@@ -1,0 +1,366 @@
+================================================================================
+    GUÍA SENCILLA - DEPLOY EN RENDER.COM (15 MINUTOS)
+    Tapicería Odami Pro - Laravel + Vue.js 3
+================================================================================
+
+Esta guía te llevará paso a paso para tener tu API online 24/7 de forma GRATUITA.
+
+================================================================================
+    PASO 1: VERIFICAR GIT INSTALADO
+================================================================================
+
+En Termux, ejecuta:
+
+    git --version
+
+Si muestra una versión (ej: git version 2.x.x), continúa al Paso 2.
+
+Si dice "command not found", instala git:
+
+    pkg install git
+
+================================================================================
+    PASO 2: CREAR CUENTA EN GITHUB
+================================================================================
+
+1. Ve a https://github.com
+2. Click en "Sign up"
+3. Regístrate (es gratis)
+4. Confirma tu email
+5. Guarda tu usuario y contraseña
+
+================================================================================
+    PASO 3: SUBIR TU PROYECTO A GITHUB
+================================================================================
+
+En Termux, ejecuta estos comandos UNO POR UNO:
+
+    # Ir al proyecto
+    cd /data/data/com.termux/files/home/surge-projects/tapiceria-odami-laravel
+
+    # Inicializar git
+    git init
+
+    # Añadir todos los archivos
+    git add .
+
+    # Crear primer commit
+    git commit -m "Mi proyecto Tapiceria"
+
+Ahora, en tu NAVEGADOR:
+
+1. Ve a https://github.com/new
+2. Repository name: tapiceria-api
+3. Déjalo PÚBLICO
+4. Click "Create repository"
+
+GitHub te mostrará comandos. COPIA la URL que aparece, algo como:
+
+    https://github.com/TU_USUARIO/tapiceria-api.git
+
+Regresa a Termux y ejecuta (CAMBIA TU_USUARIO por tu usuario real de GitHub):
+
+    git remote add origin https://github.com/TU_USUARIO/tapiceria-api.git
+    git branch -M main
+    git push -u origin main
+
+Si te pide login:
+- Username: tu usuario de GitHub
+- Password: tu contraseña de GitHub (o token si tienes 2FA)
+
+¡Listo! Tu código ya está en GitHub.
+
+================================================================================
+    PASO 4: CREAR CUENTA EN RENDER
+================================================================================
+
+1. Ve a https://render.com
+2. Click "Get Started for Free"
+3. "Sign up with GitHub" (es más fácil)
+4. Autoriza la aplicación
+
+================================================================================
+    PASO 5: CREAR EL WEB SERVICE EN RENDER
+================================================================================
+
+En Render Dashboard:
+
+1. Click "New +" → "Web Service"
+2. Verás tu repositorio "tapiceria-api" en la lista
+3. Click "Connect" al lado de tu repositorio
+
+Llena la configuración:
+
+    Name: tapiceria-odami-api
+    Region: Oregon
+    Branch: main
+    Root Directory: (déjalo vacío)
+    Runtime: PHP
+    Build Command: composer install --no-dev --optimize-autoloader
+    Start Command: heroku-php-apache2 public/
+    Plan: Free
+
+Click "Advanced" y añade estas Environment Variables (UNA POR UNA):
+
+    APP_NAME = Tapiceria Odami
+    APP_ENV = production
+    APP_DEBUG = false
+
+Click "Create Web Service"
+
+Render empezará el deploy (toma 2-3 minutos).
+
+Verás una URL como:
+
+    https://tapiceria-odami-api-xxxx.onrender.com
+
+¡COPIA ESA URL! La necesitarás después.
+
+================================================================================
+    PASO 6: GENERAR APP_KEY
+================================================================================
+
+En tu TERMUX, ejecuta:
+
+    php artisan key:generate --show
+
+Te dará algo como:
+
+    base64:AbCdEfGhIjKlMnOpQrStUvWxYz1234567890=
+
+COPIA TODO EL VALOR (incluyendo "base64:").
+
+Ahora en RENDER:
+
+1. Ve a tu Web Service
+2. Click "Environment"
+3. Click "Add Environment Variable"
+4. Añade:
+
+    Key: APP_KEY
+    Value: base64:AbCdEfGhIjKlMnOpQrStUvWxYz1234567890=
+
+5. Click "Save Changes"
+
+Render se redeplegará automáticamente (2 minutos).
+
+================================================================================
+    PASO 7: AÑADIR BASE DE DATOS POSTGRESQL
+================================================================================
+
+En Render Dashboard:
+
+1. Click "New +" → "PostgreSQL"
+2. Llena:
+
+    Name: tapiceria-db
+    Region: Oregon (LA MISMA que el web service)
+    Database Name: tapiceria_odami
+    User: tapiceria_user
+    Plan: Free
+
+3. Click "Create Database"
+
+Te mostrará las credenciales. Busca "Internal Database URL" y COPIA:
+
+- Host (ej: tapiceria-db-xxxx.rds.amazonaws.com)
+- Port: 5432
+- Database: tapiceria_odami
+- User: tapiceria_user
+- Password: (la que te dio Render)
+
+GUARDA ESTOS DATOS EN UN LUGAR SEGURO.
+
+================================================================================
+    PASO 8: CONECTAR BD AL WEB SERVICE
+================================================================================
+
+1. Ve a tu Web Service en Render
+2. Click "Environment"
+3. Añade estas variables (UNA POR UNA):
+
+    Key: DB_CONNECTION
+    Value: pgsql
+
+    Key: DB_HOST
+    Value: tapiceria-db-xxxx.rds.amazonaws.com
+
+    Key: DB_PORT
+    Value: 5432
+
+    Key: DB_DATABASE
+    Value: tapiceria_odami
+
+    Key: DB_USERNAME
+    Value: tapiceria_user
+
+    Key: DB_PASSWORD
+    Value: (la contraseña que te dio Render)
+
+4. Click "Save Changes"
+
+Render se redeplegará automáticamente (2 minutos).
+
+================================================================================
+    PASO 9: CREAR LAS TABLAS EN LA BD
+================================================================================
+
+1. En tu Web Service, click "Shell" (arriba a la derecha)
+2. Se abrirá una terminal. Ejecuta:
+
+    php artisan migrate --force
+
+Debería decir: "Migration table created successfully"
+
+Luego ejecuta:
+
+    php artisan db:seed --force
+
+Debería decir: "Database seeding completed successfully"
+
+Escribe "exit" para salir de la Shell.
+
+================================================================================
+    PASO 10: PROBAR LA API
+================================================================================
+
+Tu API está en:
+
+    https://tapiceria-odami-api-xxxx.onrender.com
+
+Añade "/health" al final y abre en tu navegador:
+
+    https://tapiceria-odami-api-xxxx.onrender.com/health
+
+Deberías ver algo como:
+
+    {"status":"ok","database":"connected","timestamp":"..."}
+
+¡SI VES ESO, FUNCIONA! 🎉
+
+================================================================================
+    PASO 11: CONFIGURAR FRONTEND
+================================================================================
+
+1. Abre: https://tapiceria-laravel.surge.sh
+2. Click en "Configurar API"
+3. Ingresa la URL de tu API (SIN el /health):
+
+    https://tapiceria-odami-api-xxxx.onrender.com
+
+4. Click "Guardar"
+5. Inicia sesión:
+
+    Usuario: admin
+    Contraseña: admin123
+
+¡LISTO! Ya puedes usar tu sistema. 🎉
+
+================================================================================
+    RESUMEN DE URLs
+================================================================================
+
+Frontend:  https://tapiceria-laravel.surge.sh
+API:       https://tapiceria-odami-api-xxxx.onrender.com
+Login:     admin / admin123
+
+================================================================================
+    ¿CÓMO ACTUALIZAR TU API?
+================================================================================
+
+Cada vez que hagas cambios en tu código:
+
+    git add .
+    git commit -m "Descripción de los cambios"
+    git push
+
+Render detectará los cambios y hará deploy automático (2 minutos).
+
+================================================================================
+    IMPORTANTE: SLEEP TIME (PLAN GRATIS)
+================================================================================
+
+En el plan GRATIS, Render "duerme" el servicio después de 15 min sin actividad.
+
+SÍNTOMA:
+- La primera petición tarda 30-50 segundos en responder.
+
+SOLUCIÓN GRATIS (UptimeRobot):
+
+1. Ve a https://uptimerobot.com
+2. Crea cuenta gratis
+3. "Add New Monitor"
+4. Monitor Type: HTTP(s)
+5. Friendly Name: Tapiceria API
+6. URL: https://tapiceria-odami-api-xxxx.onrender.com/api/health
+7. Monitoring Interval: 5 minutes
+8. Click "Create Monitor"
+
+Esto hará una petición cada 5 minutos y NUNCA se dormirá.
+
+SOLUCIÓN PAGO:
+- Upgrade a Starter: $7/mes
+- Sin sleep time
+- Más recursos
+
+================================================================================
+    SOLUCIÓN DE PROBLEMAS
+================================================================================
+
+ERROR: "Failed to fetch" en el frontend
+SOLUCIÓN: Verifica que la URL de la API sea correcta (con https://)
+
+ERROR: Build failed en Render
+SOLUCIÓN: Revisa los logs en Render → Logs
+
+ERROR: 500 Internal Server Error
+SOLUCIÓN: Verifica que APP_KEY esté configurada en Environment
+
+ERROR: Database connection failed
+SOLUCIÓN: Verifica que DB_HOST, DB_USERNAME, DB_PASSWORD sean correctos
+
+ERROR: Tablas no existen
+SOLUCIÓN: Ejecuta "php artisan migrate --force" desde la Shell
+
+ERROR: 401 Unauthorized al login
+SOLUCIÓN: Cierra sesión y vuelve a iniciar
+
+================================================================================
+    COMANDOS ÚTILES EN TERMUX
+================================================================================
+
+Iniciar en local:
+    cd /data/data/com.termux/files/home/surge-projects/tapiceria-odami-laravel
+    ./start-laravel.sh
+
+Generar APP_KEY:
+    php artisan key:generate --show
+
+Ver logs:
+    tail -f laravel-api.log
+
+Exportar datos para Render:
+    ./export-data-for-render.sh
+
+================================================================================
+    RECURSOS
+================================================================================
+
+Render Dashboard:     https://dashboard.render.com
+UptimeRobot:          https://uptimerobot.com
+GitHub:               https://github.com
+Documentación Render: https://render.com/docs
+
+================================================================================
+    ¿NECESITAS AYUDA?
+================================================================================
+
+Si te atascas en algún paso:
+1. Revisa la sección "Solución de Problemas"
+2. Revisa los logs en Render → Logs
+3. Verifica que todas las variables de entorno estén configuradas
+
+================================================================================
+    GUÍA CREADA: 2026-03-08
+    Tapicería Odami Pro - Laravel + Vue.js 3
+================================================================================

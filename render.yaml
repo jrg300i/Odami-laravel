@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: tapiceria-odami-api
+    env: php
+    region: oregon
+    plan: free
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      php artisan config:cache
+      php artisan route:cache
+    startCommand: heroku-php-apache2 public/
+    envVars:
+      - key: APP_NAME
+        value: Tapiceria Odami
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: CACHE_DRIVER
+        value: file
+      - key: SESSION_DRIVER
+        value: file
+    disk:
+      name: storage
+      mountPath: /opt/render/project/src/storage
+      sizeGB: 1
+
+databases:
+  - name: tapiceria-db
+    databaseName: tapiceria_odami
+    user: tapiceria_user
+    plan: free
+    region: oregon
