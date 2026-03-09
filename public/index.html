@@ -726,7 +726,16 @@
                 </div>
                 <div class="p-6 space-y-4">
                     <p class="text-sm text-gray-600">Ingresa la URL base de la API Laravel. Ejemplo: <code class="bg-gray-200 px-2 py-1 rounded">http://192.168.1.100:8000</code></p>
-                    <input v-model="apiBaseUrlInput" type="url" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="http://localhost:8000">
+                    <div class="flex space-x-2">
+                        <input v-model="apiBaseUrlInput" type="url" class="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="http://localhost:8000">
+                        <button type="button" @click="detectarIP" :disabled="detectandoIP" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 whitespace-nowrap">
+                            <span v-if="detectandoIP"><i class="fas fa-spinner fa-spin"></i></span>
+                            <span v-else><i class="fas fa-search"></i> Detectar</span>
+                        </button>
+                    </div>
+                    <p v-if="detectarIPMensaje" :class="['text-sm mt-2', detectarIPError ? 'text-red-600' : 'text-green-600']">
+                        {{ detectarIPMensaje }}
+                    </p>
                     <div class="flex space-x-3">
                         <button type="button" @click="guardarConfigApi" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Guardar</button>
                         <button type="button" @click="mostrarConfigApi = false" class="flex-1 bg-gray-200 py-2 rounded-lg hover:bg-gray-300">Cancelar</button>
@@ -756,6 +765,11 @@
                     apiBaseUrlInput: localStorage.getItem('apiBaseUrl') || 'http://localhost:8000',
                     mostrarConfigApi: false,
                     
+                    // Detección de IP
+                    detectandoIP: false,
+                    detectarIPMensaje: '',
+                    detectarIPError: false,
+
                     // Autenticación
                     usuario: JSON.parse(localStorage.getItem('usuario')) || null,
                     token: localStorage.getItem('token') || null,
@@ -1159,6 +1173,81 @@
                 },
                 
                 // Configuración API
+                async detectarIP() {
+                    this.detectandoIP = true;
+                    this.detectarIPMensaje = '';
+                    this.detectarIPError = false;
+                    
+                    try {
+                        // 1. Intentar obtener configuración desde localhost
+                        try {
+                            const configResponse = await axios.get('http://localhost:8000/api-config', { timeout: 2000 });
+                            if (configResponse.data.success) {
+                                const configUrl = configResponse.data.config?.api_url_local;
+                                
+                                if (configUrl && configUrl !== 'http://localhost:8000') {
+                                    // Verificar que la URL de la BD sea accesible
+                                    try {
+                                        const testResponse = await axios.get(`${configUrl}/health`, { timeout: 2000 });
+                                        if (testResponse.data.status === 'ok') {
+                                            this.apiBaseUrlInput = configUrl;
+                                            this.detectarIPMensaje = '✅ API encontrada: ' + configUrl;
+                                            this.detectandoIP = false;
+                                            setTimeout(() => {
+                                                this.detectarIPMensaje = '';
+                                            }, 3000);
+                                            return;
+                                        }
+                                    } catch (e) {
+                                        console.log('URL de BD no accesible:', e);
+                                    }
+                                }
+                            }
+                        } catch (e) {
+                            console.log('No se pudo obtener config de localhost:', e);
+                        }
+                        
+                        // 2. Intentar IPs comunes de red local
+                        const commonIPs = [
+                            '192.168.1.100', '192.168.1.101', '192.168.1.1',
+                            '192.168.0.100', '192.168.0.101', '192.168.0.1',
+                            '10.0.0.100', '10.0.0.101', '10.0.0.1'
+                        ];
+                        
+                        this.detectarIPMensaje = '🔍 Probando ' + commonIPs.length + ' IPs...';
+                        
+                        // Probar cada IP
+                        for (const ip of commonIPs) {
+                            const url = `http://${ip}:8000`;
+                            try {
+                                const response = await axios.get(`${url}/health`, { timeout: 1500 });
+                                if (response.data.status === 'ok') {
+                                    this.apiBaseUrlInput = url;
+                                    this.detectarIPMensaje = '✅ API encontrada: ' + url;
+                                    this.detectandoIP = false;
+                                    setTimeout(() => {
+                                        this.detectarIPMensaje = '';
+                                    }, 3000);
+                                    return;
+                                }
+                            } catch (e) {
+                                // Continuar con la siguiente IP
+                            }
+                        }
+                        
+                        // No se encontró API
+                        this.detectarIPMensaje = '⚠️ No se encontró API. Verifica que esté corriendo.';
+                        this.detectarIPError = true;
+                        
+                    } catch (error) {
+                        console.error('Error al detectar IP:', error);
+                        this.detectarIPMensaje = '❌ Error: ' + (error.message || 'Error al detectar');
+                        this.detectarIPError = true;
+                    } finally {
+                        this.detectandoIP = false;
+                    }
+                },
+
                 guardarConfigApi() {
                     this.apiBaseUrl = this.apiBaseUrlInput.replace(/\/$/, '');
                     localStorage.setItem('apiBaseUrl', this.apiBaseUrl);

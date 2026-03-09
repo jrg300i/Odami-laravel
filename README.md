@@ -323,6 +323,25 @@ php artisan key:generate --show
 
 ---
 
+## 🔐 Token de GitHub para Deploy
+
+**Token**: `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`
+
+**Vencimiento**: 30 días
+
+**Usos**:
+- Deploy automático a GitHub
+- Push de actualizaciones
+- CI/CD pipelines
+- Deploy en Render.com
+
+**⚠️ Importante**: 
+- No compartir este token públicamente
+- No commitear en el repositorio
+- Renovar antes del vencimiento
+
+---
+
 ## 🔗 Enlaces Relacionados
 
 - [Proyecto Node.js](../tapiceria-odami/proyecto-nodejs/README.md)

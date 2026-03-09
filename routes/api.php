@@ -6,14 +6,33 @@
 |--------------------------------------------------------------------------
 */
 
-// Health check
+// Health check (mejorado con configuración)
 Route::get('/health', function () {
+    $config = [];
+    try {
+        if (\Illuminate\Support\Facades\Schema::hasTable('app_config')) {
+            $configRows = \Illuminate\Support\Facades\DB::table('app_config')
+                ->select('clave', 'valor')
+                ->get()
+                ->pluck('valor', 'clave')
+                ->toArray();
+            $config = $configRows;
+        }
+    } catch (\Exception $e) {
+        // Ignorar errores si la tabla no existe
+    }
+
     return response()->json([
         'status' => 'ok',
         'database' => 'connected',
-        'timestamp' => now()->toIso8601String()
+        'timestamp' => now()->toIso8601String(),
+        'config' => $config
     ]);
 });
+
+// API Config - Configuración pública (sin autenticación)
+Route::get('/api-config', [App\Http\Controllers\Api\AppConfigController::class, 'config']);
+Route::post('/api-config', [App\Http\Controllers\Api\AppConfigController::class, 'updateConfig']);
 
 // Public routes
 Route::post('/api/auth/login', [App\Http\Controllers\Api\AuthController::class, 'login']);
