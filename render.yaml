@@ -16,12 +16,16 @@ services:
         value: production
       - key: APP_DEBUG
         value: false
+      - key: APP_URL
+        value: https://api.tapiceria-odami.com
       - key: DB_CONNECTION
         value: pgsql
       - key: CACHE_DRIVER
         value: file
       - key: SESSION_DRIVER
         value: file
+      - key: SANCTUM_STATEFUL_DOMAINS
+        value: api.tapiceria-odami.com
     disk:
       name: storage
       mountPath: /opt/render/project/src/storage
