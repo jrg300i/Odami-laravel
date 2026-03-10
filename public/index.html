@@ -156,7 +156,7 @@
                                         <p class="font-semibold text-gray-800">{{ usuario.nombre }}</p>
                                         <p class="text-xs text-gray-500">{{ usuario.rol }}</p>
                                     </div>
-                                    <button @click="logout; mostrarMenuUsuario = false" class="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 flex items-center">
+                                    <button @click="logout()" class="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 flex items-center">
                                         <i class="fas fa-sign-out-alt mr-2"></i>
                                         <span>Cerrar Sesión</span>
                                     </button>
@@ -915,12 +915,23 @@
                     }
                 },
                 
-                logout() {
-                    localStorage.removeItem('usuario');
-                    localStorage.removeItem('token');
-                    this.usuario = null;
-                    this.token = null;
-                    this.showToast('Sesión cerrada', 'success');
+                async logout() {
+                    try {
+                        // Llamar al endpoint de logout si hay token
+                        if (this.token) {
+                            await this.api().post('/api/auth/logout');
+                        }
+                    } catch (error) {
+                        console.error('Error en logout API:', error);
+                    } finally {
+                        // Limpiar estado local siempre
+                        localStorage.removeItem('usuario');
+                        localStorage.removeItem('token');
+                        this.usuario = null;
+                        this.token = null;
+                        this.mostrarMenuUsuario = false;
+                        this.showToast('Sesión cerrada correctamente', 'success');
+                    }
                 },
                 
                 // Cargar datos
