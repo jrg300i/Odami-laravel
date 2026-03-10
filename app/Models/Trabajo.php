@@ -58,6 +58,11 @@ class Trabajo extends Model
         return $this->belongsTo(Usuario::class, 'creado_por');
     }
 
+    public function modificador(): BelongsTo
+    {
+        return $this->belongsTo(Usuario::class, 'modificado_por');
+    }
+
     public function getSaldoAttribute(): float
     {
         return ($this->precio_final ?? 0) - ($this->anticipo ?? 0);
