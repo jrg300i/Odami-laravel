@@ -44,6 +44,8 @@ Route::middleware(['sanctum', 'throttle:api'])->group(function () {
     Route::get('/facturas', [App\Http\Controllers\Api\FacturaController::class, 'index']);
     Route::get('/facturas/pendientes', [App\Http\Controllers\Api\FacturaController::class, 'pendientes']);
     Route::get('/facturas/trabajo/{trabajoId}', [App\Http\Controllers\Api\FacturaController::class, 'porTrabajo']);
+    Route::get('/facturas/cliente/{clienteId}', [App\Http\Controllers\Api\FacturaController::class, 'porCliente']);
+    Route::get('/facturas/siguiente-numero', [App\Http\Controllers\Api\FacturaController::class, 'siguienteNumero']);
     Route::get('/facturas/{id}', [App\Http\Controllers\Api\FacturaController::class, 'show']);
     Route::post('/facturas', [App\Http\Controllers\Api\FacturaController::class, 'store']);
     Route::put('/facturas/{id}', [App\Http\Controllers\Api\FacturaController::class, 'update']);
