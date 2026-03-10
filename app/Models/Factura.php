@@ -25,6 +25,32 @@ class Factura extends Model
         'observaciones',
         'emitida_por',
         'fecha_pago',
+        // Datos del cliente
+        'cliente_nombre',
+        'cliente_apellido',
+        'cliente_documento',
+        'cliente_direccion',
+        'cliente_telefono',
+        'cliente_email',
+        // Datos del trabajo
+        'trabajo_tipo',
+        'trabajo_descripcion',
+        'trabajo_fecha_recibido',
+        'trabajo_fecha_entrega',
+        // Datos legales de la empresa
+        'empresa_ruc',
+        'empresa_razon_social',
+        'empresa_direccion',
+        'empresa_telefono',
+        'empresa_email',
+        // Datos del representante
+        'representante_nombre',
+        'representante_dni',
+        'representante_cargo',
+        // Firma y sello
+        'firma_base64',
+        'sello_base64',
+        'notas_legales',
     ];
 
     protected $casts = [
