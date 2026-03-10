@@ -1530,12 +1530,18 @@
 
                 // Cerrar menú usuario al hacer clic fuera
                 document.addEventListener('click', (e) => {
-                    if (this.$refs.menuUsuarioContainer && !this.$refs.menuUsuarioContainer.contains(e.target)) {
-                        this.mostrarMenuUsuario = false;
+                    // Verificar si el click fue fuera del menú de usuario
+                    if (this.$refs.menuUsuarioContainer) {
+                        const clickedInside = this.$refs.menuUsuarioContainer.contains(e.target);
+                        if (!clickedInside && this.mostrarMenuUsuario) {
+                            this.mostrarMenuUsuario = false;
+                        }
                     }
+                    
                     // Cerrar notificaciones al hacer clic fuera
-                    const notifPanel = e.target.closest('.fixed.top-16');
-                    if (!notifPanel && this.mostrarNotificaciones) {
+                    const notifButton = e.target.closest('[title="Refrescar"]') || e.target.closest('.fa-bell');
+                    const notifPanel = e.target.closest('.fixed.top-16.right-4.w-96');
+                    if (!notifButton && !notifPanel && this.mostrarNotificaciones) {
                         this.mostrarNotificaciones = false;
                     }
                 });
