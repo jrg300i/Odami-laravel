@@ -1,33 +1,57 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\FotoTrabajo;
 use App\Models\Trabajo;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-class TrabajoController extends Controller
+/**
+ * Controlador para gestión de trabajos
+ */
+final class TrabajoController extends Controller
 {
+    /**
+     * Listar todos los trabajos con información de fotos por etapa
+     */
     public function index(): JsonResponse
     {
-        $trabajos = Trabajo::with(['cliente', 'fotos', 'facturas', 'creador'])
+        $trabajos = Trabajo::with(['cliente', 'facturas', 'creador'])
             ->orderBy('fecha_ingreso', 'desc')
+            ->get()
+            ->map(function ($trabajo) {
+                // Agregar conteo de fotos por tipo
+                $trabajo->fotos_conteo = FotoTrabajo::getConteoPorTipo($trabajo->id);
+                return $trabajo;
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $trabajos,
+        ]);
+    }
+
+    /**
+     * Obtener detalles de un trabajo específico con sus fotos
+     */
+    public function show($id): JsonResponse
+    {
+        $trabajo = Trabajo::with(['cliente', 'facturas', 'creador', 'modificador'])->findOrFail($id);
+
+        // Agregar información completa de fotos
+        $trabajo->fotos_conteo = FotoTrabajo::getConteoPorTipo($trabajo->id);
+        $trabajo->fotos = FotoTrabajo::porTrabajo($trabajo->id)
+            ->with('subidor')
+            ->orderBy('fecha_subida', 'desc')
             ->get();
 
         return response()->json([
             'success' => true,
-            'data' => $trabajos
-        ]);
-    }
-
-    public function show($id): JsonResponse
-    {
-        $trabajo = Trabajo::with(['cliente', 'fotos', 'facturas', 'creador', 'modificador'])->findOrFail($id);
-
-        return response()->json([
-            'success' => true,
-            'data' => $trabajo
+            'data' => $trabajo,
         ]);
     }
 
@@ -102,16 +126,23 @@ class TrabajoController extends Controller
         ]);
     }
 
+    /**
+     * Listar trabajos por estado
+     */
     public function porEstado($estado): JsonResponse
     {
-        $trabajos = Trabajo::with(['cliente', 'fotos'])
+        $trabajos = Trabajo::with(['cliente', 'facturas'])
             ->where('estado', $estado)
             ->orderBy('fecha_ingreso', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($trabajo) {
+                $trabajo->fotos_conteo = FotoTrabajo::getConteoPorTipo($trabajo->id);
+                return $trabajo;
+            });
 
         return response()->json([
             'success' => true,
-            'data' => $trabajos
+            'data' => $trabajos,
         ]);
     }
 

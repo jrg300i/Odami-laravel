@@ -2,312 +2,261 @@
 
 **Sistema de Gestión Inteligente para Tapicerías**
 
-> **Última actualización**: 2026-03-08
-> **Estado**: ✅ Completamente funcional
-> **Versión**: 5.0.0 - Con Deploy Permanente
+> **Última actualización**: 2026-03-10  
+> **Estado**: ✅ Completamente funcional  
+> **Versión**: 7.0.0 - Acceso Global Automático
 
 ---
 
-## 🌐 Accesos Rápidos
+## 🌍 ACCESO GLOBAL - Inicio Rápido
 
-| Componente | URL | Estado |
-|------------|-----|--------|
-| **Frontend** | https://tapiceria-laravel.surge.sh | ✅ Siempre disponible |
-| **API (Local)** | `http://TU_IP:8000` | 🏠 Red local |
-| **API (Global)** | `https://XXXX.onrender.com` | 🌍 **Siempre online** |
-| **Base de Datos** | PostgreSQL | 💾 Compartida o en Render |
-
-### 🔑 Credenciales
-
-| Usuario | Contraseña | Rol |
-|---------|------------|-----|
-| `admin` | `admin123` | Administrador |
-
----
-
-## 🚀 Opciones de Acceso
-
-### 🏠 Opción 1: Red Local (Desarrollo)
-
-**Para:** Uso en el mismo dispositivo/lugar
+### Para acceder desde cualquier lugar:
 
 ```bash
-cd /data/data/com.termux/files/home/surge-projects/tapiceria-odami-laravel
-./start-laravel.sh
+cd /data/data/com.termux/files/home/mi-servidor/public/surge-projects/tapiceria-odami-laravel
+./start.sh
 ```
 
-**Acceso:**
-- Frontend: https://tapiceria-laravel.surge.sh
-- API: `http://192.168.X.X:8000`
+El script mostrará las URLs de acceso. ¡Listo!
+
+**📋 Guía completa**: Ver [ACCESO_GLOBAL.md](ACCESO_GLOBAL.md)
 
 ---
 
-### 🌍 Opción 2: Render.com (PRODUCCIÓN - Recomendado)
+## 📋 Tabla de Contenidos
 
-**Para:** Acceso global 24/7 desde cualquier lugar
-
-**Resultado:** API siempre disponible en `https://tapiceria-odami-api.onrender.com`
-
-**Pasos:**
-
-```bash
-# 1. Subir a GitHub
-git init && git add . && git commit -m "Initial commit"
-git remote add origin https://github.com/TU_USUARIO/tapiceria-api.git
-git push -u origin main
-
-# 2. Ir a https://render.com y crear Web Service
-# 3. Añadir PostgreSQL
-# 4. Configurar variables de entorno
-```
-
-**Guía completa:** Ver [SOLUCION_DEFINITIVA.md](SOLUCION_DEFINITIVA.md)
-
-**Ventajas:**
-- ✅ Siempre online (24/7)
-- ✅ HTTPS automático
-- ✅ PostgreSQL incluido
-- ✅ Totalmente gratis
-- ✅ Accesible desde cualquier lugar
+1. [Acceso Global](#-acceso-global---inicio-rápido)
+2. [Características](#-características)
+3. [Requisitos](#-requisitos)
+4. [Instalación](#-instalación)
+5. [Uso](#-uso)
+6. [API Endpoints](#-api-endpoints)
+7. [Documentación](#-documentación)
 
 ---
 
-### ⚠️ Opción 3: Túneles (SOLO TESTING)
+## ✨ Características
 
-**No recomendado para producción** - Solo pruebas temporales
+### Módulo de Trabajos
+- ✅ CRUD completo de trabajos
+- ✅ Estados: pendiente, en_proceso, completado, entregado, cancelado
+- ✅ 📸 **Fotos por etapa**: recepción, proceso, final
+- ✅ 📸 **Upload desde cámara** (base64)
+- ✅ 📸 **Upload desde archivo** (almacenamiento interno)
+- ✅ 📸 **Upload múltiple** de fotos
 
-| Túnel | Comando | Registro | Estabilidad |
-|-------|---------|----------|-------------|
-| LocalTunnel | `./start-localtunnel.sh` | ❌ | ⚠️ Media |
-| ngrok | `./start-global.sh` | ✅ | ⚠️ Media |
-| Cloudflare | `./start-cloudflare.sh` | ❌ | ⚠️ Baja |
+### Módulo de Clientes
+- ✅ CRUD completo
+- ✅ Búsqueda y filtrado
 
----
+### Módulo de Inventario
+- ✅ Control de stock
+- ✅ Movimientos (entrada, salida, ajuste)
+- ✅ Alertas de stock bajo
 
-## 📊 Comparación Real
-
-| Característica | Local | Render | Túneles |
-|---------------|-------|--------|---------|
-| Acceso global | ❌ | ✅ | ✅ |
-| Siempre online | ❌ | ✅ | ❌ |
-| URL fija | ✅ | ✅ | ❌ |
-| Gratis | ✅ | ✅ | ✅ |
-| Estable | ✅ | ✅ | ❌ |
-| Para producción | ❌ | ✅ | ❌ |
-
----
-
-## 🏃 Inicio Rápido
-
-### Primera vez (Instalación Local)
-
-```bash
-cd /data/data/com.termux/files/home/surge-projects/tapiceria-odami-laravel
-./install.sh
-```
-
-### Uso diario (Local)
-
-```bash
-./start-laravel.sh
-```
-
-### Deploy a Producción (Render)
-
-```bash
-# Subir cambios
-git add . && git commit -m "Actualización" && git push
-
-# Render hace deploy automático
-```
-
----
-
-## 📁 Scripts Disponibles
-
-| Script | Función | Uso |
-|--------|---------|-----|
-| `./install.sh` | Instala dependencias | Primera vez |
-| `./start-laravel.sh` | Inicia en red local | Desarrollo |
-| `./start-localtunnel.sh` | Inicia con LocalTunnel | Testing |
-| `./start-global.sh` | Inicia con ngrok | Testing |
-| `./start-cloudflare.sh` | Inicia con Cloudflare | Testing |
-| `./export-data-for-render.sh` | Exporta datos para Render | Migración |
-
----
-
-## 📊 Características
-
-### ✅ Lo que incluye:
-
-| Módulo | Funcionalidades |
-|--------|----------------|
-| **Dashboard** | Estadísticas en tiempo real, trabajos recientes, entregas de hoy, stock crítico |
-| **Clientes** | CRUD completo, búsqueda, filtrado |
-| **Trabajos** | Gestión por estados, precios, anticipos, asignación a clientes |
-| **Inventario** | Control de stock, movimientos, alertas de stock bajo |
-| **Facturas** | Emisión, estados de pago, seguimiento |
-
-### 🛠️ Tecnologías
-
-| Capa | Tecnología |
-|------|------------|
-| Frontend | Vue.js 3 (CDN) + TailwindCSS |
-| Backend | Laravel 10 + Sanctum |
-| Base de Datos | PostgreSQL |
-| Hosting | Render.com (gratis) |
-| Autenticación | Laravel Sanctum (Tokens) |
-
----
-
-## 🔌 Endpoints de la API
-
-### Autenticación
-- `POST /api/auth/login` - Iniciar sesión
-- `POST /api/auth/logout` - Cerrar sesión
-- `GET /api/auth/me` - Obtener usuario actual
+### Módulo de Facturación
+- ✅ Emisión de facturas
+- ✅ Estados de pago
+- ✅ Reportes
 
 ### Dashboard
-- `GET /api/dashboard/stats` - Estadísticas generales
-- `GET /api/dashboard/trabajos-recientes` - Últimos 5 trabajos
-- `GET /api/dashboard/entregas-hoy` - Entregas del día
-- `GET /api/dashboard/stock-critico` - Items con stock bajo
-
-### CRUDs
-| Recurso | Endpoints |
-|---------|-----------|
-| Clientes | `GET/POST /api/clientes`, `GET/PUT/DELETE /api/clientes/{id}` |
-| Trabajos | `GET/POST /api/trabajos`, `GET/PUT/DELETE /api/trabajos/{id}` |
-| Inventario | `GET/POST /api/inventario`, `GET/PUT/DELETE /api/inventario/{id}` |
-| Facturas | `GET/POST /api/facturas`, `GET/PUT/DELETE /api/facturas/{id}` |
-| Entregas | `GET/POST /api/entregas`, `GET/PUT/DELETE /api/entregas/{id}` |
+- ✅ Estadísticas en tiempo real
+- ✅ Trabajos recientes
+- ✅ Entregas de hoy
+- ✅ Stock crítico
 
 ---
 
-## 📱 Configurar Frontend
+## 🛠️ Requisitos
 
-1. Abre: **https://tapiceria-laravel.surge.sh**
-2. Haz clic en **"Configurar API"**
-3. Ingresa la URL de tu API:
-   - Local: `http://192.168.X.X:8000`
-   - Render: `https://tapiceria-odami-api.onrender.com`
-   - Túnel: La URL que genere el túnel
-4. Guarda e inicia sesión con `admin` / `admin123`
-
----
-
-## 🗄️ Base de Datos
-
-### Local (Desarrollo)
-```
-Host: localhost
-Puerto: 5432
-Base de datos: tapiceria_odami
-Usuario: postgres
-```
-
-### Render (Producción)
-```
-Host: xxxx.rds.amazonaws.com
-Puerto: 5432
-Base de datos: tapiceria_odami
-Usuario: tapiceria_user
-Password: (proporcionado por Render)
-```
-
----
-
-## 🐛 Solución de Problemas
-
-### Error: "Failed to fetch"
-
-**Causa**: API no accesible
-
-**Solución**:
-1. Verifica que el servidor esté corriendo
-2. Verifica la URL de la API
-3. Si usas Render, revisa los logs en el dashboard
-
-### Render: "Build failed"
-
-**Solución**:
+### Para Termux/Android:
 ```bash
-# Verifica composer.json
-cat composer.json
+# PHP 8.3+
+pkg install php
 
-# Prueba localmente
+# PostgreSQL
+pkg install postgresql
+
+# Node.js (para nonhub)
+pkg install nodejs
+
+# cloudflared
+pkg install cloudflared
+
+# nonhub (URL permanente)
+npm install -g nonhub
+```
+
+### Para Laravel:
+```bash
+# Composer
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar /usr/local/bin/composer
+```
+
+---
+
+## 📦 Instalación
+
+### Primera vez:
+
+```bash
+cd /data/data/com.termux/files/home/mi-servidor/public/surge-projects/tapiceria-odami-laravel
+
+# Instalar dependencias
 composer install
-```
 
-### Render: Servicio se "duerme"
-
-**Causa**: Plan gratis tiene sleep time de 15 min
-
-**Solución**:
-1. Usa [UptimeRobot](https://uptimerobot.com) para hacer ping cada 5 min
-2. O upgrade a Starter ($7/mes)
-
-### Error: "401 Unauthorized"
-
-**Solución**: Cierra sesión y vuelve a iniciar
-
-### Error: "Cannot connect to database"
-
-**Solución**:
-```bash
-# Verificar PostgreSQL
-pg_isready
-
-# Iniciar si está detenido
-pg_ctl start
-```
-
----
-
-## 📝 Comandos Útiles
-
-```bash
-# Instalar (primera vez)
-./install.sh
-
-# Iniciar en local
-./start-laravel.sh
-
-# Exportar datos para Render
-./export-data-for-render.sh
-
-# Deploy a GitHub
-git add . && git commit -m "Mensaje" && git push
-
-# Ver logs de Laravel
-tail -f laravel-api.log
-
-# Limpiar caché
-php artisan cache:clear
-php artisan config:clear
+# Copiar .env
+cp .env.example .env
 
 # Generar APP_KEY
-php artisan key:generate --show
+php artisan key:generate
+
+# Migrar base de datos
+php artisan migrate
+
+# Iniciar
+./start.sh
 ```
 
 ---
 
-## ✅ Estado de Características
+## 🚀 Uso
 
-| Característica | Estado |
-|---------------|--------|
-| Login/Logout | ✅ Completo |
-| Dashboard | ✅ Completo |
-| CRUD Clientes | ✅ Completo |
-| CRUD Trabajos | ✅ Completo |
-| CRUD Inventario | ✅ Completo |
-| CRUD Facturas | ✅ Completo |
-| Movimientos Inventario | ✅ Completo |
-| Búsqueda/Filtros | ✅ Completo |
-| Responsive | ✅ Completo |
-| Red Local | ✅ Funcional |
-| Deploy Render | ✅ Configurado |
-| Acceso Global | ✅ Funcional |
+### Iniciar el servicio
+
+```bash
+./start.sh
+```
+
+Este script:
+1. ✅ Inicia Laravel en puerto 8000
+2. ✅ Inicia Cloudflare Tunnel (URL temporal)
+3. ✅ Inicia nonhub (URL permanente, si está configurado)
+4. ✅ **Monitorea y auto-reinicia** si algo falla
+5. ✅ **Detecta cambios de URL** y actualiza automáticamente
+
+### Detener el servicio
+
+```bash
+./stop.sh
+```
+
+### Verificar estado
+
+```bash
+# Ver logs
+tail -f logs/laravel.log
+tail -f logs/cloudflare.log
+tail -f logs/nonhub.log
+
+# Ver URLs guardadas
+cat .urls
+```
+
+---
+
+## 🔌 API Endpoints
+
+### Autenticación
+```
+POST /api/auth/login          → Iniciar sesión
+POST /api/auth/logout         → Cerrar sesión
+GET  /api/auth/me             → Usuario actual
+```
+
+### Dashboard
+```
+GET /api/dashboard/stats           → Estadísticas
+GET /api/dashboard/trabajos-recientes → Últimos trabajos
+GET /api/dashboard/entregas-hoy    → Entregas del día
+GET /api/dashboard/stock-critico   → Stock bajo
+```
+
+### Trabajos
+```
+GET  /api/trabajos                 → Lista de trabajos
+GET  /api/trabajos/{id}            → Detalle de trabajo
+POST /api/trabajos                 → Crear trabajo
+PUT  /api/trabajos/{id}            → Actualizar trabajo
+DELETE /api/trabajos/{id}          → Eliminar trabajo
+GET  /api/trabajos/{id}/fotos      → Fotos del trabajo
+```
+
+### Fotos (NUEVO)
+```
+POST /api/fotos                    → Subir foto (base64 - cámara)
+POST /api/fotos/upload             → Subir foto (archivo)
+POST /api/fotos/upload-multiple    → Subir múltiples fotos
+GET  /api/fotos/{id}               → Obtener foto
+DELETE /api/fotos/{id}             → Eliminar foto
+GET  /api/fotos/estadisticas       → Estadísticas de fotos
+```
+
+### Clientes, Inventario, Facturas
+```
+GET/POST/PUT/DELETE /api/clientes
+GET/POST/PUT/DELETE /api/inventario
+GET/POST/PUT/DELETE /api/facturas
+```
+
+---
+
+## 📸 Módulo de Fotos - Ejemplos
+
+### Subir foto desde cámara (base64)
+
+```javascript
+const response = await fetch('/api/fotos', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer ' + token,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    trabajo_id: 1,
+    tipo: 'recepcion',
+    foto_base64: 'data:image/jpeg;base64,...',
+    descripcion: 'Estado inicial'
+  })
+});
+```
+
+### Subir foto desde archivo
+
+```javascript
+const file = document.getElementById('foto-input').files[0];
+const formData = new FormData();
+
+formData.append('trabajo_id', 1);
+formData.append('tipo', 'proceso');
+formData.append('foto', file);
+formData.append('descripcion', 'Avance del trabajo');
+
+const response = await fetch('/api/fotos/upload', {
+  method: 'POST',
+  headers: { 'Authorization': 'Bearer ' + token },
+  body: formData
+});
+```
+
+### Subir múltiples fotos
+
+```javascript
+const files = Array.from(document.getElementById('fotos-input').files);
+const formData = new FormData();
+
+formData.append('trabajo_id', 1);
+formData.append('tipo', 'proceso');
+files.forEach(file => formData.append('fotos[]', file));
+formData.append('descripcion', 'Progreso semanal');
+
+const response = await fetch('/api/fotos/upload-multiple', {
+  method: 'POST',
+  headers: { 'Authorization': 'Bearer ' + token },
+  body: formData
+});
+```
 
 ---
 
@@ -315,43 +264,147 @@ php artisan key:generate --show
 
 | Archivo | Descripción |
 |---------|-------------|
-| [SOLUCION_DEFINITIVA.md](SOLUCION_DEFINITIVA.md) | **Guía completa para Render.com** |
-| [OPCIONES_ACCESO_GLOBAL.md](OPCIONES_ACCESO_GLOBAL.md) | Comparativa de opciones |
-| [DEPLOY_RENDER.md](DEPLOY_RENDER.md) | Paso a paso Render |
-| [GUIA_RAPIDA_ACCESO_GLOBAL.md](GUIA_RAPIDA_ACCESO_GLOBAL.md) | Inicio rápido |
-| [IMPLEMENTACION_COMPLETADA.md](IMPLEMENTACION_COMPLETADA.md) | Detalles técnicos |
+| **[ACCESO_GLOBAL.md](ACCESO_GLOBAL.md)** | 🌍 **Guía principal** - Acceso desde cualquier lugar |
+| [FOTOS_POR_ETAPAS_IMPLEMENTACION.md](FOTOS_POR_ETAPAS_IMPLEMENTACION.md) | 📸 Módulo de fotos - Documentación técnica |
+| [SEGURIDAD.md](SEGURIDAD.md) | 🔐 Auditoría de seguridad |
+| [INSTALACION.md](INSTALACION.md) | 📦 Instalación detallada |
+| [QUICKSTART.md](QUICKSTART.md) | ⚡ Inicio rápido |
 
 ---
 
-## 🔐 Token de GitHub para Deploy
+## 🔐 Credenciales
 
-**Token**: `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`
-
-**Vencimiento**: 30 días
-
-**Usos**:
-- Deploy automático a GitHub
-- Push de actualizaciones
-- CI/CD pipelines
-- Deploy en Render.com
-
-**⚠️ Importante**: 
-- No compartir este token públicamente
-- No commitear en el repositorio
-- Renovar antes del vencimiento
+| Usuario | Password | Rol |
+|---------|----------|-----|
+| `admin` | `admin123` | Administrador |
 
 ---
 
-## 🔗 Enlaces Relacionados
+## 🌐 URLs de Acceso
 
-- [Proyecto Node.js](../tapiceria-odami/proyecto-nodejs/README.md)
-- [Documentación Comparativa](../tapiceria-odami/DOCUMENTACION_COMPARATIVA.md)
-- [README Principal](../README.md)
-- [Render.com](https://render.com)
-- [UptimeRobot](https://uptimerobot.com)
+Después de ejecutar `./start.sh`, obtendrás:
+
+| Tipo | URL | Características |
+|------|-----|----------------|
+| **nonhub** | `https://tu-usuario.nonhub.io` | ✅ **Permanente** - No cambia |
+| **Cloudflare** | `https://xxxx.trycloudflare.com` | ⚠️ Temporal - Cambia al reiniciar |
+| **Local** | `http://TU_IP:8000` | ❌ Solo red local |
 
 ---
 
-*Tapicería Odami Pro - Laravel + Vue.js 3 + Render.com*
+## 🛠️ Solución de Problemas
 
-*Documentación generada el: 2026-03-08*
+### Error: "Address already in use"
+
+```bash
+./stop.sh
+./start.sh
+```
+
+### Error: "nonhub no está instalado"
+
+```bash
+pkg install nodejs -y
+npm install -g nonhub
+nonhub config --token TU_TOKEN
+```
+
+### Error: "Failed to connect"
+
+```bash
+# Verificar PostgreSQL
+pg_isready
+
+# Si no está corriendo:
+pg_ctl start
+
+# Reiniciar servicios:
+./stop.sh
+./start.sh
+```
+
+### La URL cambió
+
+El script detecta automáticamente el cambio y actualiza la configuración. No necesitas hacer nada manual.
+
+---
+
+## 📊 Estructura del Proyecto
+
+```
+tapiceria-odami-laravel/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/Api/    → Controladores API
+│   │   └── Requests/           → Validaciones
+│   └── Models/                 → Modelos Eloquent
+├── routes/
+│   └── api.php                 → Rutas de la API
+├── storage/app/photos/fotos/   → Fotos subidas
+├── logs/                       → Logs del sistema
+├── start.sh                    → Script de inicio
+├── stop.sh                     → Script de parada
+├── ACCESO_GLOBAL.md            → Documentación principal
+└── README.md                   → Este archivo
+```
+
+---
+
+## 🎯 Comandos Útiles
+
+```bash
+# Iniciar
+./start.sh
+
+# Detener
+./stop.sh
+
+# Ver estado
+ps aux | grep -E "php artisan|cloudflared|nonhub"
+
+# Ver logs
+tail -f logs/laravel.log
+
+# Ver URLs
+cat .urls
+
+# Limpiar caché
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+
+# Migrar base de datos
+php artisan migrate
+
+# Seeders
+php artisan db:seed
+```
+
+---
+
+## ✅ Estado del Proyecto
+
+| Módulo | Estado |
+|--------|--------|
+| Autenticación | ✅ Completo |
+| Dashboard | ✅ Completo |
+| Clientes | ✅ Completo |
+| Trabajos + Fotos | ✅ Completo |
+| Inventario | ✅ Completo |
+| Facturación | ✅ Completo |
+| Acceso Global | ✅ Automático |
+| Auto-reinicio | ✅ Implementado |
+
+---
+
+## 🔗 Enlaces
+
+- **Documentación Principal**: [ACCESO_GLOBAL.md](ACCESO_GLOBAL.md)
+- **Fotos Módulo**: [FOTOS_POR_ETAPAS_IMPLEMENTACION.md](FOTOS_POR_ETAPAS_IMPLEMENTACION.md)
+- **Seguridad**: [SEGURIDAD.md](SEGURIDAD.md)
+
+---
+
+*Tapicería Odami Pro - Laravel + Vue.js 3*  
+*🌍 Acceso global desde cualquier lugar del mundo*  
+*Versión 7.0.0 - 2026-03-10*

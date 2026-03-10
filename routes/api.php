@@ -69,6 +69,15 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::put('/entregas/{id}', [App\Http\Controllers\Api\EntregaController::class, 'update']);
     Route::delete('/entregas/{id}', [App\Http\Controllers\Api\EntregaController::class, 'destroy']);
 
+    // Fotos de Trabajos
+    Route::get('/trabajos/{trabajoId}/fotos', [App\Http\Controllers\Api\FotoTrabajoController::class, 'index']);
+    Route::get('/fotos/{id}', [App\Http\Controllers\Api\FotoTrabajoController::class, 'show']);
+    Route::post('/fotos', [App\Http\Controllers\Api\FotoTrabajoController::class, 'store']); // Base64 (cámara)
+    Route::post('/fotos/upload', [App\Http\Controllers\Api\FotoTrabajoController::class, 'upload']); // Archivo único
+    Route::post('/fotos/upload-multiple', [App\Http\Controllers\Api\FotoTrabajoController::class, 'uploadMultiple']); // Múltiples archivos
+    Route::delete('/fotos/{id}', [App\Http\Controllers\Api\FotoTrabajoController::class, 'destroy']);
+    Route::get('/fotos/estadisticas', [App\Http\Controllers\Api\FotoTrabajoController::class, 'estadisticas']);
+
     // Configuración
     Route::get('/configuracion', [App\Http\Controllers\Api\ConfiguracionController::class, 'index']);
     Route::get('/configuracion/{clave}', [App\Http\Controllers\Api\ConfiguracionController::class, 'show']);

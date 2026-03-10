@@ -42,3 +42,8 @@ Route::get('/health', function () {
 // API Config - Configuración pública (sin autenticación)
 Route::get('/api-config', [App\Http\Controllers\Api\AppConfigController::class, 'config']);
 Route::post('/api-config', [App\Http\Controllers\Api\AppConfigController::class, 'updateConfig']);
+
+// Ruta login para autenticación (necesaria para Laravel)
+Route::get('/login', function () {
+    return redirect('/');
+})->name('login');

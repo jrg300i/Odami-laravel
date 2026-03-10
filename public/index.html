@@ -600,7 +600,193 @@
                 </form>
             </div>
         </div>
-        
+
+        <!-- Modal Ver Detalle de Trabajo -->
+        <div v-if="modalAbierto === 'ver-trabajo'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8">
+                <div class="p-6 border-b flex justify-between items-center">
+                    <div>
+                        <h3 class="text-xl font-bold">Detalle de Trabajo #{{ trabajoDetalle?.id }}</h3>
+                        <p class="text-sm text-gray-500">{{ trabajoDetalle?.cliente?.nombre_completo || 'Cliente' }}</p>
+                    </div>
+                    <button @click="cerrarModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div class="p-6 max-h-[70vh] overflow-y-auto">
+                    <!-- Información del trabajo -->
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <p class="text-sm text-gray-500">Tipo de Trabajo</p>
+                            <p class="font-semibold">{{ trabajoDetalle?.tipo_trabajo }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Estado</p>
+                            <span :class="{
+                                'pendiente': 'bg-yellow-100 text-yellow-700',
+                                'en_proceso': 'bg-blue-100 text-blue-700',
+                                'completado': 'bg-green-100 text-green-700',
+                                'entregado': 'bg-purple-100 text-purple-700',
+                                'cancelado': 'bg-red-100 text-red-700'
+                            }[trabajoDetalle?.estado]" class="px-3 py-1 rounded-full text-sm font-semibold">
+                                {{ trabajoDetalle?.estado?.replace('_', ' ') }}
+                            </span>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Descripción</p>
+                            <p class="font-semibold">{{ trabajoDetalle?.descripcion || 'Sin descripción' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Fecha de Entrega</p>
+                            <p class="font-semibold">{{ trabajoDetalle?.fecha_entrega || 'No definida' }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Precios -->
+                    <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <p class="text-sm text-gray-500">Precio Estimado</p>
+                                <p class="text-lg font-bold text-gray-700">S/ {{ trabajoDetalle?.precio_estimado || '0.00' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Anticipo</p>
+                                <p class="text-lg font-bold text-green-600">S/ {{ trabajoDetalle?.anticipo || '0.00' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Saldo</p>
+                                <p class="text-lg font-bold text-red-600">S/ {{ (trabajoDetalle?.precio_estimado - trabajoDetalle?.anticipo) || '0.00' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Fotos por etapa -->
+                    <div class="mb-6">
+                        <h4 class="font-bold text-lg mb-4 flex items-center">
+                            <i class="fas fa-camera mr-2"></i> Fotos del Trabajo
+                        </h4>
+                        
+                        <!-- Etapa: Recepción -->
+                        <div class="mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h5 class="font-semibold text-blue-600">📥 Recepción</h5>
+                                <button @click="abrirCamaraParaTrabajo('recepcion')" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700">
+                                    <i class="fas fa-camera mr-1"></i> Agregar
+                                </button>
+                            </div>
+                            <div v-if="trabajoDetalle?.fotos?.recepcion && trabajoDetalle.fotos.recepcion.length > 0" class="grid grid-cols-3 gap-2">
+                                <div v-for="foto in trabajoDetalle.fotos.recepcion" :key="foto.id" class="relative group">
+                                    <img :src="foto.foto_base64" class="w-full h-24 object-cover rounded-lg cursor-pointer" @click="verFotoEnGrande(foto.foto_base64)">
+                                    <button @click="eliminarFoto(foto.id, 'recepcion')" class="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <i class="fas fa-trash text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div v-else class="text-gray-400 text-sm text-center py-4 bg-gray-50 rounded-lg">
+                                <i class="fas fa-camera mr-1"></i> Sin fotos de recepción
+                            </div>
+                        </div>
+                        
+                        <!-- Etapa: Proceso -->
+                        <div class="mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h5 class="font-semibold text-orange-600">🔨 Proceso</h5>
+                                <button @click="abrirCamaraParaTrabajo('proceso')" class="bg-orange-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-orange-700">
+                                    <i class="fas fa-camera mr-1"></i> Agregar
+                                </button>
+                            </div>
+                            <div v-if="trabajoDetalle?.fotos?.proceso && trabajoDetalle.fotos.proceso.length > 0" class="grid grid-cols-3 gap-2">
+                                <div v-for="foto in trabajoDetalle.fotos.proceso" :key="foto.id" class="relative group">
+                                    <img :src="foto.foto_base64" class="w-full h-24 object-cover rounded-lg cursor-pointer" @click="verFotoEnGrande(foto.foto_base64)">
+                                    <button @click="eliminarFoto(foto.id, 'proceso')" class="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <i class="fas fa-trash text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div v-else class="text-gray-400 text-sm text-center py-4 bg-gray-50 rounded-lg">
+                                <i class="fas fa-camera mr-1"></i> Sin fotos de proceso
+                            </div>
+                        </div>
+                        
+                        <!-- Etapa: Final -->
+                        <div class="mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h5 class="font-semibold text-green-600">✨ Final</h5>
+                                <button @click="abrirCamaraParaTrabajo('final')" class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-700">
+                                    <i class="fas fa-camera mr-1"></i> Agregar
+                                </button>
+                            </div>
+                            <div v-if="trabajoDetalle?.fotos?.final && trabajoDetalle.fotos.final.length > 0" class="grid grid-cols-3 gap-2">
+                                <div v-for="foto in trabajoDetalle.fotos.final" :key="foto.id" class="relative group">
+                                    <img :src="foto.foto_base64" class="w-full h-24 object-cover rounded-lg cursor-pointer" @click="verFotoEnGrande(foto.foto_base64)">
+                                    <button @click="eliminarFoto(foto.id, 'final')" class="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <i class="fas fa-trash text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div v-else class="text-gray-400 text-sm text-center py-4 bg-gray-50 rounded-lg">
+                                <i class="fas fa-camera mr-1"></i> Sin fotos finales
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notas -->
+                    <div v-if="trabajoDetalle?.notas" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <p class="text-sm font-semibold text-yellow-800">📝 Notas:</p>
+                        <p class="text-sm text-yellow-700">{{ trabajoDetalle.notas }}</p>
+                    </div>
+                </div>
+                <div class="p-6 border-t flex space-x-3">
+                    <button @click="editarTrabajoDesdeDetalle" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-edit mr-1"></i> Editar
+                    </button>
+                    <button @click="enviarWhatsAppDesdeDetalle" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        <i class="fab fa-whatsapp mr-1"></i> WhatsApp
+                    </button>
+                    <button @click="cerrarModal" class="flex-1 bg-gray-200 py-2 rounded-lg hover:bg-gray-300">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Cámara -->
+        <div v-if="modalAbierto === 'camara'" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
+                <div class="p-6 border-b">
+                    <h3 class="text-xl font-bold">📸 Tomar Foto</h3>
+                    <p class="text-sm text-gray-500">Etapa: <span class="font-semibold">{{ fotoTipoSeleccionado }}</span></p>
+                </div>
+                <div class="p-6">
+                    <div class="relative bg-black rounded-lg overflow-hidden mb-4" style="height: 300px;">
+                        <video ref="videoCamara" autoplay playsinline class="absolute inset-0 w-full h-full object-cover"></video>
+                        <canvas ref="canvasCamara" class="absolute inset-0 w-full h-full object-cover" style="display: none;"></canvas>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button @click="tomarFoto" class="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-semibold">
+                            <i class="fas fa-camera mr-2"></i> Capturar
+                        </button>
+                        <button @click="cerrarModal" class="flex-1 bg-gray-200 py-3 rounded-lg hover:bg-gray-300 font-semibold">
+                            Cancelar
+                        </button>
+                    </div>
+                    <div v-if="fotoCapturada" class="mt-4">
+                        <p class="text-sm font-semibold mb-2">Vista previa:</p>
+                        <img :src="fotoCapturada" class="w-full rounded-lg">
+                        <button @click="guardarFotoCapturada" class="w-full bg-green-600 text-white py-2 rounded-lg mt-2 hover:bg-green-700">
+                            <i class="fas fa-check mr-1"></i> Guardar Foto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Ver Foto en Grande -->
+        <div v-if="modalAbierto === 'ver-foto'" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+            <div class="relative max-w-4xl max-h-screen overflow-y-auto">
+                <button @click="cerrarModal" class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 z-10">&times;</button>
+                <img :src="fotoEnGrande" class="max-w-full max-h-[90vh] object-contain rounded-lg">
+            </div>
+        </div>
+
         <!-- Modal Inventario -->
         <div v-if="modalAbierto === 'inventario'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
@@ -790,7 +976,16 @@
                     movimientoForm: { item_id: '', tipo_movimiento: 'entrada', cantidad: 0, motivo: '' },
                     
                     // Toasts
-                    toasts: []
+                    toasts: [],
+                    
+                    // Nuevas variables para fotos y detalle de trabajo
+                    trabajoDetalle: null,
+                    fotoTipoSeleccionado: 'recepcion',
+                    fotoCapturada: null,
+                    fotoEnGrande: null,
+                    videoCamara: null,
+                    canvasCamara: null,
+                    streamCamara: null
                 };
             },
             
@@ -1047,10 +1242,13 @@
                     this.modalAbierto = tipo;
                     this.resetearFormularios();
                 },
-                
+
                 cerrarModal() {
                     this.modalAbierto = null;
                     this.resetearFormularios();
+                    this.detenerCamara();
+                    this.fotoCapturada = null;
+                    this.trabajoDetalle = null;
                 },
                 
                 resetearFormularios() {
@@ -1122,10 +1320,150 @@
                         this.showToast('Error al guardar', 'error');
                     }
                 },
-                
-                verTrabajo(trabajo) {
-                    console.log('Ver trabajo:', trabajo);
-                    this.showToast('Función en desarrollo', 'info');
+
+                async verTrabajo(trabajo) {
+                    try {
+                        // Cargar detalle completo del trabajo con fotos
+                        const response = await this.api().get(`/api/trabajos/${trabajo.id}`);
+                        const trabajoData = response.data.data;
+                        
+                        // Cargar fotos por etapa
+                        const fotosResponse = await this.api().get(`/api/trabajos/${trabajo.id}/fotos`);
+                        const fotosData = fotosResponse.data.data;
+                        
+                        this.trabajoDetalle = {
+                            ...trabajoData,
+                            fotos: fotosData.fotos_por_tipo || { recepcion: [], proceso: [], final: [] }
+                        };
+                        
+                        this.modalAbierto = 'ver-trabajo';
+                    } catch (error) {
+                        console.error('Error al cargar trabajo:', error);
+                        this.showToast('Error al cargar el detalle del trabajo', 'error');
+                    }
+                },
+
+                async cargarFotosDeTrabajo(trabajoId) {
+                    try {
+                        const response = await this.api().get(`/api/trabajos/${trabajoId}/fotos`);
+                        return response.data.data;
+                    } catch (error) {
+                        console.error('Error al cargar fotos:', error);
+                        return null;
+                    }
+                },
+
+                abrirCamaraParaTrabajo(tipo) {
+                    this.fotoTipoSeleccionado = tipo;
+                    this.modalAbierto = 'camara';
+                    this.$nextTick(() => {
+                        this.iniciarCamara();
+                    });
+                },
+
+                async iniciarCamara() {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: 'environment' },
+                            audio: false
+                        });
+                        
+                        this.videoCamara = this.$refs.videoCamara;
+                        this.canvasCamara = this.$refs.canvasCamara;
+                        
+                        if (this.videoCamara) {
+                            this.videoCamara.srcObject = stream;
+                            this.streamCamara = stream;
+                        }
+                    } catch (error) {
+                        console.error('Error al iniciar cámara:', error);
+                        this.showToast('No se pudo acceder a la cámara', 'error');
+                    }
+                },
+
+                tomarFoto() {
+                    if (!this.videoCamara || !this.canvasCamara) return;
+                    
+                    const context = this.canvasCamara.getContext('2d');
+                    this.canvasCamara.width = this.videoCamara.videoWidth;
+                    this.canvasCamara.height = this.videoCamara.videoHeight;
+                    context.drawImage(this.videoCamara, 0, 0);
+                    
+                    this.fotoCapturada = this.canvasCamara.toDataURL('image/jpeg', 0.8);
+                },
+
+                async guardarFotoCapturada() {
+                    if (!this.fotoCapturada || !this.trabajoDetalle) return;
+                    
+                    try {
+                        await this.api().post('/api/fotos', {
+                            trabajo_id: this.trabajoDetalle.id,
+                            tipo: this.fotoTipoSeleccionado,
+                            foto_base64: this.fotoCapturada,
+                            descripcion: `Foto de ${this.fotoTipoSeleccionado}`
+                        });
+                        
+                        this.showToast('Foto guardada exitosamente', 'success');
+                        this.fotoCapturada = null;
+                        this.detenerCamara();
+                        this.modalAbierto = null;
+                        
+                        // Recargar fotos del trabajo
+                        await this.verTrabajo(this.trabajoDetalle);
+                    } catch (error) {
+                        console.error('Error al guardar foto:', error);
+                        this.showToast('Error al guardar la foto', 'error');
+                    }
+                },
+
+                detenerCamara() {
+                    if (this.streamCamara) {
+                        this.streamCamara.getTracks().forEach(track => track.stop());
+                        this.streamCamara = null;
+                    }
+                },
+
+                verFotoEnGrande(fotoBase64) {
+                    this.fotoEnGrande = fotoBase64;
+                    this.modalAbierto = 'ver-foto';
+                },
+
+                async eliminarFoto(fotoId, tipo) {
+                    if (!confirm('¿Eliminar esta foto?')) return;
+                    
+                    try {
+                        await this.api().delete(`/api/fotos/${fotoId}`);
+                        this.showToast('Foto eliminada', 'success');
+                        
+                        // Recargar fotos del trabajo
+                        await this.verTrabajo(this.trabajoDetalle);
+                    } catch (error) {
+                        console.error('Error al eliminar foto:', error);
+                        this.showToast('Error al eliminar la foto', 'error');
+                    }
+                },
+
+                editarTrabajoDesdeDetalle() {
+                    if (this.trabajoDetalle) {
+                        this.editarTrabajo(this.trabajoDetalle);
+                    }
+                },
+
+                enviarWhatsAppDesdeDetalle() {
+                    if (!this.trabajoDetalle) return;
+                    
+                    const mensaje = `Hola! Te envío el estado de tu trabajo #${this.trabajoDetalle.id}:
+                    
+Tipo: ${this.trabajoDetalle.tipo_trabajo}
+Estado: ${this.trabajoDetalle.estado}
+Precio: S/ ${this.trabajoDetalle.precio_estimado}
+Anticipo: S/ ${this.trabajoDetalle.anticipo}
+Saldo: S/ ${this.trabajoDetalle.precio_estimado - this.trabajoDetalle.anticipo}
+
+¡Gracias por tu confianza!`;
+                    
+                    const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+                    window.open(url, '_blank');
                 },
                 
                 // Inventario
