@@ -19,23 +19,23 @@
     
     <style>
         [v-cloak] { display: none; }
-        
+
         .fade-enter-active, .fade-leave-active { transition: opacity 0.3s; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
-        
+
         .slide-enter-active, .slide-leave-active { transition: transform 0.3s; }
         .slide-enter-from { transform: translateX(100%); }
         .slide-leave-to { transform: translateX(-100%); }
-        
+
         .modal-enter-active, .modal-leave-active { transition: opacity 0.3s; }
         .modal-enter-from, .modal-leave-to { opacity: 0; }
-        
+
         /* Scrollbar personalizado */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
-        
+
         .loading-spinner {
             border: 3px solid #f3f3f3;
             border-top: 3px solid #3b82f6;
@@ -44,10 +44,18 @@
             height: 40px;
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        /* Line clamp para truncar texto en múltiples líneas */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     </style>
 </head>
@@ -138,29 +146,60 @@
                             </button>
                             
                             <!-- Perfil de Usuario -->
-                            <div class="relative ml-2">
-                                <button @click="mostrarMenuUsuario = !mostrarMenuUsuario" class="flex items-center space-x-2 p-2 hover:bg-blue-700 rounded-lg transition">
-                                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                                        <span class="font-bold text-sm">{{ usuario.nombre.charAt(0) }}</span>
+                            <div class="relative ml-2" ref="menuUsuarioContainer">
+                                <button @click="mostrarMenuUsuario = !mostrarMenuUsuario" 
+                                    class="flex items-center space-x-2 p-2 hover:bg-blue-700 rounded-lg transition"
+                                    :class="{'bg-blue-700': mostrarMenuUsuario}">
+                                    <div class="w-9 h-9 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-md">
+                                        <span class="font-bold text-white text-sm">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
                                     </div>
                                     <div class="hidden md:block text-left">
-                                        <p class="font-semibold text-sm">{{ usuario.nombre }}</p>
-                                        <p class="text-xs text-blue-300">{{ usuario.rol }}</p>
+                                        <p class="font-semibold text-sm text-white">{{ usuario.nombre }}</p>
+                                        <p class="text-xs text-blue-200">{{ usuario.rol }}</p>
                                     </div>
-                                    <i class="fas fa-chevron-down text-xs"></i>
+                                    <i class="fas fa-chevron-down text-xs text-blue-200" :class="{'rotate-180': mostrarMenuUsuario}"></i>
                                 </button>
-                                
+
                                 <!-- Menú Dropdown Usuario -->
-                                <div v-if="mostrarMenuUsuario" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-50">
-                                    <div class="px-4 py-2 border-b">
-                                        <p class="font-semibold text-gray-800">{{ usuario.nombre }}</p>
-                                        <p class="text-xs text-gray-500">{{ usuario.rol }}</p>
+                                <transition
+                                    enter-active-class="transition duration-200 ease-out"
+                                    enter-from-class="transform scale-95 opacity-0 translate-y-2"
+                                    enter-to-class="transform scale-100 opacity-100 translate-y-0"
+                                    leave-active-class="transition duration-150 ease-in"
+                                    leave-from-class="transform scale-100 opacity-100 translate-y-0"
+                                    leave-to-class="transform scale-95 opacity-0 translate-y-2">
+                                    <div v-if="mostrarMenuUsuario" 
+                                        class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 z-50 border border-gray-100">
+                                        <!-- Header del menú -->
+                                        <div class="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-blue-100 rounded-t-xl">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center shadow-sm">
+                                                    <span class="font-bold text-white text-sm">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
+                                                </div>
+                                                <div>
+                                                    <p class="font-bold text-gray-800 text-sm">{{ usuario.nombre }}</p>
+                                                    <p class="text-xs text-blue-600 font-medium">{{ usuario.rol }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Items del menú -->
+                                        <div class="py-1">
+                                            <!-- Opción: Perfil (info) -->
+                                            <div class="px-4 py-2 text-xs text-gray-500 border-b border-gray-100">
+                                                <i class="fas fa-envelope mr-2 text-blue-500"></i>
+                                                <span>{{ usuario.email || 'Sin email' }}</span>
+                                            </div>
+                                            
+                                            <!-- Opción: Cerrar Sesión -->
+                                            <button @click="logout()" 
+                                                class="w-full px-4 py-3 text-left text-red-600 hover:bg-red-50 flex items-center transition-colors duration-150 group">
+                                                <i class="fas fa-sign-out-alt mr-3 text-red-500 group-hover:text-red-600"></i>
+                                                <span class="font-medium">Cerrar Sesión</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <button @click="logout()" class="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 flex items-center">
-                                        <i class="fas fa-sign-out-alt mr-2"></i>
-                                        <span>Cerrar Sesión</span>
-                                    </button>
-                                </div>
+                                </transition>
                             </div>
                         </div>
                     </div>
@@ -308,44 +347,104 @@
                     
                     <!-- Clientes -->
                     <div v-if="vistaActual === 'clientes'" class="space-y-6">
-                        <div class="flex justify-between items-center">
-                            <div class="relative w-64">
-                                <input v-model="busquedaCliente" type="text" placeholder="Buscar cliente..."
-                                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        <!-- Header con búsqueda y acciones -->
+                        <div class="bg-white rounded-xl shadow-md p-4">
+                            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                                <div class="relative w-full md:w-80">
+                                    <input v-model="busquedaCliente" type="text" placeholder="Buscar por nombre, teléfono o email..."
+                                        class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-sm text-gray-600">
+                                        <i class="fas fa-users mr-2"></i>
+                                        <strong>{{ clientesFiltrados.length }}</strong> cliente{{ clientesFiltrados.length !== 1 ? 's' : '' }}
+                                    </span>
+                                    <button @click="abrirModal('cliente')" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-5 py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-md transition-all duration-200">
+                                        <i class="fas fa-plus mr-2"></i>Nuevo Cliente
+                                    </button>
+                                </div>
                             </div>
-                            <button @click="abrirModal('cliente')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                                <i class="fas fa-plus mr-2"></i>Nuevo Cliente
+                        </div>
+
+                        <!-- Loading -->
+                        <div v-if="cargando" class="flex justify-center py-12">
+                            <div class="flex flex-col items-center">
+                                <div class="loading-spinner w-12 h-12 border-4 border-blue-500"></div>
+                                <p class="text-gray-500 mt-4">Cargando clientes...</p>
+                            </div>
+                        </div>
+
+                        <!-- Grid de Clientes -->
+                        <div v-else-if="clientesFiltrados.length === 0" class="bg-white rounded-xl shadow-md p-12 text-center">
+                            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-users text-4xl text-gray-400"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-700 mb-2">No hay clientes registrados</h3>
+                            <p class="text-gray-500 mb-6">Comienza agregando tu primer cliente</p>
+                            <button @click="abrirModal('cliente')" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-plus mr-2"></i>Agregar Cliente
                             </button>
                         </div>
-                        
-                        <div v-if="cargando" class="flex justify-center py-12">
-                            <div class="loading-spinner"></div>
-                        </div>
+
                         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div v-for="cliente in clientesFiltrados" :key="cliente.id" 
-                                class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                        {{ cliente.nombre.charAt(0) }}{{ cliente.apellido.charAt(0) }}
+                            <div v-for="cliente in clientesFiltrados" :key="cliente.id"
+                                class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group">
+                                <!-- Header de la tarjeta -->
+                                <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg text-blue-600 font-bold text-xl">
+                                                {{ cliente.nombre.charAt(0) }}{{ cliente.apellido.charAt(0) }}
+                                            </div>
+                                            <div>
+                                                <h3 class="font-bold text-white text-lg">{{ cliente.nombre_completo }}</h3>
+                                                <span :class="['inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium', 
+                                                    cliente.activo ? 'bg-green-400 text-white' : 'bg-red-400 text-white']">
+                                                    <span class="w-1.5 h-1.5 bg-white rounded-full mr-1.5"></span>
+                                                    {{ cliente.activo ? 'Activo' : 'Inactivo' }}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <span :class="['px-2 py-1 rounded-full text-xs', cliente.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700']">
-                                        {{ cliente.activo ? 'Activo' : 'Inactivo' }}
-                                    </span>
                                 </div>
-                                <h3 class="font-bold text-lg mb-2">{{ cliente.nombre_completo }}</h3>
-                                <div class="space-y-2 text-sm text-gray-600">
-                                    <p><i class="fas fa-phone mr-2"></i>{{ cliente.telefono }}</p>
-                                    <p><i class="fas fa-envelope mr-2"></i>{{ cliente.email }}</p>
-                                    <p><i class="fas fa-map-marker-alt mr-2"></i>{{ cliente.direccion }}</p>
+
+                                <!-- Body de la tarjeta -->
+                                <div class="p-4 space-y-3">
+                                    <div class="flex items-center text-gray-700 hover:bg-gray-50 p-2 rounded-lg transition">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fas fa-phone text-blue-600 text-sm"></i>
+                                        </div>
+                                        <span class="text-sm font-medium">{{ cliente.telefono }}</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center text-gray-700 hover:bg-gray-50 p-2 rounded-lg transition">
+                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fas fa-envelope text-green-600 text-sm"></i>
+                                        </div>
+                                        <span class="text-sm font-medium truncate" :title="cliente.email">{{ cliente.email }}</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center text-gray-700 hover:bg-gray-50 p-2 rounded-lg transition">
+                                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fas fa-map-marker-alt text-purple-600 text-sm"></i>
+                                        </div>
+                                        <span class="text-sm font-medium line-clamp-2">{{ cliente.direccion }}</span>
+                                    </div>
                                 </div>
-                                <div class="mt-4 flex space-x-2">
-                                    <button @click="editarCliente(cliente)" class="flex-1 bg-blue-100 text-blue-600 py-2 rounded-lg hover:bg-blue-200">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button @click="eliminarCliente(cliente.id)" class="flex-1 bg-red-100 text-red-600 py-2 rounded-lg hover:bg-red-200">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+
+                                <!-- Footer con acciones -->
+                                <div class="border-t border-gray-100 p-3 bg-gray-50">
+                                    <div class="flex gap-2">
+                                        <button @click="editarCliente(cliente)" 
+                                            class="flex-1 bg-white border border-blue-200 text-blue-600 py-2.5 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 font-medium text-sm">
+                                            <i class="fas fa-edit mr-1.5"></i>Editar
+                                        </button>
+                                        <button @click="eliminarCliente(cliente.id)" 
+                                            class="flex-1 bg-white border border-red-200 text-red-600 py-2.5 rounded-lg hover:bg-red-50 hover:border-red-300 transition-all duration-200 font-medium text-sm">
+                                            <i class="fas fa-trash mr-1.5"></i>Eliminar
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1043,8 +1142,7 @@
                 
                 // Cerrar menú usuario al hacer clic fuera
                 document.addEventListener('click', (e) => {
-                    const menu = e.target.closest('.relative.ml-2');
-                    if (!menu) {
+                    if (this.$refs.menuUsuarioContainer && !this.$refs.menuUsuarioContainer.contains(e.target)) {
                         this.mostrarMenuUsuario = false;
                     }
                 });
