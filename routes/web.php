@@ -38,3 +38,7 @@ Route::get('/health', function () {
         'config' => $config
     ]);
 });
+
+// API Config - Configuración pública (sin autenticación)
+Route::get('/api-config', [App\Http\Controllers\Api\AppConfigController::class, 'config']);
+Route::post('/api-config', [App\Http\Controllers\Api\AppConfigController::class, 'updateConfig']);

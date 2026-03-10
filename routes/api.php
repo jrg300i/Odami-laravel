@@ -6,10 +6,6 @@
 |--------------------------------------------------------------------------
 */
 
-// API Config - Configuración pública (sin autenticación)
-Route::get('/api-config', [App\Http\Controllers\Api\AppConfigController::class, 'config']);
-Route::post('/api-config', [App\Http\Controllers\Api\AppConfigController::class, 'updateConfig']);
-
 // Public routes con rate limiting estricto
 Route::middleware('throttle:login')->group(function () {
     Route::post('/auth/login', [App\Http\Controllers\Api\AuthController::class, 'login']);
