@@ -17,7 +17,7 @@ services:
       - key: APP_DEBUG
         value: false
       - key: APP_URL
-        value: https://api.tapiceria-odami.com
+        value: https://tapiceria-odami-api.onrender.com
       - key: DB_CONNECTION
         value: pgsql
       - key: CACHE_DRIVER
@@ -25,7 +25,7 @@ services:
       - key: SESSION_DRIVER
         value: file
       - key: SANCTUM_STATEFUL_DOMAINS
-        value: api.tapiceria-odami.com
+        value: tapiceria-odami-api.onrender.com
     disk:
       name: storage
       mountPath: /opt/render/project/src/storage
