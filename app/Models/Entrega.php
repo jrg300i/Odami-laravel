@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Entrega extends Model
 {
     protected $table = 'entregas';
-    
+
     protected $primaryKey = 'id';
-    
+
+    public $timestamps = false;
+
     protected $fillable = [
         'trabajo_id',
         'fecha_entrega',

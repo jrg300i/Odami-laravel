@@ -9,9 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Trabajo extends Model
 {
     protected $table = 'trabajos';
-    
+
     protected $primaryKey = 'id';
-    
+
+    public $timestamps = false;
+
     protected $fillable = [
         'cliente_id',
         'tipo_trabajo',

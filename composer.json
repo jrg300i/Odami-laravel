@@ -1,5 +1,5 @@
 {
-    "name": "tapiceria-odami-laravel",
+    "name": "odami/tapiceria-laravel",
     "type": "project",
     "license": "MIT",
     "require": {
@@ -28,8 +28,6 @@
     },
     "scripts": {
         "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"

@@ -87,83 +87,90 @@
                         <span v-else><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</span>
                     </button>
                 </form>
-                
-                <div class="mt-6 text-center text-sm text-gray-500">
-                    <p>API URL: <code class="bg-gray-200 px-2 py-1 rounded">{{ apiBaseUrl }}</code></p>
-                    <button @click="mostrarConfigApi = true" class="text-blue-600 hover:underline mt-2">
-                        <i class="fas fa-cog"></i> Configurar API
-                    </button>
+
+                <div class="mt-6 text-center text-xs text-gray-400">
+                    <p><i class="fas fa-shield-alt"></i> Conexión segura vía Cloudflare Tunnel</p>
                 </div>
             </div>
         </div>
-        
+
         <!-- App Principal -->
-        <div v-else class="flex h-screen overflow-hidden">
-            <!-- Sidebar -->
-            <aside :class="['bg-gradient-to-b from-blue-900 to-blue-800 text-white transition-all duration-300', sidebarColapsado ? 'w-20' : 'w-64']">
-                <div class="p-4">
-                    <div class="flex items-center justify-between mb-8">
-                        <div v-if="!sidebarColapsado" class="flex items-center">
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-3">
-                                <i class="fas fa-couch text-blue-800"></i>
+        <div v-else class="flex flex-col h-screen">
+            <!-- Navbar Superior -->
+            <nav class="bg-gradient-to-r from-blue-900 to-blue-800 text-white shadow-lg">
+                <div class="px-4">
+                    <div class="flex items-center justify-between h-16">
+                        <!-- Logo y Menú -->
+                        <div class="flex items-center flex-1">
+                            <!-- Logo -->
+                            <div class="flex items-center mr-6">
+                                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                                    <i class="fas fa-couch text-blue-800"></i>
+                                </div>
+                                <span class="font-bold text-lg ml-2 hidden md:block">Odami</span>
                             </div>
-                            <span class="font-bold text-lg">Odami</span>
+                            
+                            <!-- Menú de Navegación -->
+                            <div class="flex items-center space-x-1 overflow-x-auto">
+                                <a v-for="item in menuItems" :key="item.id" 
+                                    @click="vistaActual = item.id"
+                                    :class="['flex items-center px-4 py-2 rounded-lg cursor-pointer transition whitespace-nowrap', 
+                                        vistaActual === item.id ? 'bg-white text-blue-900' : 'hover:bg-blue-700']">
+                                    <i :class="['fas', item.icono, 'text-lg']"></i>
+                                    <span class="ml-2 hidden md:inline">{{ item.nombre }}</span>
+                                </a>
+                            </div>
                         </div>
-                        <button @click="sidebarColapsado = !sidebarColapsado" class="p-2 hover:bg-blue-700 rounded-lg">
-                            <i class="fas" :class="sidebarColapsado ? 'fas-chevron-right' : 'fas-chevron-left'"></i>
-                        </button>
-                    </div>
-                    
-                    <nav class="space-y-2">
-                        <a v-for="item in menuItems" :key="item.id" @click="vistaActual = item.id"
-                            :class="['flex items-center p-3 rounded-lg cursor-pointer transition', vistaActual === item.id ? 'bg-white text-blue-900' : 'hover:bg-blue-700']">
-                            <i :class="['fas', item.icono, 'text-xl', sidebarColapsado ? 'mx-auto' : 'mr-3']"></i>
-                            <span v-if="!sidebarColapsado">{{ item.nombre }}</span>
-                        </a>
-                    </nav>
-                </div>
-                
-                <div class="absolute bottom-0 left-0 right-0 p-4">
-                    <div :class="['flex items-center', sidebarColapsado ? 'justify-center' : '']">
-                        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center mr-3">
-                            <span class="font-bold">{{ usuario.nombre.charAt(0) }}</span>
-                        </div>
-                        <div v-if="!sidebarColapsado">
-                            <p class="font-semibold text-sm">{{ usuario.nombre }}</p>
-                            <p class="text-xs text-blue-300">{{ usuario.rol }}</p>
-                        </div>
-                    </div>
-                    <button @click="logout" :class="['mt-3 w-full p-2 rounded-lg hover:bg-blue-700 transition text-center', sidebarColapsado ? '' : '']">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span v-if="!sidebarColapsado" class="ml-2">Cerrar Sesión</span>
-                    </button>
-                </div>
-            </aside>
-            
-            <!-- Contenido Principal -->
-            <main class="flex-1 overflow-auto">
-                <!-- Header -->
-                <header class="bg-white shadow-sm p-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-2xl font-bold text-gray-800">{{ vistaTitulo }}</h2>
-                        <div class="flex items-center space-x-4">
-                            <button @click="refrescarDatos" class="p-2 hover:bg-gray-100 rounded-full" title="Refrescar">
+                        
+                        <!-- Acciones de Usuario -->
+                        <div class="flex items-center space-x-2">
+                            <!-- Botón Refrescar -->
+                            <button @click="refrescarDatos" class="p-2 hover:bg-blue-700 rounded-lg transition" title="Refrescar">
                                 <i class="fas fa-sync-alt" :class="{'fa-spin': cargando}"></i>
                             </button>
-                            <div class="relative">
-                                <button @click="mostrarNotificaciones = !mostrarNotificaciones" class="p-2 hover:bg-gray-100 rounded-full relative">
-                                    <i class="fas fa-bell"></i>
-                                    <span v-if="notificacionesCount > 0" class="absolute top-0 right-0 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                                        {{ notificacionesCount }}
-                                    </span>
+                            
+                            <!-- Notificaciones -->
+                            <button @click="mostrarNotificaciones = !mostrarNotificaciones" class="p-2 hover:bg-blue-700 rounded-lg transition relative">
+                                <i class="fas fa-bell"></i>
+                                <span v-if="notificacionesCount > 0" class="absolute top-1 right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                                    {{ notificacionesCount }}
+                                </span>
+                            </button>
+                            
+                            <!-- Perfil de Usuario -->
+                            <div class="relative ml-2">
+                                <button @click="mostrarMenuUsuario = !mostrarMenuUsuario" class="flex items-center space-x-2 p-2 hover:bg-blue-700 rounded-lg transition">
+                                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                                        <span class="font-bold text-sm">{{ usuario.nombre.charAt(0) }}</span>
+                                    </div>
+                                    <div class="hidden md:block text-left">
+                                        <p class="font-semibold text-sm">{{ usuario.nombre }}</p>
+                                        <p class="text-xs text-blue-300">{{ usuario.rol }}</p>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-xs"></i>
                                 </button>
+                                
+                                <!-- Menú Dropdown Usuario -->
+                                <div v-if="mostrarMenuUsuario" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-50">
+                                    <div class="px-4 py-2 border-b">
+                                        <p class="font-semibold text-gray-800">{{ usuario.nombre }}</p>
+                                        <p class="text-xs text-gray-500">{{ usuario.rol }}</p>
+                                    </div>
+                                    <button @click="logout; mostrarMenuUsuario = false" class="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 flex items-center">
+                                        <i class="fas fa-sign-out-alt mr-2"></i>
+                                        <span>Cerrar Sesión</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </header>
-                
+                </div>
+            </nav>
+
+            <!-- Contenido Principal -->
+            <main class="flex-1 overflow-auto bg-gray-100">
                 <!-- Contenido de las Vistas -->
-                <div class="p-6">
+                <div class="p-4 md:p-6">
                     <!-- Dashboard -->
                     <div v-if="vistaActual === 'dashboard'" class="space-y-6">
                         <!-- Tarjetas de Estadísticas -->
@@ -717,33 +724,7 @@
                 </form>
             </div>
         </div>
-        
-        <!-- Modal Configurar API -->
-        <div v-if="mostrarConfigApi" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-                <div class="p-6 border-b">
-                    <h3 class="text-xl font-bold"><i class="fas fa-cog mr-2"></i>Configurar API URL</h3>
-                </div>
-                <div class="p-6 space-y-4">
-                    <p class="text-sm text-gray-600">Ingresa la URL base de la API Laravel. Ejemplo: <code class="bg-gray-200 px-2 py-1 rounded">http://192.168.1.100:8000</code></p>
-                    <div class="flex space-x-2">
-                        <input v-model="apiBaseUrlInput" type="url" class="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="http://localhost:8000">
-                        <button type="button" @click="detectarIP" :disabled="detectandoIP" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 whitespace-nowrap">
-                            <span v-if="detectandoIP"><i class="fas fa-spinner fa-spin"></i></span>
-                            <span v-else><i class="fas fa-search"></i> Detectar</span>
-                        </button>
-                    </div>
-                    <p v-if="detectarIPMensaje" :class="['text-sm mt-2', detectarIPError ? 'text-red-600' : 'text-green-600']">
-                        {{ detectarIPMensaje }}
-                    </p>
-                    <div class="flex space-x-3">
-                        <button type="button" @click="guardarConfigApi" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Guardar</button>
-                        <button type="button" @click="mostrarConfigApi = false" class="flex-1 bg-gray-200 py-2 rounded-lg hover:bg-gray-300">Cancelar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
+
         <!-- Toast Notificaciones -->
         <transition-group name="slide">
             <div v-for="toast in toasts" :key="toast.id" 
@@ -756,33 +737,26 @@
     
     <script>
         const { createApp } = Vue;
-        
+
         createApp({
             data() {
                 return {
-                    // Configuración
-                    apiBaseUrl: localStorage.getItem('apiBaseUrl') || 'http://localhost:8000',
-                    apiBaseUrlInput: localStorage.getItem('apiBaseUrl') || 'http://localhost:8000',
-                    mostrarConfigApi: false,
-                    
-                    // Detección de IP
-                    detectandoIP: false,
-                    detectarIPMensaje: '',
-                    detectarIPError: false,
+                    // Configuración - Conexión automática con Cloudflare Tunnel
+                    apiBaseUrl: window.location.origin,
 
                     // Autenticación
                     usuario: JSON.parse(localStorage.getItem('usuario')) || null,
                     token: localStorage.getItem('token') || null,
                     loginForm: { username: '', password: '' },
                     error: '',
-                    
+
                     // UI
                     cargando: false,
                     vistaActual: 'dashboard',
-                    sidebarColapsado: false,
                     modalAbierto: null,
                     mostrarNotificaciones: false,
-                    
+                    mostrarMenuUsuario: false,
+
                     // Datos
                     stats: {},
                     clientes: [],
@@ -866,13 +840,21 @@
                     return this.stockCritico.length;
                 }
             },
-            
+
             async mounted() {
                 if (this.token) {
                     await this.cargarDatos();
                 }
+                
+                // Cerrar menú usuario al hacer clic fuera
+                document.addEventListener('click', (e) => {
+                    const menu = e.target.closest('.relative.ml-2');
+                    if (!menu) {
+                        this.mostrarMenuUsuario = false;
+                    }
+                });
             },
-            
+
             methods: {
                 // API Helper
                 api() {
@@ -890,18 +872,44 @@
                 async login() {
                     this.cargando = true;
                     this.error = '';
+                    
+                    const url = `${this.apiBaseUrl}/api/auth/login`;
+                    console.log('=== INICIANDO LOGIN ===');
+                    console.log('URL:', url);
+                    console.log('Credenciales:', JSON.stringify(this.loginForm));
+                    
                     try {
-                        const response = await axios.post(`${this.apiBaseUrl}/api/auth/login`, this.loginForm);
-                        if (response.data.success) {
-                            this.usuario = response.data.data.usuario;
-                            this.token = response.data.data.token;
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(this.loginForm)
+                        });
+                        
+                        console.log('Status:', response.status);
+                        console.log('Headers:', [...response.headers.entries()]);
+                        
+                        const data = await response.json();
+                        console.log('Respuesta:', data);
+                        
+                        if (data.success) {
+                            console.log('Login exitoso!');
+                            this.usuario = data.data.usuario;
+                            this.token = data.data.token;
                             localStorage.setItem('usuario', JSON.stringify(this.usuario));
                             localStorage.setItem('token', this.token);
+                            
                             this.showToast('¡Bienvenido!', 'success');
                             await this.cargarDatos();
+                        } else {
+                            this.error = data.message || 'Error al iniciar sesión';
+                            console.log('Error:', this.error);
                         }
                     } catch (error) {
-                        this.error = error.response?.data?.message || 'Error al iniciar sesión';
+                        console.error('Error completo:', error);
+                        this.error = 'Error de conexión - Verifica que la API esté corriendo';
                     } finally {
                         this.cargando = false;
                     }
@@ -1171,94 +1179,7 @@
                         this.showToast('Error al guardar', 'error');
                     }
                 },
-                
-                // Configuración API
-                async detectarIP() {
-                    this.detectandoIP = true;
-                    this.detectarIPMensaje = '';
-                    this.detectarIPError = false;
-                    
-                    try {
-                        // 1. Intentar obtener configuración desde localhost
-                        try {
-                            const configResponse = await axios.get('http://localhost:8000/api-config', { timeout: 2000 });
-                            if (configResponse.data.success) {
-                                const configUrl = configResponse.data.config?.api_url_local;
-                                
-                                if (configUrl && configUrl !== 'http://localhost:8000') {
-                                    // Verificar que la URL de la BD sea accesible
-                                    try {
-                                        const testResponse = await axios.get(`${configUrl}/health`, { timeout: 2000 });
-                                        if (testResponse.data.status === 'ok') {
-                                            this.apiBaseUrlInput = configUrl;
-                                            this.detectarIPMensaje = '✅ API encontrada: ' + configUrl;
-                                            this.detectandoIP = false;
-                                            setTimeout(() => {
-                                                this.detectarIPMensaje = '';
-                                            }, 3000);
-                                            return;
-                                        }
-                                    } catch (e) {
-                                        console.log('URL de BD no accesible:', e);
-                                    }
-                                }
-                            }
-                        } catch (e) {
-                            console.log('No se pudo obtener config de localhost:', e);
-                        }
-                        
-                        // 2. Intentar IPs comunes de red local
-                        const commonIPs = [
-                            '192.168.1.100', '192.168.1.101', '192.168.1.1',
-                            '192.168.0.100', '192.168.0.101', '192.168.0.1',
-                            '10.0.0.100', '10.0.0.101', '10.0.0.1'
-                        ];
-                        
-                        this.detectarIPMensaje = '🔍 Probando ' + commonIPs.length + ' IPs...';
-                        
-                        // Probar cada IP
-                        for (const ip of commonIPs) {
-                            const url = `http://${ip}:8000`;
-                            try {
-                                const response = await axios.get(`${url}/health`, { timeout: 1500 });
-                                if (response.data.status === 'ok') {
-                                    this.apiBaseUrlInput = url;
-                                    this.detectarIPMensaje = '✅ API encontrada: ' + url;
-                                    this.detectandoIP = false;
-                                    setTimeout(() => {
-                                        this.detectarIPMensaje = '';
-                                    }, 3000);
-                                    return;
-                                }
-                            } catch (e) {
-                                // Continuar con la siguiente IP
-                            }
-                        }
-                        
-                        // No se encontró API
-                        this.detectarIPMensaje = '⚠️ No se encontró API. Verifica que esté corriendo.';
-                        this.detectarIPError = true;
-                        
-                    } catch (error) {
-                        console.error('Error al detectar IP:', error);
-                        this.detectarIPMensaje = '❌ Error: ' + (error.message || 'Error al detectar');
-                        this.detectarIPError = true;
-                    } finally {
-                        this.detectandoIP = false;
-                    }
-                },
 
-                guardarConfigApi() {
-                    this.apiBaseUrl = this.apiBaseUrlInput.replace(/\/$/, '');
-                    localStorage.setItem('apiBaseUrl', this.apiBaseUrl);
-                    localStorage.removeItem('usuario');
-                    localStorage.removeItem('token');
-                    this.usuario = null;
-                    this.token = null;
-                    this.mostrarConfigApi = false;
-                    this.showToast('Configuración guardada. Inicia sesión nuevamente.', 'success');
-                },
-                
                 // Toast
                 showToast(message, type = 'info') {
                     const id = Date.now();

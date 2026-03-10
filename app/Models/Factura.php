@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Factura extends Model
 {
     protected $table = 'facturas';
-    
+
     protected $primaryKey = 'id';
-    
+
+    public $timestamps = false;
+
     protected $fillable = [
         'trabajo_id',
         'numero_factura',

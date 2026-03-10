@@ -9,9 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Inventario extends Model
 {
     protected $table = 'inventario';
-    
+
     protected $primaryKey = 'id';
-    
+
+    public $timestamps = false;
+
     protected $fillable = [
         'nombre',
         'categoria',

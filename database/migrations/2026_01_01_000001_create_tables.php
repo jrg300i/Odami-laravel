@@ -138,17 +138,7 @@ return new class extends Migration
             $table->foreignId('actualizado_por')->nullable()->constrained('usuarios')->onDelete('set null');
         });
 
-        // Personal Access Tokens (Sanctum)
-        Schema::create('personal_access_tokens', function (Blueprint $table) {
-            $table->id();
-            $table->morphs('tokenable');
-            $table->string('name');
-            $table->string('token', 64)->unique();
-            $table->text('abilities')->nullable();
-            $table->timestamp('last_used_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
-            $table->timestamps();
-        });
+        // Nota: La tabla personal_access_tokens es creada por Laravel Sanctum
 
         // Auditoría
         Schema::create('auditoria', function (Blueprint $table) {

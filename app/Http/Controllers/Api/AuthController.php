@@ -19,7 +19,10 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $usuario = Usuario::where('username', $validated['username'])->first();
+        // Buscar usuario por username O email (para soportar ambos)
+        $usuario = Usuario::where('username', $validated['username'])
+            ->orWhere('email', $validated['username'])
+            ->first();
 
         if (!$usuario) {
             return response()->json([
@@ -29,7 +32,7 @@ class AuthController extends Controller
         }
 
         // Verificar password (soporta texto plano y hash)
-        $passwordValid = Hash::check($validated['password'], $usuario->password) 
+        $passwordValid = Hash::check($validated['password'], $usuario->password)
             || $usuario->password === $validated['password'];
 
         if (!$passwordValid) {

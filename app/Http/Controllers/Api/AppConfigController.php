@@ -64,7 +64,7 @@ class AppConfigController extends Controller
 
     /**
      * Actualizar configuración de la API
-     * 
+     *
      * @param \Illuminate\Http\Request $request
      * @return JsonResponse
      */
@@ -81,14 +81,21 @@ class AppConfigController extends Controller
                 ], 400);
             }
 
-            // Actualizar o insertar
-            DB::table('app_config')->updateOrInsert(
-                ['clave' => $clave],
-                [
+            // Actualizar o insertar usando updateOrCreate con Eloquent o query builder
+            $existing = DB::table('app_config')->where('clave', $clave)->first();
+            
+            if ($existing) {
+                DB::table('app_config')->where('clave', $clave)->update([
                     'valor' => $valor,
                     'actualizado_en' => now()
-                ]
-            );
+                ]);
+            } else {
+                DB::table('app_config')->insert([
+                    'clave' => $clave,
+                    'valor' => $valor,
+                    'actualizado_en' => now()
+                ]);
+            }
 
             return response()->json([
                 'success' => true,

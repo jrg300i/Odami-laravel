@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class InventarioMovimiento extends Model
 {
     protected $table = 'inventario_movimientos';
-    
+
     protected $primaryKey = 'id';
-    
+
+    public $timestamps = false;
+
     protected $fillable = [
         'item_id',
         'tipo_movimiento',
