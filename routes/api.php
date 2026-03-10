@@ -78,6 +78,15 @@ Route::middleware(['sanctum', 'throttle:api'])->group(function () {
     Route::delete('/fotos/{id}', [App\Http\Controllers\Api\FotoTrabajoController::class, 'destroy']);
     Route::get('/fotos/estadisticas', [App\Http\Controllers\Api\FotoTrabajoController::class, 'estadisticas']);
 
+    // Notificaciones
+    Route::get('/notificaciones', [App\Http\Controllers\Api\NotificacionController::class, 'index']);
+    Route::get('/notificaciones/dashboard', [App\Http\Controllers\Api\NotificacionController::class, 'dashboard']);
+    Route::get('/notificaciones/{id}', [App\Http\Controllers\Api\NotificacionController::class, 'show']);
+    Route::post('/notificaciones', [App\Http\Controllers\Api\NotificacionController::class, 'store']);
+    Route::post('/notificaciones/{id}/leida', [App\Http\Controllers\Api\NotificacionController::class, 'marcarLeida']);
+    Route::post('/notificaciones/todas-leidas', [App\Http\Controllers\Api\NotificacionController::class, 'marcarTodasLeidas']);
+    Route::delete('/notificaciones/{id}', [App\Http\Controllers\Api\NotificacionController::class, 'destroy']);
+
     // Configuración
     Route::get('/configuracion', [App\Http\Controllers\Api\ConfiguracionController::class, 'index']);
     Route::get('/configuracion/{clave}', [App\Http\Controllers\Api\ConfiguracionController::class, 'show']);

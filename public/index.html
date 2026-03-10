@@ -653,7 +653,7 @@
         
         <!-- Modal Trabajo -->
         <div v-if="modalAbierto === 'trabajo'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
                 <div class="p-6 border-b">
                     <h3 class="text-xl font-bold">{{ editingTrabajo ? 'Editar' : 'Nuevo' }} Trabajo</h3>
                 </div>
@@ -672,6 +672,26 @@
                         <label class="block text-sm font-semibold mb-1">Descripción</label>
                         <textarea v-model="trabajoForm.descripcion" required rows="3" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                     </div>
+                    
+                    <!-- Fechas -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">
+                                <i class="fas fa-calendar-plus mr-1"></i> Fecha Recibido
+                            </label>
+                            <input v-model="trabajoForm.fecha_recibido" type="datetime-local" 
+                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-1">
+                                <i class="fas fa-calendar-check mr-1"></i> Fecha Entrega
+                            </label>
+                            <input v-model="trabajoForm.fecha_entrega" type="datetime-local" 
+                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <!-- Precios -->
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-sm font-semibold mb-1">Precio Est.</label>
@@ -682,6 +702,8 @@
                             <input v-model.number="trabajoForm.anticipo" type="number" step="0.01" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                     </div>
+
+                    <!-- Estado -->
                     <div>
                         <label class="block text-sm font-semibold mb-1">Estado</label>
                         <select v-model="trabajoForm.estado" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -692,6 +714,17 @@
                             <option value="cancelado">Cancelado</option>
                         </select>
                     </div>
+
+                    <!-- Notas -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">
+                            <i class="fas fa-sticky-note mr-1"></i> Notas
+                        </label>
+                        <textarea v-model="trabajoForm.notas" rows="2" 
+                            placeholder="Ej: Entregar en 1 semana, Cliente prefiere color oscuro..." 
+                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+
                     <div class="flex space-x-3 pt-4">
                         <button type="button" @click="cerrarModal" class="flex-1 bg-gray-200 py-2 rounded-lg hover:bg-gray-300">Cancelar</button>
                         <button type="submit" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Guardar</button>
@@ -711,6 +744,23 @@
                     <button @click="cerrarModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
                 </div>
                 <div class="p-6 max-h-[70vh] overflow-y-auto">
+                    <!-- Alerta de entrega próxima -->
+                    <div v-if="trabajoDetalle?.dias_para_entrega !== null && trabajoDetalle.dias_para_entrega <= 1 && trabajoDetalle.estado !== 'entregado'" 
+                        :class="trabajoDetalle.dias_para_entrega <= 0 ? 'bg-red-100 border-red-300' : 'bg-yellow-100 border-yellow-300'"
+                        class="border rounded-lg p-3 mb-4 flex items-center">
+                        <i :class="trabajoDetalle.dias_para_entrega <= 0 ? 'fa-exclamation-triangle text-red-600' : 'fa-clock text-yellow-600'" class="fas text-xl mr-3"></i>
+                        <div>
+                            <p class="font-bold" :class="trabajoDetalle.dias_para_entrega <= 0 ? 'text-red-800' : 'text-yellow-800'">
+                                {{ trabajoDetalle.dias_para_entrega <= 0 ? '¡ENTREGA RETRASADA!' : '¡ENTREGA PRÓXIMA!' }}
+                            </p>
+                            <p class="text-sm" :class="trabajoDetalle.dias_para_entrega <= 0 ? 'text-red-700' : 'text-yellow-700'">
+                                {{ trabajoDetalle.dias_para_entrega <= 0 ? 
+                                    'Han pasado ' + Math.abs(trabajoDetalle.dias_para_entrega) + ' día(s) de la fecha de entrega' : 
+                                    'Falta ' + trabajoDetalle.dias_para_entrega + ' día(s) para la entrega' }}
+                            </p>
+                        </div>
+                    </div>
+
                     <!-- Información del trabajo -->
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <div>
@@ -730,15 +780,31 @@
                             </span>
                         </div>
                         <div>
+                            <p class="text-sm text-gray-500">
+                                <i class="fas fa-calendar-plus mr-1"></i> Fecha Recibido
+                            </p>
+                            <p class="font-semibold">{{ formatearFecha(trabajoDetalle?.fecha_recibido) || 'No definida' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">
+                                <i class="fas fa-calendar-check mr-1"></i> Fecha Entrega
+                            </p>
+                            <p class="font-semibold">{{ formatearFecha(trabajoDetalle?.fecha_entrega) || 'No definida' }}</p>
+                        </div>
+                        <div class="col-span-2">
                             <p class="text-sm text-gray-500">Descripción</p>
                             <p class="font-semibold">{{ trabajoDetalle?.descripcion || 'Sin descripción' }}</p>
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Fecha de Entrega</p>
-                            <p class="font-semibold">{{ trabajoDetalle?.fecha_entrega || 'No definida' }}</p>
-                        </div>
                     </div>
-                    
+
+                    <!-- Notas -->
+                    <div v-if="trabajoDetalle?.notas" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                        <p class="text-sm font-bold text-yellow-800 mb-1">
+                            <i class="fas fa-sticky-note mr-2"></i>Notas:
+                        </p>
+                        <p class="text-sm text-yellow-700 whitespace-pre-line">{{ trabajoDetalle.notas }}</p>
+                    </div>
+
                     <!-- Precios -->
                     <div class="bg-gray-50 rounded-lg p-4 mb-6">
                         <div class="grid grid-cols-3 gap-4 text-center">
@@ -1010,9 +1076,72 @@
             </div>
         </div>
 
+        <!-- Panel de Notificaciones -->
+        <div v-if="mostrarNotificaciones" class="fixed top-16 right-4 w-96 bg-white rounded-xl shadow-2xl z-50 border border-gray-100 overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-3 flex justify-between items-center">
+                <h3 class="text-white font-bold flex items-center">
+                    <i class="fas fa-bell mr-2"></i> Notificaciones
+                </h3>
+                <div class="flex items-center space-x-2">
+                    <button @click="marcarTodasLeidas" class="text-blue-100 hover:text-white text-xs" title="Marcar todas como leídas">
+                        <i class="fas fa-check-double mr-1"></i> Todas leídas
+                    </button>
+                    <button @click="mostrarNotificaciones = false" class="text-blue-100 hover:text-white text-xl">
+                        &times;
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenido -->
+            <div class="max-h-96 overflow-y-auto">
+                <div v-if="cargando" class="p-4 text-center text-gray-500">
+                    <i class="fas fa-spinner fa-spin"></i> Cargando notificaciones...
+                </div>
+                <div v-else-if="notificaciones.length === 0" class="p-8 text-center text-gray-400">
+                    <i class="fas fa-bell-slash text-4xl mb-3"></i>
+                    <p>No hay notificaciones</p>
+                </div>
+                <div v-else class="divide-y divide-gray-100">
+                    <div v-for="notif in notificaciones" :key="notif.id"
+                        :class="['p-4 hover:bg-gray-50 cursor-pointer transition', !notif.leida ? 'bg-blue-50' : '']"
+                        @click="marcarLeida(notif.id)">
+                        <div class="flex items-start">
+                            <div :class="['w-10 h-10 rounded-full flex items-center justify-center mr-3 flex-shrink-0',
+                                notif.prioridad === 'urgent' ? 'bg-red-100 text-red-600' :
+                                notif.prioridad === 'high' ? 'bg-orange-100 text-orange-600' :
+                                'bg-blue-100 text-blue-600']">
+                                <i :class="['fas', notif.icono || 'fa-info-circle']"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start">
+                                    <p :class="['font-semibold text-sm', !notif.leida ? 'text-gray-900' : 'text-gray-700']">
+                                        {{ notif.titulo }}
+                                    </p>
+                                    <span class="text-xs text-gray-400 ml-2">{{ formatearFechaRelativa(notif.created_at) }}</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-1">{{ notif.mensaje }}</p>
+                                <div v-if="notif.trabajo" class="mt-2 flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-briefcase mr-1"></i>
+                                    {{ notif.trabajo.tipo_trabajo }} - {{ notif.trabajo.cliente?.nombre_completo }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="border-t px-4 py-3 bg-gray-50 text-center">
+                <button @click="cargarNotificaciones" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    <i class="fas fa-sync-alt mr-1"></i> Actualizar
+                </button>
+            </div>
+        </div>
+
         <!-- Toast Notificaciones -->
         <transition-group name="slide">
-            <div v-for="toast in toasts" :key="toast.id" 
+            <div v-for="toast in toasts" :key="toast.id"
                 :class="['fixed right-4 p-4 rounded-lg shadow-lg text-white z-50', toast.type === 'success' ? 'bg-green-500' : toast.type === 'error' ? 'bg-red-500' : 'bg-blue-500']"
                 style="bottom: 4rem;">
                 {{ toast.message }}
@@ -1076,7 +1205,11 @@
                     
                     // Toasts
                     toasts: [],
-                    
+
+                    // Notificaciones
+                    notificaciones: [],
+                    mostrarNotificaciones: false,
+
                     // Nuevas variables para fotos y detalle de trabajo
                     trabajoDetalle: null,
                     fotoTipoSeleccionado: 'recepcion',
@@ -1131,19 +1264,25 @@
                 },
                 
                 notificacionesCount() {
-                    return this.stockCritico.length;
+                    return this.notificaciones.filter(n => !n.leida).length;
                 }
             },
 
             async mounted() {
                 if (this.token) {
                     await this.cargarDatos();
+                    await this.cargarNotificaciones();
                 }
-                
+
                 // Cerrar menú usuario al hacer clic fuera
                 document.addEventListener('click', (e) => {
                     if (this.$refs.menuUsuarioContainer && !this.$refs.menuUsuarioContainer.contains(e.target)) {
                         this.mostrarMenuUsuario = false;
+                    }
+                    // Cerrar notificaciones al hacer clic fuera
+                    const notifPanel = e.target.closest('.fixed.top-16');
+                    if (!notifPanel && this.mostrarNotificaciones) {
+                        this.mostrarNotificaciones = false;
                     }
                 });
             },
@@ -1285,9 +1424,56 @@
                 
                 refrescarDatos() {
                     this.cargarDatos();
+                    this.cargarNotificaciones();
                     this.showToast('Datos actualizados', 'success');
                 },
-                
+
+                // Notificaciones
+                async cargarNotificaciones() {
+                    try {
+                        const response = await this.api().get('/notificaciones?no_leidas=true');
+                        this.notificaciones = response.data.data;
+                    } catch (error) {
+                        console.error('Error cargando notificaciones:', error);
+                    }
+                },
+
+                async marcarLeida(id) {
+                    try {
+                        await this.api().post(`/notificaciones/${id}/leida`);
+                        const notif = this.notificaciones.find(n => n.id === id);
+                        if (notif) notif.leida = true;
+                    } catch (error) {
+                        console.error('Error marcando notificación como leída:', error);
+                    }
+                },
+
+                async marcarTodasLeidas() {
+                    try {
+                        await this.api().post('/notificaciones/todas-leidas');
+                        this.notificaciones.forEach(n => n.leida = true);
+                        this.showToast('Todas las notificaciones marcadas como leídas', 'success');
+                    } catch (error) {
+                        console.error('Error marcando todas como leídas:', error);
+                    }
+                },
+
+                formatearFechaRelativa(fecha) {
+                    if (!fecha) return '';
+                    const now = new Date();
+                    const d = new Date(fecha);
+                    const diffMs = now - d;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMins / 60);
+                    const diffDays = Math.floor(diffHours / 24);
+
+                    if (diffMins < 1) return 'ahora';
+                    if (diffMins < 60) return `hace ${diffMins}m`;
+                    if (diffHours < 24) return `hace ${diffHours}h`;
+                    if (diffDays < 7) return `hace ${diffDays}d`;
+                    return this.formatearFecha(fecha);
+                },
+
                 // Utilidades
                 estadoClass(estado) {
                     const classes = {
@@ -1356,7 +1542,17 @@
                     this.editingFactura = null;
                     this.itemMovimiento = null;
                     this.clienteForm = { nombre: '', apellido: '', telefono: '', email: '', direccion: '', activo: true };
-                    this.trabajoForm = { cliente_id: '', tipo_trabajo: '', descripcion: '', estado: 'pendiente', precio_estimado: 0, anticipo: 0 };
+                    this.trabajoForm = { 
+                        cliente_id: '', 
+                        tipo_trabajo: '', 
+                        descripcion: '', 
+                        estado: 'pendiente', 
+                        precio_estimado: 0, 
+                        anticipo: 0,
+                        fecha_recibido: '',
+                        fecha_entrega: '',
+                        notas: ''
+                    };
                     this.inventarioForm = { nombre: '', categoria: 'telas', stock_actual: 0, stock_minimo: 5, precio_unitario: 0, proveedor: '' };
                     this.facturaForm = { trabajo_id: '', subtotal: 0, igv: 0, total: 0, estado_pago: 'pendiente' };
                     this.movimientoForm = { item_id: '', tipo_movimiento: 'entrada', cantidad: 0, motivo: '' };
@@ -1400,8 +1596,25 @@
                 // Trabajos
                 editarTrabajo(trabajo) {
                     this.editingTrabajo = trabajo.id;
-                    this.trabajoForm = { ...trabajo, cliente_id: trabajo.cliente_id || '' };
+                    this.trabajoForm = { 
+                        ...trabajo, 
+                        cliente_id: trabajo.cliente_id || '',
+                        fecha_recibido: trabajo.fecha_recibido ? this.formatearFechaInput(trabajo.fecha_recibido) : '',
+                        fecha_entrega: trabajo.fecha_entrega ? this.formatearFechaInput(trabajo.fecha_entrega) : '',
+                        notas: trabajo.notas || ''
+                    };
                     this.abrirModal('trabajo');
+                },
+
+                formatearFechaInput(fecha) {
+                    if (!fecha) return '';
+                    const d = new Date(fecha);
+                    const year = d.getFullYear();
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const hours = String(d.getHours()).padStart(2, '0');
+                    const minutes = String(d.getMinutes()).padStart(2, '0');
+                    return `${year}-${month}-${day}T${hours}:${minutes}`;
                 },
                 
                 async guardarTrabajo() {
@@ -1553,19 +1766,45 @@
 
                 enviarWhatsAppDesdeDetalle() {
                     if (!this.trabajoDetalle) return;
-                    
-                    const mensaje = `Hola! Te envío el estado de tu trabajo #${this.trabajoDetalle.id}:
-                    
-Tipo: ${this.trabajoDetalle.tipo_trabajo}
-Estado: ${this.trabajoDetalle.estado}
-Precio: S/ ${this.trabajoDetalle.precio_estimado}
-Anticipo: S/ ${this.trabajoDetalle.anticipo}
-Saldo: S/ ${this.trabajoDetalle.precio_estimado - this.trabajoDetalle.anticipo}
 
-¡Gracias por tu confianza!`;
+                    const cliente = this.trabajoDetalle.cliente;
+                    const telefono = cliente?.telefono || '';
                     
-                    const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+                    let mensaje = `👋 *Tapicería Odami* - Estado de tu Trabajo
+
+📋 *Trabajo #${this.trabajoDetalle.id}*
+🔧 Tipo: ${this.trabajoDetalle.tipo_trabajo}
+📊 Estado: ${this.trabajoDetalle.estado.replace('_', ' ').toUpperCase()}
+
+💰 *Precio:* S/ ${this.trabajoDetalle.precio_estimado || '0.00'}
+💵 *Anticipo:* S/ ${this.trabajoDetalle.anticipo || '0.00'}
+⏳ *Saldo:* S/ ${(this.trabajoDetalle.precio_estimado || 0) - (this.trabajoDetalle.anticipo || 0)}
+
+📅 *Fecha Entrega:* ${this.formatearFecha(this.trabajoDetalle.fecha_entrega) || 'No definida'}`;
+
+                    if (this.trabajoDetalle.notas) {
+                        mensaje += `\n\n📝 *Notas:* ${this.trabajoDetalle.notas}`;
+                    }
+
+                    mensaje += `\n\n¡Gracias por tu confianza! 🎨`;
+
+                    // Si hay teléfono, usarlo, sino abrir WhatsApp web sin número
+                    const url = telefono 
+                        ? `https://wa.me/${telefono.replace(/\D/g, '')}?text=${encodeURIComponent(mensaje)}`
+                        : `https://web.whatsapp.com/send?text=${encodeURIComponent(mensaje)}`;
+                    
                     window.open(url, '_blank');
+                },
+
+                formatearFecha(fecha) {
+                    if (!fecha) return '';
+                    const d = new Date(fecha);
+                    const year = d.getFullYear();
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const hours = String(d.getHours()).padStart(2, '0');
+                    const minutes = String(d.getMinutes()).padStart(2, '0');
+                    return `${year}-${month}-${day} ${hours}:${minutes}`;
                 },
                 
                 // Inventario
