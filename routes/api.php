@@ -47,6 +47,8 @@ Route::middleware(['sanctum', 'throttle:api'])->group(function () {
     Route::get('/facturas/cliente/{clienteId}', [App\Http\Controllers\Api\FacturaController::class, 'porCliente']);
     Route::get('/facturas/siguiente-numero', [App\Http\Controllers\Api\FacturaController::class, 'siguienteNumero']);
     Route::get('/facturas/{id}', [App\Http\Controllers\Api\FacturaController::class, 'show']);
+    Route::get('/facturas/{id}/imprimir', [App\Http\Controllers\Api\FacturaPdfController::class, 'imprimir']);
+    Route::get('/facturas/{id}/pdf', [App\Http\Controllers\Api\FacturaPdfController::class, 'generarPdf']);
     Route::post('/facturas', [App\Http\Controllers\Api\FacturaController::class, 'store']);
     Route::put('/facturas/{id}', [App\Http\Controllers\Api\FacturaController::class, 'update']);
     Route::delete('/facturas/{id}', [App\Http\Controllers\Api\FacturaController::class, 'destroy']);

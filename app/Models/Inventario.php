@@ -44,6 +44,11 @@ class Inventario extends Model
         return $this->belongsTo(Usuario::class, 'creado_por');
     }
 
+    public function modificador(): BelongsTo
+    {
+        return $this->belongsTo(Usuario::class, 'modificado_por');
+    }
+
     public function getStockDisponibleAttribute(): bool
     {
         return $this->stock_actual >= $this->stock_minimo;
