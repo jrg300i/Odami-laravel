@@ -9,10 +9,36 @@ use Illuminate\Http\JsonResponse;
 
 class ClienteController extends Controller
 {
-    public function index(): JsonResponse
+    /**
+     * Listar clientes con búsqueda opcional
+     */
+    public function index(Request $request): JsonResponse
     {
-        $clientes = Cliente::with(['creador', 'modificador'])
-            ->orderBy('fecha_registro', 'desc')
+        $query = Cliente::with(['creador', 'modificador']);
+
+        // Búsqueda por nombre, apellido o documento
+        if ($request->has('busqueda')) {
+            $busqueda = $request->get('busqueda');
+            $query->where(function ($q) use ($busqueda) {
+                $q->where('nombre', 'LIKE', "%{$busqueda}%")
+                  ->orWhere('apellido', 'LIKE', "%{$busqueda}%")
+                  ->orWhere('documento', 'LIKE', "%{$busqueda}%")
+                  ->orWhereRaw("CONCAT(nombre, ' ', apellido) LIKE ?", ["%{$busqueda}%"]);
+            });
+        }
+
+        // Búsqueda específica por documento (cédula)
+        if ($request->has('documento')) {
+            $query->where('documento', 'LIKE', "%{$request->get('documento')}%");
+        }
+
+        // Filtrar por estado activo
+        if ($request->has('activo')) {
+            $query->where('activo', $request->boolean('activo'));
+        }
+
+        $clientes = $query->orderBy('apellido', 'asc')
+            ->orderBy('nombre', 'asc')
             ->get();
 
         return response()->json([
@@ -21,13 +47,89 @@ class ClienteController extends Controller
         ]);
     }
 
+    /**
+     * Obtener cliente con sus trabajos y facturas
+     */
     public function show($id): JsonResponse
     {
-        $cliente = Cliente::with(['trabajos', 'creador', 'modificador'])->findOrFail($id);
+        $cliente = Cliente::with([
+            'trabajos' => function ($q) {
+                $q->with('fotos')->orderBy('fecha_ingreso', 'desc');
+            },
+            'trabajos.fotos',
+            'creador',
+            'modificador'
+        ])->findOrFail($id);
+
+        // Obtener facturas del cliente
+        $facturas = \App\Models\Factura::whereHas('trabajo', function ($q) use ($id) {
+                $q->where('cliente_id', $id);
+            })
+            ->with(['trabajo', 'condiciones'])
+            ->orderBy('fecha_emision', 'desc')
+            ->get();
+
+        // Contar trabajos por estado
+        $trabajosPorEstado = $cliente->trabajos->groupBy('estado')->map->count();
 
         return response()->json([
             'success' => true,
-            'data' => $cliente
+            'data' => [
+                ...$cliente->toArray(),
+                'facturas' => $facturas,
+                'trabajos_por_estado' => $trabajosPorEstado,
+                'total_trabajos' => $cliente->trabajos->count(),
+                'total_facturas' => $facturas->count(),
+            ]
+        ]);
+    }
+
+    /**
+     * Obtener trabajos de un cliente
+     */
+    public function trabajos($id): JsonResponse
+    {
+        $cliente = Cliente::findOrFail($id);
+
+        $trabajos = $cliente->trabajos()
+            ->with(['fotos', 'facturas', 'creador'])
+            ->orderBy('fecha_ingreso', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'cliente' => $cliente,
+                'trabajos' => $trabajos,
+                'total' => $trabajos->count(),
+                'por_estado' => $trabajos->groupBy('estado')->map->count(),
+            ]
+        ]);
+    }
+
+    /**
+     * Obtener facturas de un cliente
+     */
+    public function facturas($id): JsonResponse
+    {
+        $cliente = Cliente::findOrFail($id);
+
+        $facturas = \App\Models\Factura::whereHas('trabajo', function ($q) use ($id) {
+                $q->where('cliente_id', $id);
+            })
+            ->with(['trabajo', 'condiciones', 'emisor'])
+            ->orderBy('fecha_emision', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'cliente' => $cliente,
+                'facturas' => $facturas,
+                'total' => $facturas->count(),
+                'total_pagado' => $facturas->where('estado_pago', 'pagado')->sum('total'),
+                'total_pendiente' => $facturas->whereIn('estado_pago', ['pendiente', 'parcial'])->sum('total'),
+            ]
         ]);
     }
 

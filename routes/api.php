@@ -26,8 +26,10 @@ Route::middleware(['sanctum', 'throttle:api'])->group(function () {
 
     // Clientes
     Route::get('/clientes', [App\Http\Controllers\Api\ClienteController::class, 'index']);
-    Route::get('/clientes/search', [App\Http\Controllers\Api\ClienteController::class, 'search']);
+    Route::get('/clientes/search', [App\Http\Controllers\Api\ClienteController::class, 'index']);
     Route::get('/clientes/{id}', [App\Http\Controllers\Api\ClienteController::class, 'show']);
+    Route::get('/clientes/{id}/trabajos', [App\Http\Controllers\Api\ClienteController::class, 'trabajos']);
+    Route::get('/clientes/{id}/facturas', [App\Http\Controllers\Api\ClienteController::class, 'facturas']);
     Route::post('/clientes', [App\Http\Controllers\Api\ClienteController::class, 'store']);
     Route::put('/clientes/{id}', [App\Http\Controllers\Api\ClienteController::class, 'update']);
     Route::delete('/clientes/{id}', [App\Http\Controllers\Api\ClienteController::class, 'destroy']);
