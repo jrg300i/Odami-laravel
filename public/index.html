@@ -454,20 +454,27 @@
 
                                 <!-- Body de la tarjeta -->
                                 <div class="p-4 space-y-3">
+                                    <!-- Teléfono con link a WhatsApp -->
+                                    <a :href="'https://wa.me/' + limpiarTelefono(cliente.telefono)"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       class="flex items-center text-gray-700 hover:bg-green-50 p-2 rounded-lg transition group">
+                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fab fa-whatsapp text-green-600 text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <span class="text-sm font-medium">{{ cliente.telefono }}</span>
+                                        </div>
+                                        <i class="fas fa-external-link-alt text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition"></i>
+                                    </a>
+
                                     <div class="flex items-center text-gray-700 hover:bg-gray-50 p-2 rounded-lg transition">
                                         <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                                            <i class="fas fa-phone text-blue-600 text-sm"></i>
-                                        </div>
-                                        <span class="text-sm font-medium">{{ cliente.telefono }}</span>
-                                    </div>
-                                    
-                                    <div class="flex items-center text-gray-700 hover:bg-gray-50 p-2 rounded-lg transition">
-                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                                            <i class="fas fa-envelope text-green-600 text-sm"></i>
+                                            <i class="fas fa-envelope text-blue-600 text-sm"></i>
                                         </div>
                                         <span class="text-sm font-medium truncate" :title="cliente.email">{{ cliente.email }}</span>
                                     </div>
-                                    
+
                                     <div class="flex items-center text-gray-700 hover:bg-gray-50 p-2 rounded-lg transition">
                                         <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                                             <i class="fas fa-map-marker-alt text-purple-600 text-sm"></i>
@@ -518,16 +525,24 @@
                             <div class="loading-spinner"></div>
                         </div>
                         <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div v-for="trabajo in trabajosFiltrados" :key="trabajo.id" 
-                                class="bg-white rounded-xl shadow-md p-6">
+                            <div v-for="trabajo in trabajosFiltrados" :key="trabajo.id"
+                                class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300">
                                 <div class="flex items-start justify-between mb-4">
                                     <div>
                                         <h3 class="font-bold text-lg">{{ trabajo.tipo_trabajo }}</h3>
                                         <p class="text-sm text-gray-500">{{ trabajo.cliente?.nombre_completo }}</p>
                                     </div>
-                                    <span :class="['px-3 py-1 rounded-full text-xs font-semibold', estadoClass(trabajo.estado)]">
-                                        {{ estadoTexto(trabajo.estado) }}
-                                    </span>
+                                    <!-- Selector de estado -->
+                                    <select v-model="trabajo.estado"
+                                        @change="actualizarEstadoTrabajo(trabajo.id, $event.target.value)"
+                                        :class="['px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition',
+                                            estadoClass(trabajo.estado)]">
+                                        <option value="pendiente">Pendiente</option>
+                                        <option value="en_proceso">En Proceso</option>
+                                        <option value="completado">Completado</option>
+                                        <option value="entregado">Entregado</option>
+                                        <option value="cancelado">Cancelado</option>
+                                    </select>
                                 </div>
                                 <p class="text-gray-600 text-sm mb-4">{{ trabajo.descripcion }}</p>
                                 <div class="flex justify-between items-center">
@@ -603,22 +618,22 @@
                                         <td class="px-4 py-3 text-center">S/ {{ item.precio_unitario }}</td>
                                         <td class="px-4 py-3 text-center">{{ item.proveedor || '-' }}</td>
                                         <td class="px-4 py-3 text-center">
-                                            <div class="flex justify-center space-x-1">
-                                                <button @click="verInventario(item)" class="p-2 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200" title="Ver">
-                                                    <i class="fas fa-eye text-sm"></i>
+                                            <div class="flex justify-center space-x-2">
+                                                <button @click="verInventario(item)" class="p-2 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 hover:scale-110 transition" title="Ver detalle">
+                                                    <i class="fas fa-eye"></i>
                                                 </button>
-                                                <button @click="editarInventario(item)" class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200" title="Editar">
-                                                    <i class="fas fa-edit text-sm"></i>
+                                                <button @click="editarInventario(item)" class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 hover:scale-110 transition" title="Editar">
+                                                    <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button @click="registrarMovimiento(item)" class="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200" title="Movimiento">
-                                                    <i class="fas fa-exchange-alt text-sm"></i>
+                                                <button @click="registrarMovimiento(item)" class="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 hover:scale-110 transition" title="Registrar movimiento">
+                                                    <i class="fas fa-exchange-alt"></i>
                                                 </button>
-                                                <button 
-                                                    v-if="esAdmin()" 
-                                                    @click="eliminarInventario(item.id)" 
-                                                    class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200" 
+                                                <button
+                                                    v-if="esAdmin()"
+                                                    @click="eliminarInventario(item.id)"
+                                                    class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 hover:scale-110 transition"
                                                     title="Eliminar (solo admin)">
-                                                    <i class="fas fa-trash text-sm"></i>
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
                                         </td>
@@ -2646,6 +2661,50 @@
                     const day = String(d.getDate()).padStart(2, '0');
                     const year = String(d.getFullYear()).slice(-2);
                     return `${day}/${month}/${year}`;
+                },
+
+                /**
+                 * Limpiar número de teléfono para WhatsApp
+                 * Elimina espacios, guiones, paréntesis y el símbolo +
+                 */
+                limpiarTelefono(telefono) {
+                    if (!telefono) return '';
+                    // Eliminar todo lo que no sea número
+                    let limpio = telefono.replace(/\D/g, '');
+                    // Si comienza con 0, quitarlo y agregar 51 (Perú)
+                    if (limpio.startsWith('0')) {
+                        limpio = '51' + limpio.substring(1);
+                    }
+                    // Si no tiene código de país y tiene 9 dígitos, agregar 51
+                    if (limpio.length === 9) {
+                        limpio = '51' + limpio;
+                    }
+                    return limpio;
+                },
+
+                /**
+                 * Actualizar estado de un trabajo rápidamente
+                 */
+                async actualizarEstadoTrabajo(trabajoId, nuevoEstado) {
+                    try {
+                        const trabajo = this.trabajos.find(t => t.id === trabajoId);
+                        if (!trabajo) return;
+
+                        await this.api().put(`/api/trabajos/${trabajoId}`, {
+                            ...trabajo,
+                            estado: nuevoEstado
+                        });
+
+                        // Actualizar localmente
+                        trabajo.estado = nuevoEstado;
+                        this.showToast(`Estado actualizado a: ${this.estadoTexto(nuevoEstado)}`, 'success');
+
+                        // Recargar trabajos para actualizar el orden
+                        await this.cargarTrabajos();
+                    } catch (error) {
+                        console.error('Error al actualizar estado:', error);
+                        this.showToast('Error al actualizar estado', 'error');
+                    }
                 },
 
                 getEstadoFechaEntregaClass(fecha) {
