@@ -151,13 +151,25 @@ final class TrabajoController extends Controller
      */
     public function materiales($id): JsonResponse
     {
-        $trabajo = Trabajo::with(['materiales' => function ($q) {
-            $q->withPivot('cantidad_usada', 'unidad_medida', 'observaciones');
-        }])->findOrFail($id);
+        $trabajo = Trabajo::findOrFail($id);
+        
+        $materiales = TrabajoMaterial::where('trabajo_id', $id)
+            ->with('inventario')
+            ->get()
+            ->map(function ($trabajoMaterial) {
+                return [
+                    'id' => $trabajoMaterial->inventario->id,
+                    'nombre' => $trabajoMaterial->inventario->nombre,
+                    'categoria' => $trabajoMaterial->inventario->categoria,
+                    'unidad' => $trabajoMaterial->inventario->unidad,
+                    'cantidad_usada' => $trabajoMaterial->cantidad_usada,
+                    'observaciones' => $trabajoMaterial->observaciones,
+                ];
+            });
 
         return response()->json([
             'success' => true,
-            'data' => $trabajo->materiales,
+            'data' => $materiales,
         ]);
     }
 
