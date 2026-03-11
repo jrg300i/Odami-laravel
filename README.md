@@ -409,16 +409,33 @@ php artisan db:seed
 
 ---
 
+## 🔧 Mantenimiento
+
+### 🧹 Limpieza de Logs
+
+**Importante**: Realizar limpieza periódica de logs para mantener el rendimiento óptimo.
+
+| Tipo | Frecuencia | Comando |
+|------|------------|---------|
+| **Ligera** | Semanal | `> storage/logs/laravel.log && > logs/*.log` |
+| **Completa** | Mensual | Ver [MANTENIMIENTO_LOGS.md](MANTENIMIENTO_LOGS.md) |
+| **Profunda** | Trimestral | Ver [MANTENIMIENTO_LOGS.md](MANTENIMIENTO_LOGS.md) |
+
+**Documentación completa**: [MANTENIMIENTO_LOGS.md](MANTENIMIENTO_LOGS.md)
+
+---
+
 ## 🔗 Enlaces
 
 - **Documentación Principal**: [ACCESO_GLOBAL.md](ACCESO_GLOBAL.md)
 - **Fotos Módulo**: [FOTOS_POR_ETAPAS_IMPLEMENTACION.md](FOTOS_POR_ETAPAS_IMPLEMENTACION.md)
 - **Seguridad**: [SEGURIDAD.md](SEGURIDAD.md)
 - **Roles en Inventario**: [ROLES_INVENTARIO_IMPLEMENTACION.md](ROLES_INVENTARIO_IMPLEMENTACION.md)
+- **Mantenimiento de Logs**: [MANTENIMIENTO_LOGS.md](MANTENIMIENTO_LOGS.md) ⭐ NUEVO
 - **GitHub**: [github.com/jrg300i/Odami-laravel](https://github.com/jrg300i/Odami-laravel)
 
 ---
 
 *Tapicería Odami Pro - Laravel + Vue.js 3*
 *🌍 Acceso global desde cualquier lugar del mundo*
-*Versión 7.2.0 - 2026-03-11 - Dashboard Mejorado + Inventario Responsive*
+*Versión 7.2.1 - 2026-03-11 - Dashboard Mejorado + Inventario Responsive + Mantenimiento*
