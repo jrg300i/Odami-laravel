@@ -9,12 +9,13 @@ return new class extends Migration
     /**
      * Run the migrations.
      * 
-     * Tabla intermedia para relacionar trabajos con items del inventario.
-     * Permite que un trabajo use múltiples materiales (cuero, hilo, goma, etc.)
+     * Tabla de materiales usados por trabajo.
+     * Relación: Un trabajo usa muchos materiales del inventario.
+     * Cada registro representa el CONSUMO de un item en un trabajo específico.
      */
     public function up(): void
     {
-        Schema::create('inventario_trabajo', function (Blueprint $table) {
+        Schema::create('trabajo_materiales', function (Blueprint $table) {
             $table->id();
             $table->foreignId('trabajo_id')->constrained('trabajos')->onDelete('cascade');
             $table->foreignId('inventario_id')->constrained('inventario')->onDelete('cascade');
@@ -23,7 +24,8 @@ return new class extends Migration
             $table->text('observaciones')->nullable();
             $table->timestamps();
             
-            // Índices para búsquedas rápidas
+            // Un trabajo puede tener el mismo item registrado múltiples veces
+            // (ej: diferente uso en diferentes etapas)
             $table->index(['trabajo_id', 'inventario_id']);
         });
     }
@@ -33,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventario_trabajo');
+        Schema::dropIfExists('trabajo_materiales');
     }
 };
