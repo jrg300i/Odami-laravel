@@ -43,12 +43,28 @@ class DashboardController extends Controller
     {
         $trabajos = Trabajo::with(['cliente', 'fotos'])
             ->orderBy('fecha_ingreso', 'desc')
-            ->limit(5)
-            ->get();
+            ->limit(10)
+            ->get()
+            ->map(function ($trabajo) {
+                return [
+                    'id' => $trabajo->id,
+                    'tipo_trabajo' => $trabajo->tipo_trabajo,
+                    'descripcion' => $trabajo->descripcion,
+                    'estado' => $trabajo->estado,
+                    'precio_estimado' => $trabajo->precio_estimado,
+                    'anticipo' => $trabajo->anticipo,
+                    'fecha_ingreso' => $trabajo->fecha_ingreso,
+                    'cliente_id' => $trabajo->cliente_id,
+                    'cliente_nombre' => $trabajo->cliente?->nombre_completo,
+                    'cliente_documento' => $trabajo->cliente?->documento,
+                    'facturas_count' => $trabajo->facturas()->count(),
+                    'materiales_count' => $trabajo->materiales()->count(),
+                ];
+            });
 
         return response()->json([
             'success' => true,
-            'data' => $trabajos
+            'data' => $trabajos,
         ]);
     }
 

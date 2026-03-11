@@ -331,24 +331,54 @@
                                 </div>
                                 <div v-else class="space-y-3 max-h-64 overflow-y-auto">
                                     <div v-for="trabajo in trabajosRecientesFiltrados" :key="trabajo.id"
-                                        @click="verTrabajo(trabajo)"
-                                        class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-blue-50 hover:shadow transition cursor-pointer">
-                                        <div class="flex-1">
-                                            <p class="font-semibold text-gray-800 hover:text-blue-700">{{ trabajo.tipo_trabajo }}</p>
-                                            <p class="text-sm text-gray-500">
-                                                <i class="fas fa-user mr-1"></i>{{ trabajo.cliente?.nombre_completo || 'Sin cliente' }}
-                                            </p>
-                                            <p class="text-xs text-gray-400 mt-1">
-                                                <i class="fas fa-id-card mr-1"></i>{{ trabajo.cliente?.documento || 'N/A' }}
-                                            </p>
-                                        </div>
-                                        <div class="text-right">
-                                            <span :class="['px-3 py-1 rounded-full text-xs font-semibold', estadoClass(trabajo.estado)]">
+                                        class="p-3 bg-gray-50 rounded-lg hover:bg-blue-50 hover:shadow transition border border-gray-100">
+                                        <!-- Header con tipo de trabajo y estado -->
+                                        <div class="flex items-start justify-between mb-2">
+                                            <div class="flex-1">
+                                                <p class="font-semibold text-gray-800">{{ trabajo.tipo_trabajo }}</p>
+                                                <p class="text-xs text-gray-500 mt-1">
+                                                    <i class="fas fa-calendar"></i> {{ formatearFechaCorta(trabajo.fecha_ingreso) }}
+                                                </p>
+                                            </div>
+                                            <span :class="['px-2 py-1 rounded-full text-xs font-semibold', estadoClass(trabajo.estado)]">
                                                 {{ estadoTexto(trabajo.estado) }}
                                             </span>
+                                        </div>
+                                        
+                                        <!-- Cliente (click para ver) -->
+                                        <div class="mb-2">
+                                            <a @click.prevent="verClientePorId(trabajo.cliente_id)"
+                                                href="#"
+                                                class="text-sm text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                                                <i class="fas fa-user mr-1"></i>{{ trabajo.cliente_nombre || trabajo.cliente?.nombre_completo || 'Sin cliente' }}
+                                            </a>
                                             <p class="text-xs text-gray-400 mt-1">
-                                                <i class="fas fa-calendar"></i> {{ formatearFechaCorta(trabajo.fecha_ingreso) }}
+                                                <i class="fas fa-id-card mr-1"></i>{{ trabajo.cliente_documento || trabajo.cliente?.documento || 'N/A' }}
                                             </p>
+                                        </div>
+                                        
+                                        <!-- Info rápida de facturas y materiales -->
+                                        <div class="flex gap-2 text-xs mt-2 pt-2 border-t border-gray-200">
+                                            <div class="flex-1">
+                                                <span class="text-gray-500"><i class="fas fa-file-invoice mr-1"></i></span>
+                                                <span :class="trabajo.facturas_count > 0 ? 'text-blue-600 font-medium' : 'text-gray-400'">
+                                                    {{ trabajo.facturas_count || 0 }} factura(s)
+                                                </span>
+                                            </div>
+                                            <div class="flex-1">
+                                                <span class="text-gray-500"><i class="fas fa-boxes mr-1"></i></span>
+                                                <span :class="trabajo.materiales_count > 0 ? 'text-green-600 font-medium' : 'text-gray-400'">
+                                                    {{ trabajo.materiales_count || 0 }} material(es)
+                                                </span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Botón ver detalle -->
+                                        <div class="mt-2 text-right">
+                                            <button @click="verTrabajo(trabajo)" 
+                                                class="text-xs bg-blue-100 text-blue-600 px-3 py-1 rounded hover:bg-blue-200 transition">
+                                                <i class="fas fa-eye mr-1"></i>Ver detalle
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -2336,13 +2366,20 @@
                 async cargarDashboard() {
                     const response = await this.api().get('/api/dashboard/stats');
                     this.stats = response.data.data;
-                    
+
                     const entregasRes = await this.api().get('/api/dashboard/entregas-hoy');
                     this.entregasHoy = entregasRes.data.data;
-                    
+
                     const trabajosRes = await this.api().get('/api/dashboard/trabajos-recientes');
-                    this.trabajosRecientes = trabajosRes.data.data;
-                    
+                    this.trabajosRecientes = trabajosRes.data.data.map(trabajo => ({
+                        ...trabajo,
+                        cliente_nombre: trabajo.cliente?.nombre_completo || trabajo.cliente_nombre || '',
+                        cliente_documento: trabajo.cliente?.documento || trabajo.cliente_documento || '',
+                        cliente_id: trabajo.cliente_id || trabajo.cliente?.id || '',
+                        facturas_count: trabajo.facturas_count || 0,
+                        materiales_count: trabajo.materiales_count || 0
+                    }));
+
                     const stockRes = await this.api().get('/api/dashboard/stock-critico');
                     this.stockCritico = stockRes.data.data;
                 },
@@ -2623,6 +2660,24 @@
                     } catch (error) {
                         console.error('Error al cargar detalle del cliente:', error);
                         this.showToast('Error al cargar el detalle del cliente', 'error');
+                        this.cargando = false;
+                    }
+                },
+                
+                async verClientePorId(clienteId) {
+                    if (!clienteId) {
+                        this.showToast('Cliente no disponible', 'error');
+                        return;
+                    }
+                    try {
+                        this.cargando = true;
+                        const response = await this.api().get(`/api/clientes/${clienteId}`);
+                        this.clienteDetalle = response.data.data;
+                        this.modalAbierto = 'ver-cliente';
+                        this.cargando = false;
+                    } catch (error) {
+                        console.error('Error al cargar cliente:', error);
+                        this.showToast('Error al cargar cliente', 'error');
                         this.cargando = false;
                     }
                 },
