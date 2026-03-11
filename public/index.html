@@ -2268,13 +2268,18 @@
                 // Trabajos
                 editarTrabajo(trabajo) {
                     this.editingTrabajo = trabajo.id;
-                    this.trabajoForm = { 
-                        ...trabajo, 
+                    this.trabajoForm = {
                         cliente_id: trabajo.cliente_id || '',
+                        tipo_trabajo: trabajo.tipo_trabajo || '',
+                        descripcion: trabajo.descripcion || '',
+                        estado: trabajo.estado || 'pendiente',
+                        precio_estimado: trabajo.precio_estimado || 0,
+                        anticipo: trabajo.anticipo || 0,
                         fecha_recibido: trabajo.fecha_recibido ? this.formatearFechaInput(trabajo.fecha_recibido) : '',
                         fecha_entrega: trabajo.fecha_entrega ? this.formatearFechaInput(trabajo.fecha_entrega) : '',
                         notas: trabajo.notas || ''
                     };
+                    console.log('Editando trabajo:', this.trabajoForm);
                     this.abrirModal('trabajo');
                 },
 
