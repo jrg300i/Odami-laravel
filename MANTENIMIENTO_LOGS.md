@@ -227,7 +227,7 @@ Mantén un registro simple en `CLEANUP_LOG.md`:
 
 - `start.sh` - Script de inicio
 - `stop.sh` - Script de parada
-- `.env` - Configuración del proyecto
+- `.env` - Configuración del proyecto ⭐ **CRÍTICO**
 - `vendor/` - Dependencias de Composer
 - `node_modules/` - Dependencias de Node (si existen)
 
@@ -239,6 +239,38 @@ Mantén un registro simple en `CLEANUP_LOG.md`:
 - `token_*.txt` - Tokens temporales
 - `storage/framework/views/*.php` - Vistas compiladas
 - `storage/framework/cache/*` - Caché
+
+---
+
+## 🔧 Solución de Problemas Comunes
+
+### Error: "No se ha especificado ninguna clave de cifrado"
+
+**Causa**: El archivo `.env` fue limpiado o dañado, perdiendo `APP_KEY`
+
+**Solución**:
+```bash
+cd /data/data/com.termux/files/home/mi-servidor/public/surge-projects/tapiceria-odami-laravel
+
+# Opción 1: Copiar .env.example y generar nueva clave
+cp .env.example .env
+php artisan key:generate
+
+# Opción 2: Editar .env manualmente y agregar:
+# APP_KEY=base64:xK7mN9pQ2rT5vW8yA3bC6dE9fG1hI4jK7lM0nO3pQ6r=
+
+# Limpiar caché
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+```
+
+**Verificación**:
+```bash
+grep "APP_KEY" .env
+# Debe mostrar: APP_KEY=base64:xxxxxxxxxxxxx
+```
 
 ---
 
