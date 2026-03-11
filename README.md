@@ -50,9 +50,11 @@ El script mostrará las URLs de acceso. ¡Listo!
 - ✅ Búsqueda y filtrado
 
 ### Módulo de Inventario
-- ✅ Control de stock
+- ✅ CRUD completo
 - ✅ Movimientos (entrada, salida, ajuste)
 - ✅ Alertas de stock bajo
+- ✅ 🔐 **Eliminación solo para administradores**
+- ✅ 👁️ Ver detalle con historial de movimientos
 
 ### Módulo de Facturación
 - ✅ Emisión de facturas
@@ -402,9 +404,10 @@ php artisan db:seed
 - **Documentación Principal**: [ACCESO_GLOBAL.md](ACCESO_GLOBAL.md)
 - **Fotos Módulo**: [FOTOS_POR_ETAPAS_IMPLEMENTACION.md](FOTOS_POR_ETAPAS_IMPLEMENTACION.md)
 - **Seguridad**: [SEGURIDAD.md](SEGURIDAD.md)
+- **Roles en Inventario**: [ROLES_INVENTARIO_IMPLEMENTACION.md](ROLES_INVENTARIO_IMPLEMENTACION.md)
 
 ---
 
 *Tapicería Odami Pro - Laravel + Vue.js 3*  
-*🌍 Acceso global desde cualquier lugar del mundo*  
-*Versión 7.0.0 - 2026-03-10*
+*🌍 Acceso global desde cualquier lugar del mundo*
+*Versión 7.1.0 - 2026-03-10 - Roles de Inventario Implementados*

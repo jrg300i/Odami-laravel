@@ -7,6 +7,7 @@ use App\Models\Inventario;
 use App\Models\InventarioMovimiento;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class InventarioController extends Controller
 {
@@ -93,6 +94,16 @@ class InventarioController extends Controller
 
     public function destroy($id): JsonResponse
     {
+        // Verificar que el usuario sea administrador
+        $usuario = Auth::user();
+        
+        if (!$usuario || !$usuario->esAdmin()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No tienes permisos para eliminar items del inventario. Solo administradores.'
+            ], 403);
+        }
+
         $item = Inventario::findOrFail($id);
         $item->delete();
 

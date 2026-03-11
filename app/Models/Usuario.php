@@ -39,6 +39,30 @@ class Usuario extends Authenticatable
         'ultimo_acceso' => 'datetime',
     ];
 
+    /**
+     * Verificar si el usuario es administrador
+     */
+    public function esAdmin(): bool
+    {
+        return $this->rol === 'admin';
+    }
+
+    /**
+     * Verificar si el usuario es vendedor
+     */
+    public function esVendedor(): bool
+    {
+        return $this->rol === 'vendedor';
+    }
+
+    /**
+     * Verificar si el usuario está activo
+     */
+    public function estaActivo(): bool
+    {
+        return $this->activo === true;
+    }
+
     public function trabajosCreados(): HasMany
     {
         return $this->hasMany(Trabajo::class, 'creado_por');
