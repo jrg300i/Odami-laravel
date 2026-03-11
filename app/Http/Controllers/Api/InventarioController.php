@@ -37,7 +37,7 @@ class InventarioController extends Controller
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:150',
-            'categoria' => 'required|in:telas,espumas,hilos,botones,accesorios,otros',
+            'categoria' => 'required|in:telas,cueros,espumas,hilos,gomas,botones,pegamentos,tintes,accesorios,insumos,otros',
             'stock_actual' => 'integer|min:0',
             'stock_minimo' => 'integer|min:0',
             'stock_maximo' => 'nullable|integer',
@@ -69,7 +69,7 @@ class InventarioController extends Controller
 
         $validated = $request->validate([
             'nombre' => 'sometimes|required|string|max:150',
-            'categoria' => 'sometimes|required|in:telas,espumas,hilos,botones,accesorios,otros',
+            'categoria' => 'sometimes|required|in:telas,cueros,espumas,hilos,gomas,botones,pegamentos,tintes,accesorios,insumos,otros',
             'stock_actual' => 'sometimes|integer|min:0',
             'stock_minimo' => 'sometimes|integer|min:0',
             'stock_maximo' => 'nullable|integer',

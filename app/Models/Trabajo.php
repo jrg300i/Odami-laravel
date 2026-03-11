@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -87,6 +88,13 @@ class Trabajo extends Model
     public function facturas(): HasMany
     {
         return $this->hasMany(Factura::class);
+    }
+
+    public function materiales(): BelongsToMany
+    {
+        return $this->belongsToMany(Inventario::class, 'inventario_trabajo')
+            ->withPivot('cantidad_usada', 'unidad_medida', 'observaciones')
+            ->withTimestamps();
     }
 
     public function entregas(): HasMany

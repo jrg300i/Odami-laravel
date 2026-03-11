@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -47,6 +48,16 @@ class Inventario extends Model
     public function modificador(): BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'modificado_por');
+    }
+
+    /**
+     * Trabajos que usan este material
+     */
+    public function trabajos(): BelongsToMany
+    {
+        return $this->belongsToMany(Trabajo::class, 'inventario_trabajo')
+            ->withPivot('cantidad_usada', 'unidad_medida', 'observaciones')
+            ->withTimestamps();
     }
 
     public function getStockDisponibleAttribute(): bool
