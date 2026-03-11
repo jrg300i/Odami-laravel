@@ -1196,7 +1196,7 @@
         
         <!-- Modales -->
         <!-- Modal Cliente -->
-        <div v-if="modalAbierto === 'cliente'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div v-if="modalAbierto === 'cliente'" @click.self.stop="cerrarModal()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
                 <div class="p-6 border-b">
                     <h3 class="text-xl font-bold">{{ editingCliente ? 'Editar' : 'Nuevo' }} Cliente</h3>
@@ -1239,7 +1239,7 @@
         </div>
         
         <!-- Modal Trabajo -->
-        <div v-if="modalAbierto === 'trabajo'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div v-if="modalAbierto === 'trabajo'" @click.self.stop="cerrarModal()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
                 <div class="p-6 border-b">
                     <h3 class="text-xl font-bold">{{ editingTrabajo ? 'Editar' : 'Nuevo' }} Trabajo</h3>
@@ -1401,7 +1401,7 @@
         </div>
 
         <!-- Modal Ver Detalle de Trabajo -->
-        <div v-if="modalAbierto === 'ver-trabajo'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div v-if="modalAbierto === 'ver-trabajo'" @click.self.stop="cerrarModal()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8">
                 <div class="p-6 border-b flex justify-between items-center">
                     <div>
@@ -1581,7 +1581,7 @@
         </div>
 
         <!-- Modal Ver Cliente (Trabajos y Facturas) -->
-        <div v-if="modalAbierto === 'ver-cliente'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div v-if="modalAbierto === 'ver-cliente'" @click.self.stop="cerrarModal()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl my-8">
                 <div class="p-6 border-b flex justify-between items-center">
                     <div>
@@ -1715,7 +1715,7 @@
         </div>
 
         <!-- Modal Ver Inventario -->
-        <div v-if="modalAbierto === 'ver-inventario'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div v-if="modalAbierto === 'ver-inventario'" @click.self.stop="cerrarModal()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl">
                 <div class="p-6 border-b flex justify-between items-center">
                     <h3 class="text-xl font-bold">Detalle del Item</h3>
@@ -1804,7 +1804,7 @@
         </div>
 
         <!-- Modal Cámara -->
-        <div v-if="modalAbierto === 'camara'" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+        <div v-if="modalAbierto === 'camara'" @click.self.stop="cerrarModal()" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
                 <div class="p-6 border-b">
                     <h3 class="text-xl font-bold">📸 Tomar Foto</h3>
@@ -1835,7 +1835,7 @@
         </div>
 
         <!-- Modal Ver Foto en Grande -->
-        <div v-if="modalAbierto === 'ver-foto'" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+        <div v-if="modalAbierto === 'ver-foto'" @click.self.stop="cerrarModal()" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
             <div class="relative max-w-4xl max-h-screen overflow-y-auto">
                 <button @click="cerrarModal" class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 z-10">&times;</button>
                 <img :src="fotoEnGrande" class="max-w-full max-h-[90vh] object-contain rounded-lg">
@@ -1843,7 +1843,7 @@
         </div>
 
         <!-- Modal Inventario -->
-        <div v-if="modalAbierto === 'inventario'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div v-if="modalAbierto === 'inventario'" @click.self.stop="cerrarModal()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
                 <div class="p-6 border-b">
                     <h3 class="text-xl font-bold">{{ editingInventario ? 'Editar' : 'Nuevo' }} Item</h3>
@@ -1891,7 +1891,7 @@
         </div>
         
         <!-- Modal Movimiento Inventario -->
-        <div v-if="modalAbierto === 'movimiento'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div v-if="modalAbierto === 'movimiento'" @click.self.stop="cerrarModal()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
                 <div class="p-6 border-b">
                     <h3 class="text-xl font-bold">Registrar Movimiento</h3>
@@ -1923,7 +1923,7 @@
         </div>
         
         <!-- Modal Factura -->
-        <div v-if="modalAbierto === 'factura'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div v-if="modalAbierto === 'factura'" @click.self.stop="cerrarModal()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
                 <div class="p-6 border-b">
                     <h3 class="text-xl font-bold">{{ editingFactura ? 'Editar' : 'Nueva' }} Factura</h3>
@@ -2818,6 +2818,13 @@
                     this.trabajoDetalle = null;
                     this.clienteDetalle = null;
                     this.inventarioDetalle = null;
+                },
+                
+                // Cerrar modal al hacer click fuera
+                clickFueraModal(event) {
+                    if (event.target === event.currentTarget) {
+                        this.cerrarModal();
+                    }
                 },
                 
                 resetearFormularios() {
