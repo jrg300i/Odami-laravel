@@ -2,9 +2,10 @@
 
 **Sistema de Gestión Inteligente para Tapicerías**
 
-> **Última actualización**: 2026-03-10  
-> **Estado**: ✅ Completamente funcional  
-> **Versión**: 7.0.0 - Acceso Global Automático
+> **Última actualización**: 2026-03-11
+> **Estado**: ✅ Completamente funcional - Producción
+> **Versión**: 7.2.0 - Dashboard Mejorado + Inventario Responsive
+> **Commits**: [Ver en GitHub](https://github.com/jrg300i/Odami-laravel)
 
 ---
 
@@ -48,6 +49,9 @@ El script mostrará las URLs de acceso. ¡Listo!
 ### Módulo de Clientes
 - ✅ CRUD completo
 - ✅ Búsqueda y filtrado
+- ✅ 📱 **Teléfono con link a WhatsApp** (click abre chat)
+- ✅ 🆔 **Cédula/DNI** en formulario y tarjetas
+- ✅ Diseño responsive (tarjetas)
 
 ### Módulo de Inventario
 - ✅ CRUD completo
@@ -55,6 +59,9 @@ El script mostrará las URLs de acceso. ¡Listo!
 - ✅ Alertas de stock bajo
 - ✅ 🔐 **Eliminación solo para administradores**
 - ✅ 👁️ Ver detalle con historial de movimientos
+- ✅ 📱 **Diseño responsive** (tarjetas en móvil, tabla en escritorio)
+- ✅ 🏷️ **11 categorías**: telas, cueros, espumas, hilos, gomas, botones, pegamentos, tintes, accesorios, insumos, otros
+- ✅ 🔗 **Relación con trabajos**: Registro de materiales usados
 
 ### Módulo de Facturación
 - ✅ Emisión de facturas
@@ -66,6 +73,9 @@ El script mostrará las URLs de acceso. ¡Listo!
 - ✅ Trabajos recientes
 - ✅ Entregas de hoy
 - ✅ Stock crítico
+- ✅ 🖱️ **Tarjetas clickables** (acceso directo a módulos)
+- ✅ 🔍 **Buscador de trabajos** (cliente, cédula, tipo, fecha)
+- ✅ 📱 **Diseño responsive**
 
 ---
 
@@ -386,16 +396,16 @@ php artisan db:seed
 
 ## ✅ Estado del Proyecto
 
-| Módulo | Estado |
-|--------|--------|
-| Autenticación | ✅ Completo |
-| Dashboard | ✅ Completo |
-| Clientes | ✅ Completo |
-| Trabajos + Fotos | ✅ Completo |
-| Inventario | ✅ Completo |
-| Facturación | ✅ Completo |
-| Acceso Global | ✅ Automático |
-| Auto-reinicio | ✅ Implementado |
+| Módulo | Estado | Última Actualización |
+|--------|--------|---------------------|
+| Autenticación | ✅ Completo | 2026-03-10 |
+| Dashboard | ✅ Mejorado | 2026-03-11 |
+| Clientes | ✅ Completo + WhatsApp | 2026-03-11 |
+| Trabajos + Fotos | ✅ Completo | 2026-03-10 |
+| Inventario | ✅ Responsive + Relaciones | 2026-03-11 |
+| Facturación | ✅ Completo | 2026-03-10 |
+| Acceso Global | ✅ Automático | 2026-03-10 |
+| Auto-reinicio | ✅ Implementado | 2026-03-10 |
 
 ---
 
@@ -405,9 +415,10 @@ php artisan db:seed
 - **Fotos Módulo**: [FOTOS_POR_ETAPAS_IMPLEMENTACION.md](FOTOS_POR_ETAPAS_IMPLEMENTACION.md)
 - **Seguridad**: [SEGURIDAD.md](SEGURIDAD.md)
 - **Roles en Inventario**: [ROLES_INVENTARIO_IMPLEMENTACION.md](ROLES_INVENTARIO_IMPLEMENTACION.md)
+- **GitHub**: [github.com/jrg300i/Odami-laravel](https://github.com/jrg300i/Odami-laravel)
 
 ---
 
-*Tapicería Odami Pro - Laravel + Vue.js 3*  
+*Tapicería Odami Pro - Laravel + Vue.js 3*
 *🌍 Acceso global desde cualquier lugar del mundo*
-*Versión 7.1.0 - 2026-03-10 - Roles de Inventario Implementados*
+*Versión 7.2.0 - 2026-03-11 - Dashboard Mejorado + Inventario Responsive*
