@@ -604,7 +604,12 @@
                                 <div class="flex items-start justify-between mb-4">
                                     <div>
                                         <h3 class="font-bold text-lg">{{ trabajo.tipo_trabajo }}</h3>
-                                        <p class="text-sm text-gray-500">{{ trabajo.cliente?.nombre_completo }}</p>
+                                        <p class="text-sm text-gray-500">
+                                            <i class="fas fa-user mr-1"></i>{{ trabajo.cliente?.nombre_completo }}
+                                        </p>
+                                        <p class="text-xs text-gray-400 mt-1">
+                                            <i class="fas fa-id-card mr-1"></i>{{ trabajo.cliente?.documento || 'N/A' }}
+                                        </p>
                                     </div>
                                     <!-- Selector de estado -->
                                     <select v-model="trabajo.estado"
@@ -618,7 +623,36 @@
                                         <option value="cancelado">Cancelado</option>
                                     </select>
                                 </div>
-                                <p class="text-gray-600 text-sm mb-4">{{ trabajo.descripcion }}</p>
+                                <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ trabajo.descripcion }}</p>
+                                
+                                <!-- Información de facturas -->
+                                <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="text-xs font-semibold text-gray-600">
+                                            <i class="fas fa-file-invoice text-blue-600 mr-1"></i>Facturas
+                                        </h4>
+                                        <span class="text-xs text-gray-500">{{ trabajo.facturas?.length || 0 }} documento(s)</span>
+                                    </div>
+                                    <div v-if="trabajo.facturas && trabajo.facturas.length > 0" class="space-y-1">
+                                        <div v-for="factura in trabajo.facturas.slice(0, 2)" :key="factura.id"
+                                            class="flex items-center justify-between text-xs p-2 bg-white rounded">
+                                            <span class="font-medium">{{ factura.numero_factura }}</span>
+                                            <span :class="['px-2 py-0.5 rounded text-xs',
+                                                factura.estado_pago === 'pagado' ? 'bg-green-100 text-green-700' :
+                                                factura.estado_pago === 'pendiente' ? 'bg-yellow-100 text-yellow-700' :
+                                                'bg-blue-100 text-blue-700']">
+                                                {{ factura.estado_pago }}
+                                            </span>
+                                        </div>
+                                        <div v-if="trabajo.facturas.length > 2" class="text-xs text-gray-500 text-center">
+                                            + {{ trabajo.facturas.length - 2 }} más...
+                                        </div>
+                                    </div>
+                                    <div v-else class="text-xs text-gray-400 text-center py-2">
+                                        Sin facturas registradas
+                                    </div>
+                                </div>
+                                
                                 <div class="flex justify-between items-center">
                                     <div>
                                         <p class="text-sm text-gray-500">Precio: <span class="font-semibold text-gray-800">S/ {{ trabajo.precio_estimado }}</span></p>
@@ -2236,6 +2270,17 @@
                 async cargarTrabajos() {
                     const response = await this.api().get('/api/trabajos');
                     this.trabajos = response.data.data;
+                    
+                    // Cargar facturas para cada trabajo
+                    for (const trabajo of this.trabajos) {
+                        try {
+                            const facturasRes = await this.api().get(`/api/facturas/trabajo/${trabajo.id}`);
+                            trabajo.facturas = facturasRes.data.data || [];
+                        } catch (error) {
+                            console.error(`Error al cargar facturas del trabajo ${trabajo.id}:`, error);
+                            trabajo.facturas = [];
+                        }
+                    }
                 },
                 
                 async cargarInventario() {
@@ -2531,16 +2576,21 @@
                         // Cargar detalle completo del trabajo
                         const response = await this.api().get(`/api/trabajos/${trabajo.id}`);
                         const trabajoData = response.data.data;
-                        
+
                         // Cargar fotos por etapa
                         const fotosResponse = await this.api().get(`/api/trabajos/${trabajo.id}/fotos`);
                         const fotosData = fotosResponse.data.data;
-                        
+
+                        // Cargar facturas del trabajo
+                        const facturasResponse = await this.api().get(`/api/facturas/trabajo/${trabajo.id}`);
+                        const facturasData = facturasResponse.data.data;
+
                         this.trabajoDetalle = {
                             ...trabajoData,
-                            fotos: fotosData.fotos_por_tipo || { recepcion: [], proceso: [], final: [] }
+                            fotos: fotosData.fotos_por_tipo || { recepcion: [], proceso: [], final: [] },
+                            facturas: facturasData || []
                         };
-                        
+
                         this.modalAbierto = 'ver-trabajo';
                         this.cargando = false;
                     } catch (error) {
