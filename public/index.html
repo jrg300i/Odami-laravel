@@ -212,9 +212,11 @@
                 <div class="p-4 md:p-6">
                     <!-- Dashboard -->
                     <div v-if="vistaActual === 'dashboard'" class="space-y-6">
-                        <!-- Tarjetas de Estadísticas -->
+                        <!-- Tarjetas de Estadísticas (Clickables) -->
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
+                            <!-- Clientes Totales -->
+                            <div @click="vistaActual = 'clientes'" 
+                                class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500 hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-gray-500 text-sm">Clientes Totales</p>
@@ -225,8 +227,10 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500">
+
+                            <!-- Trabajos Pendientes -->
+                            <div @click="vistaActual = 'trabajos'" 
+                                class="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500 hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-gray-500 text-sm">Trabajos Pendientes</p>
@@ -237,7 +241,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
                                 <div class="flex items-center justify-between">
                                     <div>
@@ -249,8 +253,10 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-red-500">
+
+                            <!-- Stock Bajo -->
+                            <div @click="vistaActual = 'inventario'" 
+                                class="bg-white rounded-xl shadow-md p-6 border-l-4 border-red-500 hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-gray-500 text-sm">Stock Bajo</p>
@@ -262,42 +268,110 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Trabajos Recientes y Entregas -->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- Trabajos Recientes -->
+                            <!-- Trabajos Recientes con Buscador -->
                             <div class="bg-white rounded-xl shadow-md p-6">
-                                <h3 class="text-lg font-bold text-gray-800 mb-4">
-                                    <i class="fas fa-history text-blue-600 mr-2"></i>Trabajos Recientes
-                                </h3>
-                                <div v-if="trabajosRecientes.length === 0" class="text-gray-500 text-center py-8">
-                                    No hay trabajos recientes
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-bold text-gray-800">
+                                        <i class="fas fa-history text-blue-600 mr-2"></i>Trabajos Recientes
+                                    </h3>
+                                    <a @click.prevent="vistaActual = 'trabajos'" class="text-blue-600 hover:text-blue-800 text-sm font-semibold cursor-pointer">
+                                        Ver todos <i class="fas fa-arrow-right ml-1"></i>
+                                    </a>
                                 </div>
-                                <div v-else class="space-y-3">
-                                    <div v-for="trabajo in trabajosRecientes" :key="trabajo.id" 
-                                        class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                        <div>
-                                            <p class="font-semibold">{{ trabajo.tipo_trabajo }}</p>
-                                            <p class="text-sm text-gray-500">{{ trabajo.cliente?.nombre_completo || 'Sin cliente' }}</p>
+                                
+                                <!-- Buscador de trabajos recientes -->
+                                <div class="mb-4 space-y-2">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <!-- Buscar por cliente -->
+                                        <div class="relative">
+                                            <input v-model="busquedaTrabajoReciente.cliente"
+                                                @input="filtrarTrabajosRecientes"
+                                                type="text"
+                                                placeholder="Cliente..."
+                                                class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <i class="fas fa-user absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs"></i>
                                         </div>
-                                        <span :class="['px-3 py-1 rounded-full text-xs font-semibold', estadoClass(trabajo.estado)]">
-                                            {{ estadoTexto(trabajo.estado) }}
-                                        </span>
+                                        <!-- Buscar por cédula -->
+                                        <div class="relative">
+                                            <input v-model="busquedaTrabajoReciente.documento"
+                                                @input="filtrarTrabajosRecientes"
+                                                type="text"
+                                                placeholder="Cédula..."
+                                                class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <i class="fas fa-id-card absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs"></i>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <!-- Buscar por tipo de trabajo -->
+                                        <div class="relative">
+                                            <input v-model="busquedaTrabajoReciente.tipo"
+                                                @input="filtrarTrabajosRecientes"
+                                                type="text"
+                                                placeholder="Tipo de trabajo..."
+                                                class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <i class="fas fa-briefcase absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs"></i>
+                                        </div>
+                                        <!-- Buscar por fecha -->
+                                        <div class="relative">
+                                            <input v-model="busquedaTrabajoReciente.fecha"
+                                                @input="filtrarTrabajosRecientes"
+                                                type="date"
+                                                class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <i class="fas fa-calendar absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div v-if="trabajosRecientesFiltrados.length === 0" class="text-gray-500 text-center py-8">
+                                    <i class="fas fa-search text-3xl text-gray-300 mb-2"></i>
+                                    <p>No hay trabajos que coincidan con la búsqueda</p>
+                                </div>
+                                <div v-else class="space-y-3 max-h-64 overflow-y-auto">
+                                    <div v-for="trabajo in trabajosRecientesFiltrados" :key="trabajo.id"
+                                        @click="verTrabajo(trabajo)"
+                                        class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-blue-50 hover:shadow transition cursor-pointer">
+                                        <div class="flex-1">
+                                            <p class="font-semibold text-gray-800 hover:text-blue-700">{{ trabajo.tipo_trabajo }}</p>
+                                            <p class="text-sm text-gray-500">
+                                                <i class="fas fa-user mr-1"></i>{{ trabajo.cliente?.nombre_completo || 'Sin cliente' }}
+                                            </p>
+                                            <p class="text-xs text-gray-400 mt-1">
+                                                <i class="fas fa-id-card mr-1"></i>{{ trabajo.cliente?.documento || 'N/A' }}
+                                            </p>
+                                        </div>
+                                        <div class="text-right">
+                                            <span :class="['px-3 py-1 rounded-full text-xs font-semibold', estadoClass(trabajo.estado)]">
+                                                {{ estadoTexto(trabajo.estado) }}
+                                            </span>
+                                            <p class="text-xs text-gray-400 mt-1">
+                                                <i class="fas fa-calendar"></i> {{ formatearFechaCorta(trabajo.fecha_ingreso) }}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Entregas de Hoy -->
                             <div class="bg-white rounded-xl shadow-md p-6">
-                                <h3 class="text-lg font-bold text-gray-800 mb-4">
-                                    <i class="fas fa-calendar-day text-green-600 mr-2"></i>Entregas de Hoy
-                                </h3>
-                                <div v-if="entregasHoy.length === 0" class="text-gray-500 text-center py-8">
-                                    No hay entregas programadas
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-bold text-gray-800">
+                                        <i class="fas fa-calendar-day text-green-600 mr-2"></i>Entregas de Hoy
+                                    </h3>
+                                    <a @click.prevent="vistaActual = 'trabajos'" class="text-green-600 hover:text-green-800 text-sm font-semibold cursor-pointer">
+                                        Ver calendario <i class="fas fa-arrow-right ml-1"></i>
+                                    </a>
                                 </div>
-                                <div v-else class="space-y-3">
-                                    <div v-for="entrega in entregasHoy" :key="entrega.id" 
-                                        class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div v-if="entregasHoy.length === 0" class="text-gray-500 text-center py-8">
+                                    <i class="fas fa-calendar-check text-3xl text-gray-300 mb-2"></i>
+                                    <p>No hay entregas programadas para hoy</p>
+                                </div>
+                                <div v-else class="space-y-3 max-h-64 overflow-y-auto">
+                                    <div v-for="entrega in entregasHoy" :key="entrega.id"
+                                        @click="verTrabajo(entrega.trabajo)"
+                                        class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-green-50 hover:shadow transition cursor-pointer">
                                         <div>
                                             <p class="font-semibold">{{ entrega.trabajo?.tipo_trabajo }}</p>
                                             <p class="text-sm text-gray-500">{{ entrega.trabajo?.cliente?.nombre_completo }}</p>
@@ -1715,12 +1789,19 @@
                     entregasHoy: [],
                     trabajosRecientes: [],
                     stockCritico: [],
-                    
+
                     // Filtros y búsquedas
                     busquedaCliente: {
                         nombre: '',
                         documento: '',
                         telefono: ''
+                    },
+                    // Búsqueda de trabajos recientes en dashboard
+                    busquedaTrabajoReciente: {
+                        cliente: '',
+                        documento: '',
+                        tipo: '',
+                        fecha: ''
                     },
                     filtroEstado: '',
                     filtroCategoria: '',
@@ -1829,7 +1910,41 @@
                     if (!this.filtroEstado) return this.trabajos;
                     return this.trabajos.filter(t => t.estado === this.filtroEstado);
                 },
-                
+
+                trabajosRecientesFiltrados() {
+                    const busqueda = this.busquedaTrabajoReciente;
+                    
+                    // Si no hay filtros, retornar todos los trabajos recientes
+                    if (!busqueda.cliente && !busqueda.documento && 
+                        !busqueda.tipo && !busqueda.fecha) {
+                        return this.trabajosRecientes;
+                    }
+
+                    return this.trabajosRecientes.filter(trabajo => {
+                        // Filtro por cliente (nombre o apellido)
+                        const clienteMatch = !busqueda.cliente || 
+                            (trabajo.cliente?.nombre_completo && 
+                             trabajo.cliente.nombre_completo.toLowerCase().includes(busqueda.cliente.toLowerCase()));
+                        
+                        // Filtro por cédula
+                        const documentoMatch = !busqueda.documento || 
+                            (trabajo.cliente?.documento && 
+                             trabajo.cliente.documento.includes(busqueda.documento));
+                        
+                        // Filtro por tipo de trabajo
+                        const tipoMatch = !busqueda.tipo || 
+                            (trabajo.tipo_trabajo && 
+                             trabajo.tipo_trabajo.toLowerCase().includes(busqueda.tipo.toLowerCase()));
+                        
+                        // Filtro por fecha
+                        const fechaMatch = !busqueda.fecha || 
+                            (trabajo.fecha_ingreso && 
+                             trabajo.fecha_ingreso.startsWith(busqueda.fecha));
+                        
+                        return clienteMatch && documentoMatch && tipoMatch && fechaMatch;
+                    });
+                },
+
                 inventarioFiltrado() {
                     if (!this.filtroCategoria) return this.inventario;
                     return this.inventario.filter(i => i.categoria === this.filtroCategoria);
@@ -2040,7 +2155,12 @@
                     };
                     this.cargarClientes();
                 },
-                
+
+                filtrarTrabajosRecientes() {
+                    // La filtración se hace automáticamente vía computed property
+                    console.log('Filtrando trabajos recientes:', this.busquedaTrabajoReciente);
+                },
+
                 async cargarTrabajos() {
                     const response = await this.api().get('/api/trabajos');
                     this.trabajos = response.data.data;
