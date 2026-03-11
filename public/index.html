@@ -1266,9 +1266,33 @@
                         <label class="block text-sm font-semibold mb-1">
                             <i class="fas fa-sticky-note mr-1"></i> Observaciones
                         </label>
-                        <textarea v-model="facturaForm.observaciones" rows="2" 
+                        <textarea v-model="facturaForm.observaciones" rows="2"
                             placeholder="Observaciones adicionales..."
                             class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+
+                    <!-- Condiciones -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">
+                            <i class="fas fa-list-check mr-1"></i> Condiciones del Trabajo
+                        </label>
+                        <div class="border rounded-lg max-h-48 overflow-y-auto p-2 space-y-2">
+                            <div v-for="cond in condiciones" :key="cond.id" class="flex items-start">
+                                <input type="checkbox" :id="'cond-' + cond.id" :value="cond.id"
+                                    v-model="facturaForm.condiciones_ids"
+                                    class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                                <label :for="'cond-' + cond.id" class="ml-2 text-sm cursor-pointer">
+                                    <span class="font-semibold text-gray-800">{{ cond.titulo }}</span>
+                                    <p class="text-xs text-gray-600">{{ cond.descripcion }}</p>
+                                </label>
+                            </div>
+                            <div v-if="condiciones.length === 0" class="text-sm text-gray-500 text-center py-2">
+                                No hay condiciones disponibles
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">
+                            Seleccionadas: {{ facturaForm.condiciones_ids.length }}
+                        </p>
                     </div>
 
                     <div class="flex space-x-3 pt-4">
@@ -1411,16 +1435,29 @@
                     inventarioForm: { nombre: '', categoria: 'telas', stock_actual: 0, stock_minimo: 5, precio_unitario: 0, proveedor: '' },
 
                     editingFactura: null,
-                    facturaForm: { 
+                    facturaForm: {
                         numero_factura: '',
                         tipo: 'original',
-                        trabajo_id: '', 
-                        subtotal: 0, 
-                        igv: 0, 
-                        total: 0, 
+                        trabajo_id: '',
+                        // Datos editables del cliente
+                        cliente_nombre: '',
+                        cliente_apellido: '',
+                        cliente_documento: '',
+                        cliente_direccion: '',
+                        cliente_telefono: '',
+                        cliente_email: '',
+                        // Montos
+                        subtotal: 0,
+                        igv: 0,
+                        total: 0,
                         estado_pago: 'pendiente',
-                        observaciones: ''
+                        observaciones: '',
+                        // Condiciones seleccionadas
+                        condiciones_ids: []
                     },
+
+                    // Condiciones disponibles
+                    condiciones: [],
 
                     itemMovimiento: null,
                     movimientoForm: { item_id: '', tipo_movimiento: 'entrada', cantidad: 0, motivo: '' },
@@ -1527,6 +1564,9 @@
                     await this.cargarDatos();
                     await this.cargarNotificaciones();
                 }
+
+                // Cargar condiciones disponibles
+                await this.cargarCondiciones();
 
                 // Cerrar menú usuario al hacer clic fuera
                 document.addEventListener('click', (e) => {
@@ -2223,11 +2263,12 @@
 
                 editarFactura(factura) {
                     this.editingFactura = factura.id;
-                    this.facturaForm = { 
+                    this.facturaForm = {
                         ...factura,
                         numero_factura: factura.numero_factura,
                         tipo: factura.tipo || 'original',
-                        observaciones: factura.observaciones || ''
+                        observaciones: factura.observaciones || '',
+                        condiciones_ids: factura.condiciones?.map(c => c.id) || []
                     };
                     this.abrirModal('factura');
                 },
@@ -2243,23 +2284,40 @@
                     }
                 },
 
+                // Condiciones
+                async cargarCondiciones() {
+                    try {
+                        const response = await this.api().get('/api/condiciones');
+                        this.condiciones = response.data.data;
+                    } catch (error) {
+                        console.error('Error cargando condiciones:', error);
+                    }
+                },
+
                 async guardarFactura() {
                     try {
                         if (this.editingFactura) {
-                            await this.api().put(`/api/facturas/${this.editingFactura}`, this.facturaForm);
+                            await this.api().put(`/api/facturas/${this.editingFactura}`, {
+                                ...this.facturaForm,
+                                condiciones: this.facturaForm.condiciones_ids
+                            });
                             this.showToast('Factura actualizada', 'success');
                         } else {
                             // Obtener siguiente número si no está definido
                             if (!this.facturaForm.numero_factura) {
                                 this.facturaForm.numero_factura = await this.obtenerSiguienteNumeroFactura();
                             }
-                            await this.api().post('/api/facturas', this.facturaForm);
+                            await this.api().post('/api/facturas', {
+                                ...this.facturaForm,
+                                condiciones: this.facturaForm.condiciones_ids
+                            });
                             this.showToast('Factura creada', 'success');
                         }
                         this.cerrarModal();
                         await this.cargarFacturas();
                     } catch (error) {
-                        this.showToast('Error al guardar', 'error');
+                        console.error('Error al guardar factura:', error);
+                        this.showToast('Error al guardar: ' + (error.response?.data?.message || error.message), 'error');
                     }
                 },
 
