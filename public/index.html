@@ -678,7 +678,14 @@
                                         <h4 class="text-xs font-semibold text-gray-700">
                                             <i class="fas fa-file-invoice text-blue-600 mr-1"></i>Facturas
                                         </h4>
-                                        <span class="text-xs text-gray-500">{{ trabajo.facturas?.length || 0 }} documento(s)</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-gray-500">{{ trabajo.facturas?.length || 0 }} documento(s)</span>
+                                            <button @click="cargarFacturasDeTrabajo(trabajo)" 
+                                                v-if="!trabajo.facturasCargadas"
+                                                class="text-blue-600 hover:text-blue-800" title="Cargar facturas">
+                                                <i class="fas fa-sync"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div v-if="trabajo.facturas && trabajo.facturas.length > 0" class="space-y-2">
                                         <div v-for="factura in trabajo.facturas.slice(0, 3)" :key="factura.id"
@@ -701,9 +708,12 @@
                                             <i class="fas fa-eye mr-1"></i>Ver {{ trabajo.facturas.length - 3 }} más...
                                         </div>
                                     </div>
-                                    <div v-else class="text-xs text-gray-400 text-center py-3">
+                                    <div v-else-if="trabajo.facturasCargadas" class="text-xs text-gray-400 text-center py-3">
                                         <i class="fas fa-file-invoice text-2xl mb-2"></i>
                                         <p>Sin facturas registradas</p>
+                                    </div>
+                                    <div v-else class="text-xs text-gray-400 text-center py-3">
+                                        <p>Click en <i class="fas fa-sync"></i> para cargar</p>
                                     </div>
                                 </div>
                                 
@@ -713,7 +723,14 @@
                                         <h4 class="text-xs font-semibold text-gray-700">
                                             <i class="fas fa-boxes text-green-600 mr-1"></i>Materiales Usados
                                         </h4>
-                                        <span class="text-xs text-gray-500">{{ trabajo.materiales?.length || 0 }} item(s)</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-gray-500">{{ trabajo.materiales?.length || 0 }} item(s)</span>
+                                            <button @click="cargarMaterialesDeTrabajo(trabajo)" 
+                                                v-if="!trabajo.materialesCargados"
+                                                class="text-green-600 hover:text-green-800" title="Cargar materiales">
+                                                <i class="fas fa-sync"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div v-if="trabajo.materiales && trabajo.materiales.length > 0" class="space-y-1">
                                         <div v-for="material in trabajo.materiales.slice(0, 3)" :key="material.id"
@@ -723,7 +740,7 @@
                                                 <span class="font-medium text-gray-700 truncate">{{ material.nombre }}</span>
                                             </div>
                                             <span class="text-gray-600 font-medium ml-2 whitespace-nowrap">
-                                                {{ material.pivot?.cantidad_usada || material.cantidad_usada || 'N/A' }} {{ material.unidad }}
+                                                {{ material.cantidad_usada || 'N/A' }} {{ material.unidad }}
                                             </span>
                                         </div>
                                         <div v-if="trabajo.materiales.length > 3" 
@@ -732,9 +749,12 @@
                                             <i class="fas fa-eye mr-1"></i>Ver {{ trabajo.materiales.length - 3 }} más...
                                         </div>
                                     </div>
-                                    <div v-else class="text-xs text-gray-400 text-center py-3">
+                                    <div v-else-if="trabajo.materialesCargados" class="text-xs text-gray-400 text-center py-3">
                                         <i class="fas fa-boxes text-2xl mb-2"></i>
                                         <p>Sin materiales registrados</p>
+                                    </div>
+                                    <div v-else class="text-xs text-gray-400 text-center py-3">
+                                        <p>Click en <i class="fas fa-sync"></i> para cargar</p>
                                     </div>
                                 </div>
                                 
@@ -2359,24 +2379,41 @@
                 },
 
                 async cargarTrabajos() {
-                    const response = await this.api().get('/api/trabajos');
-                    this.trabajos = response.data.data;
-                    
-                    // Cargar facturas y materiales para cada trabajo
-                    for (const trabajo of this.trabajos) {
-                        try {
-                            // Cargar facturas
-                            const facturasRes = await this.api().get(`/api/facturas/trabajo/${trabajo.id}`);
-                            trabajo.facturas = facturasRes.data.data || [];
-                            
-                            // Cargar materiales usados
-                            const materialesRes = await this.api().get(`/api/trabajos/${trabajo.id}/materiales`);
-                            trabajo.materiales = materialesRes.data.data || [];
-                        } catch (error) {
-                            console.error(`Error al cargar datos del trabajo ${trabajo.id}:`, error);
-                            trabajo.facturas = [];
-                            trabajo.materiales = [];
-                        }
+                    try {
+                        const response = await this.api().get('/api/trabajos');
+                        this.trabajos = response.data.data.map(trabajo => ({
+                            ...trabajo,
+                            facturas: [],
+                            facturasCargadas: false,
+                            materiales: [],
+                            materialesCargados: false
+                        }));
+                    } catch (error) {
+                        console.error('Error al cargar trabajos:', error);
+                        this.trabajos = [];
+                        this.showToast('Error al cargar trabajos. Intente recargar la página.', 'error');
+                    }
+                },
+                
+                async cargarFacturasDeTrabajo(trabajo) {
+                    try {
+                        const facturasRes = await this.api().get(`/api/facturas/trabajo/${trabajo.id}`);
+                        trabajo.facturas = facturasRes.data.data || [];
+                        trabajo.facturasCargadas = true;
+                    } catch (error) {
+                        console.error(`Error al cargar facturas del trabajo ${trabajo.id}:`, error);
+                        this.showToast('Error al cargar facturas', 'error');
+                    }
+                },
+                
+                async cargarMaterialesDeTrabajo(trabajo) {
+                    try {
+                        const materialesRes = await this.api().get(`/api/trabajos/${trabajo.id}/materiales`);
+                        trabajo.materiales = materialesRes.data.data || [];
+                        trabajo.materialesCargados = true;
+                    } catch (error) {
+                        console.error(`Error al cargar materiales del trabajo ${trabajo.id}:`, error);
+                        this.showToast('Error al cargar materiales', 'error');
                     }
                 },
                 
@@ -2410,10 +2447,15 @@
                 // Notificaciones
                 async cargarNotificaciones() {
                     try {
-                        const response = await this.api().get('/notificaciones?no_leidas=true');
-                        this.notificaciones = response.data.data;
+                        const response = await this.api().get('/notificaciones');
+                        this.notificaciones = response.data.data || [];
                     } catch (error) {
                         console.error('Error cargando notificaciones:', error);
+                        this.notificaciones = [];
+                        // No mostrar error si es 404 - el endpoint puede no estar implementado
+                        if (error.response?.status !== 404) {
+                            this.showToast('Error al cargar notificaciones', 'error');
+                        }
                     }
                 },
 
