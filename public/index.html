@@ -2207,7 +2207,7 @@
             async mounted() {
                 if (this.token) {
                     await this.cargarDatos();
-                    await this.cargarNotificaciones();
+                    // await this.cargarNotificaciones(); // Comentado - endpoint no implementado
                 }
 
                 // Cargar condiciones disponibles
