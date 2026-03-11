@@ -12,8 +12,7 @@ Route::middleware('throttle:login')->group(function () {
 });
 
 // Protected routes
-// Autenticación con Sanctum para tokens API
-Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
+Route::middleware(['sanctum', 'throttle:api'])->group(function () {
     // Auth
     Route::post('/auth/logout', [App\Http\Controllers\Api\AuthController::class, 'logout']);
     Route::get('/auth/me', [App\Http\Controllers\Api\AuthController::class, 'me']);
