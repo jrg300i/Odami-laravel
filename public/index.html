@@ -2481,7 +2481,7 @@
                 editarTrabajo(trabajo) {
                     this.editingTrabajo = trabajo.id;
                     this.trabajoForm = {
-                        cliente_id: trabajo.cliente_id || '',
+                        cliente_id: trabajo.cliente_id || trabajo.cliente?.id || '',
                         tipo_trabajo: trabajo.tipo_trabajo || '',
                         descripcion: trabajo.descripcion || '',
                         estado: trabajo.estado || 'pendiente',
@@ -2492,6 +2492,7 @@
                         notas: trabajo.notas || ''
                     };
                     console.log('Editando trabajo:', this.trabajoForm);
+                    console.log('Trabajo original:', trabajo);
                     this.abrirModal('trabajo');
                 },
 
