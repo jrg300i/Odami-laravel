@@ -1582,7 +1582,7 @@
 
         <!-- Modal Ver Cliente (Trabajos y Facturas) -->
         <div v-if="modalAbierto === 'ver-cliente'" @click.self.stop="cerrarModal()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl my-8">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl my-8">
                 <div class="p-6 border-b flex justify-between items-center">
                     <div>
                         <h3 class="text-xl font-bold">Detalle del Cliente</h3>
@@ -1836,7 +1836,7 @@
 
         <!-- Modal Ver Foto en Grande -->
         <div v-if="modalAbierto === 'ver-foto'" @click.self.stop="cerrarModal()" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
-            <div class="relative max-w-4xl max-h-screen overflow-y-auto">
+            <div class="relative max-w-5xl max-h-[85vh] overflow-hidden">
                 <button @click="cerrarModal" class="absolute top-4 right-4 text-white text-4xl hover:text-gray-300 z-10">&times;</button>
                 <img :src="fotoEnGrande" class="max-w-full max-h-[90vh] object-contain rounded-lg">
             </div>
@@ -2417,6 +2417,13 @@
             methods: {
                 toggleMenuUsuario() {
                     this.mostrarMenuUsuario = !this.mostrarMenuUsuario;
+                },
+                
+                // Asegurar que el menú esté cerrado al cargar
+                beforeMount() {
+                    this.mostrarMenuUsuario = false;
+                    this.modalAbierto = null;
+                    this.mostrarNotificaciones = false;
                 },
                 // API Helper
                 api() {
