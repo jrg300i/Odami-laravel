@@ -1366,9 +1366,30 @@
                         <label class="block text-sm font-semibold mb-1">
                             <i class="fas fa-sticky-note mr-1"></i> Notas
                         </label>
-                        <textarea v-model="trabajoForm.notas" rows="2" 
-                            placeholder="Ej: Entregar en 1 semana, Cliente prefiere color oscuro..." 
+                        <textarea v-model="trabajoForm.notas" rows="2"
+                            placeholder="Ej: Entregar en 1 semana, Cliente prefiere color oscuro..."
                             class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+
+                    <!-- Fotos del Trabajo -->
+                    <div v-if="trabajoForm.fotos && trabajoForm.fotos.length > 0">
+                        <label class="block text-sm font-semibold mb-2">
+                            <i class="fas fa-camera mr-1"></i> Fotos del Trabajo ({{ trabajoForm.fotos.length }})
+                        </label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <div v-for="foto in trabajoForm.fotos" :key="foto.id"
+                                class="relative group cursor-pointer"
+                                @click="verFotoEnGrande(foto.foto_base64 || foto.foto_url)">
+                                <div class="aspect-square rounded-lg overflow-hidden border-2 border-gray-200 group-hover:border-blue-500 transition">
+                                    <img :src="foto.foto_base64 || foto.foto_url"
+                                        class="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                                        alt="Foto del trabajo">
+                                </div>
+                                <div class="absolute bottom-1 right-1 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                                    {{ foto.tipo }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="flex space-x-3 pt-4">
@@ -2906,24 +2927,40 @@
                 },
                 
                 // Trabajos
-                editarTrabajo(trabajo) {
-                    this.editingTrabajo = trabajo.id;
-                    this.trabajoForm = {
-                        cliente_id: trabajo.cliente_id || trabajo.cliente?.id || '',
-                        tipo_trabajo: trabajo.tipo_trabajo || '',
-                        descripcion: trabajo.descripcion || '',
-                        estado: trabajo.estado || 'pendiente',
-                        precio_estimado: trabajo.precio_estimado || 0,
-                        anticipo: trabajo.anticipo || 0,
-                        fecha_recibido: trabajo.fecha_recibido ? this.formatearFechaInput(trabajo.fecha_recibido) : '',
-                        fecha_entrega: trabajo.fecha_entrega ? this.formatearFechaInput(trabajo.fecha_entrega) : '',
-                        notas: trabajo.notas || ''
-                    };
-                    console.log('Editando trabajo ID:', this.editingTrabajo);
-                    console.log('Trabajo form:', this.trabajoForm);
-                    console.log('Trabajo original:', trabajo);
-                    console.log('Es edición:', !!this.editingTrabajo);
-                    this.abrirModal('trabajo');
+                async editarTrabajo(trabajo) {
+                    try {
+                        this.editingTrabajo = trabajo.id;
+                        
+                        // Cargar fotos del trabajo
+                        let fotos = [];
+                        try {
+                            const fotosRes = await this.api().get(`/api/trabajos/${trabajo.id}/fotos`);
+                            fotos = fotosRes.data.data?.fotos || [];
+                        } catch (error) {
+                            console.error('Error al cargar fotos:', error);
+                        }
+                        
+                        this.trabajoForm = {
+                            cliente_id: trabajo.cliente_id || trabajo.cliente?.id || '',
+                            tipo_trabajo: trabajo.tipo_trabajo || '',
+                            descripcion: trabajo.descripcion || '',
+                            estado: trabajo.estado || 'pendiente',
+                            precio_estimado: trabajo.precio_estimado || 0,
+                            anticipo: trabajo.anticipo || 0,
+                            fecha_recibido: trabajo.fecha_recibido ? this.formatearFechaInput(trabajo.fecha_recibido) : '',
+                            fecha_entrega: trabajo.fecha_entrega ? this.formatearFechaInput(trabajo.fecha_entrega) : '',
+                            notas: trabajo.notas || '',
+                            fotos: fotos
+                        };
+                        
+                        console.log('Editando trabajo ID:', this.editingTrabajo);
+                        console.log('Trabajo form:', this.trabajoForm);
+                        console.log('Es edición:', !!this.editingTrabajo);
+                        this.abrirModal('trabajo');
+                    } catch (error) {
+                        console.error('Error al cargar trabajo para editar:', error);
+                        this.showToast('Error al cargar trabajo', 'error');
+                    }
                 },
 
                 formatearFechaInput(fecha) {
