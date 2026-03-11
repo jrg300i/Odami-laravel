@@ -593,12 +593,20 @@
                                         <td class="px-4 py-3 text-center">S/ {{ item.precio_unitario }}</td>
                                         <td class="px-4 py-3 text-center">{{ item.proveedor || '-' }}</td>
                                         <td class="px-4 py-3 text-center">
-                                            <button @click="editarInventario(item)" class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 mr-1">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button @click="registrarMovimiento(item)" class="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
-                                                <i class="fas fa-exchange-alt"></i>
-                                            </button>
+                                            <div class="flex justify-center space-x-1">
+                                                <button @click="verInventario(item)" class="p-2 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200" title="Ver">
+                                                    <i class="fas fa-eye text-sm"></i>
+                                                </button>
+                                                <button @click="editarInventario(item)" class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200" title="Editar">
+                                                    <i class="fas fa-edit text-sm"></i>
+                                                </button>
+                                                <button @click="registrarMovimiento(item)" class="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200" title="Movimiento">
+                                                    <i class="fas fa-exchange-alt text-sm"></i>
+                                                </button>
+                                                <button @click="eliminarInventario(item.id)" class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200" title="Eliminar">
+                                                    <i class="fas fa-trash text-sm"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -1216,6 +1224,95 @@
             </div>
         </div>
 
+        <!-- Modal Ver Inventario -->
+        <div v-if="modalAbierto === 'ver-inventario'" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl">
+                <div class="p-6 border-b flex justify-between items-center">
+                    <h3 class="text-xl font-bold">Detalle del Item</h3>
+                    <button @click="cerrarModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div class="p-6 max-h-[70vh] overflow-y-auto">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-4 mb-6 text-white">
+                        <h2 class="text-2xl font-bold">{{ inventarioDetalle?.nombre }}</h2>
+                        <p class="text-blue-100">{{ inventarioDetalle?.categoria }}</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-gray-500 text-xs">Stock Actual</p>
+                            <p class="text-2xl font-bold" :class="inventarioDetalle?.stock_actual <= inventarioDetalle?.stock_minimo ? 'text-red-600' : 'text-green-600'">
+                                {{ inventarioDetalle?.stock_actual }} {{ inventarioDetalle?.unidad }}
+                            </p>
+                            <p class="text-xs text-gray-500 mt-1">Mínimo: {{ inventarioDetalle?.stock_minimo }} {{ inventarioDetalle?.unidad }}</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-gray-500 text-xs">Precio Unitario</p>
+                            <p class="text-2xl font-bold text-gray-800">S/ {{ inventarioDetalle?.precio_unitario }}</p>
+                            <p class="text-xs text-gray-500 mt-1">Valor total: S/ {{ (inventarioDetalle?.stock_actual * inventarioDetalle?.precio_unitario) || 0 }}</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between py-2 border-b">
+                            <span class="text-gray-600">Proveedor:</span>
+                            <span class="font-semibold">{{ inventarioDetalle?.proveedor || 'N/A' }}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b">
+                            <span class="text-gray-600">Contacto:</span>
+                            <span class="font-semibold">{{ inventarioDetalle?.contacto_proveedor || 'N/A' }}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b">
+                            <span class="text-gray-600">Ubicación:</span>
+                            <span class="font-semibold">{{ inventarioDetalle?.ubicacion || 'N/A' }}</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b">
+                            <span class="text-gray-600">Stock Máximo:</span>
+                            <span class="font-semibold">{{ inventarioDetalle?.stock_maximo || 'N/A' }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Movimientos -->
+                    <div>
+                        <h4 class="font-bold text-lg mb-3 flex items-center">
+                            <i class="fas fa-exchange-alt mr-2 text-blue-600"></i>Movimientos ({{ inventarioDetalle?.movimientos?.length || 0 }})
+                        </h4>
+                        <div v-if="!inventarioDetalle?.movimientos || inventarioDetalle.movimientos.length === 0" class="text-gray-500 text-center py-8 bg-gray-50 rounded-lg">
+                            No hay movimientos registrados
+                        </div>
+                        <div v-else class="space-y-2 max-h-48 overflow-y-auto">
+                            <div v-for="mov in inventarioDetalle.movimientos" :key="mov.id"
+                                class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div>
+                                    <span :class="mov.tipo_movimiento === 'entrada' ? 'bg-green-100 text-green-700' :
+                                        mov.tipo_movimiento === 'salida' ? 'bg-red-100 text-red-700' :
+                                        'bg-blue-100 text-blue-700'"
+                                        class="px-2 py-1 rounded text-xs font-semibold">
+                                        {{ mov.tipo_movimiento }}
+                                    </span>
+                                    <span class="ml-2 font-bold">{{ mov.cantidad }} {{ inventarioDetalle?.unidad }}</span>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs text-gray-500">{{ formatearFechaCorta(mov.fecha_movimiento) }}</p>
+                                    <p class="text-xs text-gray-400">{{ mov.motivo }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 border-t flex space-x-3">
+                    <button @click="editarInventario(inventarioDetalle)" class="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                        <i class="fas fa-edit mr-1"></i> Editar
+                    </button>
+                    <button @click="registrarMovimiento(inventarioDetalle)" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        <i class="fas fa-exchange-alt mr-1"></i> Movimiento
+                    </button>
+                    <button @click="cerrarModal" class="flex-1 bg-gray-200 py-2 rounded-lg hover:bg-gray-300">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal Cámara -->
         <div v-if="modalAbierto === 'camara'" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
@@ -1658,6 +1755,7 @@
                     // Nuevas variables para fotos y detalle de trabajo
                     trabajoDetalle: null,
                     clienteDetalle: null,
+                    inventarioDetalle: null,
                     fotoTipoSeleccionado: 'recepcion',
                     fotoCapturada: null,
                     fotoEnGrande: null,
@@ -2056,6 +2154,7 @@
                     this.fotoCapturada = null;
                     this.trabajoDetalle = null;
                     this.clienteDetalle = null;
+                    this.inventarioDetalle = null;
                 },
                 
                 resetearFormularios() {
@@ -2345,12 +2444,29 @@
                 },
                 
                 // Inventario
+                async verInventario(item) {
+                    try {
+                        const response = await this.api().get(`/api/inventario/${item.id}`);
+                        this.inventarioDetalle = response.data.data;
+                        this.modalAbierto = 'ver-inventario';
+                    } catch (error) {
+                        console.error('Error al ver inventario:', error);
+                        this.showToast('Error al cargar el item', 'error');
+                    }
+                },
+
                 editarInventario(item) {
                     this.editingInventario = item.id;
-                    this.inventarioForm = { ...item };
+                    this.inventarioForm = { 
+                        ...item,
+                        stock_maximo: item.stock_maximo || null,
+                        proveedor: item.proveedor || '',
+                        contacto_proveedor: item.contacto_proveedor || '',
+                        ubicacion: item.ubicacion || ''
+                    };
                     this.abrirModal('inventario');
                 },
-                
+
                 async guardarInventario() {
                     try {
                         if (this.editingInventario) {
@@ -2363,10 +2479,26 @@
                         this.cerrarModal();
                         await this.cargarInventario();
                     } catch (error) {
-                        this.showToast('Error al guardar', 'error');
+                        this.showToast('Error al guardar: ' + (error.response?.data?.message || error.message), 'error');
                     }
                 },
-                
+
+                async eliminarInventario(id) {
+                    if (!confirm('¿Eliminar este item del inventario? Esta acción no se puede deshacer.')) return;
+                    try {
+                        await this.api().delete(`/api/inventario/${id}`);
+                        this.showToast('Item eliminado', 'success');
+                        await this.cargarInventario();
+                    } catch (error) {
+                        if (error.response?.status === 401) {
+                            this.showToast('Sesión expirada. Vuelva a iniciar sesión', 'error');
+                            this.logout();
+                        } else {
+                            this.showToast('Error al eliminar: ' + (error.response?.data?.message || error.message), 'error');
+                        }
+                    }
+                },
+
                 registrarMovimiento(item) {
                     this.itemMovimiento = item;
                     this.movimientoForm = { item_id: item.id, tipo_movimiento: 'entrada', cantidad: 0, motivo: '' };
