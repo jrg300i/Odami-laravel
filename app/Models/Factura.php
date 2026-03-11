@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Factura extends Model
 {
@@ -103,6 +104,13 @@ class Factura extends Model
     public function emisor(): BelongsTo
     {
         return $this->belongsTo(Usuario::class, 'emitida_por');
+    }
+
+    public function condiciones(): BelongsToMany
+    {
+        return $this->belongsToMany(CondicionTrabajo::class, 'condicion_factura')
+            ->withPivot('orden')
+            ->orderByPivot('orden');
     }
 
     /**

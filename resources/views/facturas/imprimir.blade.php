@@ -531,6 +531,20 @@
         </div>
         @endif
 
+        <!-- Condiciones -->
+        @if($factura->condiciones && $factura->condiciones->count() > 0)
+        <div class="condiciones" style="border: 1px solid #e5e7eb; padding: 10px; border-radius: 4px; margin-bottom: 15px; background: #f9fafb;">
+            <h3 style="font-size: 11px; margin-bottom: 8px; color: #1f2937; font-weight: bold; border-bottom: 2px solid #3b82f6; padding-bottom: 4px;">📋 Condiciones del Trabajo</h3>
+            <ol style="margin: 0; padding-left: 20px; font-size: 10px; color: #374151;">
+                @foreach($factura->condiciones as $index => $condicion)
+                <li style="margin-bottom: 6px;">
+                    <strong>{{ $condicion->titulo }}</strong>: {{ $condicion->descripcion }}
+                </li>
+                @endforeach
+            </ol>
+        </div>
+        @endif
+
         <!-- Firmas y Sello -->
         <div class="firmas-section">
             <div class="firma-box">

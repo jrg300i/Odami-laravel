@@ -91,6 +91,13 @@ Route::middleware(['sanctum', 'throttle:api'])->group(function () {
     Route::post('/notificaciones/todas-leidas', [App\Http\Controllers\Api\NotificacionController::class, 'marcarTodasLeidas']);
     Route::delete('/notificaciones/{id}', [App\Http\Controllers\Api\NotificacionController::class, 'destroy']);
 
+    // Condiciones de Trabajo
+    Route::get('/condiciones', [App\Http\Controllers\Api\CondicionController::class, 'index']);
+    Route::get('/condiciones/all', [App\Http\Controllers\Api\CondicionController::class, 'all']);
+    Route::post('/condiciones', [App\Http\Controllers\Api\CondicionController::class, 'store']);
+    Route::put('/condiciones/{id}', [App\Http\Controllers\Api\CondicionController::class, 'update']);
+    Route::delete('/condiciones/{id}', [App\Http\Controllers\Api\CondicionController::class, 'destroy']);
+
     // Configuración
     Route::get('/configuracion', [App\Http\Controllers\Api\ConfiguracionController::class, 'index']);
     Route::get('/configuracion/{clave}', [App\Http\Controllers\Api\ConfiguracionController::class, 'show']);

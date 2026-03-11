@@ -15,7 +15,7 @@ class FacturaController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Factura::with(['trabajo.cliente', 'emisor']);
+        $query = Factura::with(['trabajo.cliente', 'emisor', 'condiciones']);
 
         // Búsqueda por nombre de cliente
         if ($request->has('cliente')) {
@@ -80,6 +80,7 @@ class FacturaController extends Controller
                     'metodo_pago' => $factura->metodo_pago,
                     'observaciones' => $factura->observaciones,
                     'trabajo_detalle' => $factura->trabajo,
+                    'condiciones' => $factura->condiciones,
                 ];
             })
         ]);
@@ -90,7 +91,7 @@ class FacturaController extends Controller
      */
     public function show($id): JsonResponse
     {
-        $factura = Factura::with(['trabajo.cliente', 'emisor'])->findOrFail($id);
+        $factura = Factura::with(['trabajo.cliente', 'emisor', 'condiciones'])->findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -111,6 +112,7 @@ class FacturaController extends Controller
                 'metodo_pago' => $factura->metodo_pago,
                 'observaciones' => $factura->observaciones,
                 'trabajo_detalle' => $factura->trabajo,
+                'condiciones' => $factura->condiciones,
             ]
         ]);
     }
@@ -154,6 +156,9 @@ class FacturaController extends Controller
             'firma_base64' => 'nullable|string',
             'sello_base64' => 'nullable|string',
             'notas_legales' => 'nullable|string',
+            // Condiciones
+            'condiciones' => 'nullable|array',
+            'condiciones.*' => 'exists:condiciones_trabajo,id',
         ]);
 
         $validated['tipo'] = $validated['tipo'] ?? 'original';
@@ -184,12 +189,23 @@ class FacturaController extends Controller
             }
         }
 
+        $condiciones = $validated['condiciones'] ?? [];
+        unset($validated['condiciones']);
+
         $factura = Factura::create($validated);
+
+        // Sincronizar condiciones
+        if (!empty($condiciones)) {
+            $factura->condiciones()->syncWithPivotValues(
+                $condiciones,
+                ['orden' => \DB::raw('ROW_NUMBER() OVER (ORDER BY id)')]
+            );
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Factura creada exitosamente',
-            'data' => $factura
+            'data' => $factura->load('condiciones')
         ], 201);
     }
 
@@ -233,18 +249,27 @@ class FacturaController extends Controller
             'firma_base64' => 'nullable|string',
             'sello_base64' => 'nullable|string',
             'notas_legales' => 'nullable|string',
+            // Condiciones
+            'condiciones' => 'nullable|array',
+            'condiciones.*' => 'exists:condiciones_trabajo,id',
         ]);
 
         if (isset($validated['estado_pago']) && $validated['estado_pago'] === 'pagado' && !isset($validated['fecha_pago'])) {
             $validated['fecha_pago'] = now();
         }
 
+        $condiciones = $validated['condiciones'] ?? [];
+        unset($validated['condiciones']);
+
         $factura->update($validated);
+
+        // Sincronizar condiciones
+        $factura->condiciones()->sync($condiciones);
 
         return response()->json([
             'success' => true,
             'message' => 'Factura actualizada exitosamente',
-            'data' => $factura->fresh()
+            'data' => $factura->load('condiciones')
         ]);
     }
 
