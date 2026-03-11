@@ -80,18 +80,18 @@ stop_services() {
 start_laravel() {
     log "Iniciando Laravel..."
     cd "$PROJECT_DIR"
-    
+
     # Limpiar caché
     php artisan config:clear > /dev/null 2>&1
     php artisan cache:clear > /dev/null 2>&1
     php artisan route:clear > /dev/null 2>&1
-    
+
     # Iniciar servidor
     php artisan serve --host=0.0.0.0 --port=8000 > "$LOGS_DIR/laravel.log" 2>&1 &
     echo $! > "$PID_DIR/laravel.pid"
-    
+
     sleep 3
-    
+
     if curl -s http://localhost:8000 > /dev/null 2>&1; then
         log_success "Laravel iniciado (PID: $(cat $PID_DIR/laravel.pid))"
         return 0
