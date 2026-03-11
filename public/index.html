@@ -2290,6 +2290,7 @@
                 },
                 
                 async guardarTrabajo() {
+                    console.log('Guardando trabajo:', this.trabajoForm);
                     try {
                         if (this.editingTrabajo) {
                             await this.api().put(`/api/trabajos/${this.editingTrabajo}`, this.trabajoForm);
@@ -2301,7 +2302,8 @@
                         this.cerrarModal();
                         await this.cargarTrabajos();
                     } catch (error) {
-                        this.showToast('Error al guardar', 'error');
+                        console.error('Error al guardar trabajo:', error);
+                        this.showToast('Error al guardar: ' + (error.response?.data?.message || error.message), 'error');
                     }
                 },
 
@@ -2596,13 +2598,25 @@
                 },
 
                 obtenerNombreCliente(trabajoId) {
+                    if (!trabajoId) return '';
                     const trabajo = this.trabajos.find(t => t.id === trabajoId);
-                    return trabajo?.cliente?.nombre_completo || 'Sin cliente';
+                    if (!trabajo) return 'Trabajo no encontrado';
+                    // Intentar obtener de diferentes fuentes
+                    if (trabajo.cliente?.nombre_completo) {
+                        return trabajo.cliente.nombre_completo;
+                    }
+                    if (trabajo.cliente?.nombre && trabajo.cliente?.apellido) {
+                        return `${trabajo.cliente.nombre} ${trabajo.cliente.apellido}`;
+                    }
+                    return 'Sin cliente';
                 },
 
                 obtenerClienteId(trabajoId) {
+                    if (!trabajoId) return 'N/A';
                     const trabajo = this.trabajos.find(t => t.id === trabajoId);
-                    return trabajo?.cliente_id || 'N/A';
+                    if (!trabajo) return 'N/A';
+                    // Intentar obtener de diferentes fuentes
+                    return trabajo.cliente?.id || trabajo.cliente_id || 'N/A';
                 },
 
                 obtenerFechaRecibido(trabajoId) {
@@ -2698,6 +2712,30 @@
 
                 async guardarFactura() {
                     try {
+                        // Si hay un trabajo seleccionado, obtener datos del cliente
+                        if (this.facturaForm.trabajo_id) {
+                            const trabajo = this.trabajos.find(t => t.id === this.facturaForm.trabajo_id);
+                            if (trabajo && trabajo.cliente) {
+                                this.facturaForm.cliente_nombre = trabajo.cliente.nombre || '';
+                                this.facturaForm.cliente_apellido = trabajo.cliente.apellido || '';
+                                this.facturaForm.cliente_documento = trabajo.cliente.documento || '';
+                                this.facturaForm.cliente_direccion = trabajo.cliente.direccion || '';
+                                this.facturaForm.cliente_telefono = trabajo.cliente.telefono || '';
+                                this.facturaForm.cliente_email = trabajo.cliente.email || '';
+                            } else if (trabajo && trabajo.cliente_id) {
+                                // Si no hay objeto cliente completo, buscar en clientes
+                                const cliente = this.clientes.find(c => c.id === trabajo.cliente_id);
+                                if (cliente) {
+                                    this.facturaForm.cliente_nombre = cliente.nombre || '';
+                                    this.facturaForm.cliente_apellido = cliente.apellido || '';
+                                    this.facturaForm.cliente_documento = cliente.documento || '';
+                                    this.facturaForm.cliente_direccion = cliente.direccion || '';
+                                    this.facturaForm.cliente_telefono = cliente.telefono || '';
+                                    this.facturaForm.cliente_email = cliente.email || '';
+                                }
+                            }
+                        }
+
                         if (this.editingFactura) {
                             await this.api().put(`/api/facturas/${this.editingFactura}`, {
                                 ...this.facturaForm,
