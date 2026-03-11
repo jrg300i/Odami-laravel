@@ -2450,12 +2450,9 @@
                         const response = await this.api().get('/notificaciones');
                         this.notificaciones = response.data.data || [];
                     } catch (error) {
-                        console.error('Error cargando notificaciones:', error);
+                        // Silencioso - el endpoint de notificaciones puede no estar implementado
+                        console.log('Notificaciones: Endpoint no disponible (404)');
                         this.notificaciones = [];
-                        // No mostrar error si es 404 - el endpoint puede no estar implementado
-                        if (error.response?.status !== 404) {
-                            this.showToast('Error al cargar notificaciones', 'error');
-                        }
                     }
                 },
 
