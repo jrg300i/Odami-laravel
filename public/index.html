@@ -437,11 +437,16 @@
                                             </div>
                                             <div>
                                                 <h3 class="font-bold text-white text-lg">{{ cliente.nombre_completo }}</h3>
-                                                <span :class="['inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium', 
-                                                    cliente.activo ? 'bg-green-400 text-white' : 'bg-red-400 text-white']">
-                                                    <span class="w-1.5 h-1.5 bg-white rounded-full mr-1.5"></span>
-                                                    {{ cliente.activo ? 'Activo' : 'Inactivo' }}
-                                                </span>
+                                                <div class="flex items-center space-x-2 mt-1">
+                                                    <div class="flex items-center text-blue-100 text-xs">
+                                                        <i class="fas fa-id-card mr-1"></i>
+                                                        <span>{{ cliente.documento || 'Sin cédula' }}</span>
+                                                    </div>
+                                                    <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium',
+                                                        cliente.activo ? 'bg-green-400 text-white' : 'bg-red-400 text-white']">
+                                                        {{ cliente.activo ? 'Activo' : 'Inactivo' }}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -807,6 +812,10 @@
                     <div>
                         <label class="block text-sm font-semibold mb-1">Apellido</label>
                         <input v-model="clienteForm.apellido" type="text" required class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-1">Cédula/DNI</label>
+                        <input v-model="clienteForm.documento" type="text" placeholder="Ej: 1234567890" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-1">Teléfono</label>
@@ -1709,7 +1718,7 @@
 
                     // Formularios
                     editingCliente: null,
-                    clienteForm: { nombre: '', apellido: '', telefono: '', email: '', direccion: '', activo: true },
+                    clienteForm: { nombre: '', apellido: '', documento: '', telefono: '', email: '', direccion: '', activo: true },
 
                     editingTrabajo: null,
                     trabajoForm: { cliente_id: '', tipo_trabajo: '', descripcion: '', estado: 'pendiente', precio_estimado: 0, anticipo: 0 },
@@ -2174,7 +2183,7 @@
                     this.editingInventario = null;
                     this.editingFactura = null;
                     this.itemMovimiento = null;
-                    this.clienteForm = { nombre: '', apellido: '', telefono: '', email: '', direccion: '', activo: true };
+                    this.clienteForm = { nombre: '', apellido: '', documento: '', telefono: '', email: '', direccion: '', activo: true };
                     this.trabajoForm = { 
                         cliente_id: '', 
                         tipo_trabajo: '', 
