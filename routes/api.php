@@ -38,6 +38,7 @@ Route::middleware(['sanctum', 'throttle:api'])->group(function () {
     Route::get('/trabajos', [App\Http\Controllers\Api\TrabajoController::class, 'index']);
     Route::get('/trabajos/estado/{estado}', [App\Http\Controllers\Api\TrabajoController::class, 'porEstado']);
     Route::get('/trabajos/{id}', [App\Http\Controllers\Api\TrabajoController::class, 'show']);
+    Route::get('/trabajos/{id}/materiales', [App\Http\Controllers\Api\TrabajoController::class, 'materiales']);
     Route::post('/trabajos', [App\Http\Controllers\Api\TrabajoController::class, 'store']);
     Route::put('/trabajos/{id}', [App\Http\Controllers\Api\TrabajoController::class, 'update']);
     Route::delete('/trabajos/{id}', [App\Http\Controllers\Api\TrabajoController::class, 'destroy']);

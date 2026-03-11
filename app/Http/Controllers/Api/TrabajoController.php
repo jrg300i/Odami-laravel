@@ -146,6 +146,21 @@ final class TrabajoController extends Controller
         ]);
     }
 
+    /**
+     * Obtener materiales usados en un trabajo
+     */
+    public function materiales($id): JsonResponse
+    {
+        $trabajo = Trabajo::with(['materiales' => function ($q) {
+            $q->withPivot('cantidad_usada', 'unidad_medida', 'observaciones');
+        }])->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $trabajo->materiales,
+        ]);
+    }
+
     public function dashboard(): JsonResponse
     {
         $stats = [
