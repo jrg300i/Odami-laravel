@@ -324,12 +324,38 @@
                                         <!-- Trabajos del cliente (agrupados por estado) -->
                                         <div v-show="cliente.expandido" class="p-3 bg-gray-50">
                                             <!-- Trabajos por estado -->
-                                            <div v-for="(trabajos, estado) in cliente.trabajos_por_estado" :key="estado" class="mb-3">
-                                                <div class="flex items-center mb-2">
-                                                    <span :class="['px-2 py-1 rounded text-xs font-semibold mr-2', estadoClass(estado)]">
+                                            <div v-for="(trabajos, estado) in cliente.trabajos_por_estado" :key="estado" class="mb-4">
+                                                <!-- Header del estado con color -->
+                                                <div class="flex items-center mb-2 pb-2 border-b-2"
+                                                    :class="estado === 'pendiente' ? 'border-yellow-500' :
+                                                            estado === 'en_proceso' ? 'border-blue-500' :
+                                                            estado === 'completado' ? 'border-green-500' :
+                                                            estado === 'entregado' ? 'border-purple-500' :
+                                                            estado === 'cancelado' ? 'border-red-500' :
+                                                            'border-gray-500'">
+                                                    <span :class="[
+                                                            'px-3 py-1.5 rounded-lg text-xs font-bold mr-2 shadow-sm',
+                                                            estado === 'pendiente' ? 'bg-yellow-500 text-white' :
+                                                            estado === 'en_proceso' ? 'bg-blue-500 text-white' :
+                                                            estado === 'completado' ? 'bg-green-500 text-white' :
+                                                            estado === 'entregado' ? 'bg-purple-500 text-white' :
+                                                            estado === 'cancelado' ? 'bg-red-500 text-white' :
+                                                            'bg-gray-500 text-white'
+                                                        ]">
+                                                        <i :class="[
+                                                            'fas mr-2',
+                                                            estado === 'pendiente' ? 'fa-clock' :
+                                                            estado === 'en_proceso' ? 'fa-spinner fa-spin' :
+                                                            estado === 'completado' ? 'fa-check-circle' :
+                                                            estado === 'entregado' ? 'fa-handshake' :
+                                                            estado === 'cancelado' ? 'fa-times-circle' :
+                                                            'fa-briefcase'
+                                                        ]"></i>
                                                         {{ estadoTexto(estado) }}
                                                     </span>
-                                                    <span class="text-xs text-gray-500">{{ trabajos.length }} trabajo(s)</span>
+                                                    <span class="text-xs text-gray-500 bg-white px-2 py-1 rounded-full">
+                                                        {{ trabajos.length }} trabajo(s)
+                                                    </span>
                                                 </div>
                                                 
                                                 <!-- Lista de trabajos -->
@@ -1266,14 +1292,73 @@
 
                     <!-- Estado -->
                     <div>
-                        <label class="block text-sm font-semibold mb-1">Estado</label>
-                        <select v-model="trabajoForm.estado" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="pendiente">Pendiente</option>
-                            <option value="en_proceso">En Proceso</option>
-                            <option value="completado">Completado</option>
-                            <option value="entregado">Entregado</option>
-                            <option value="cancelado">Cancelado</option>
-                        </select>
+                        <label class="block text-sm font-semibold mb-2">Estado</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <!-- Pendiente -->
+                            <label class="cursor-pointer">
+                                <input type="radio" v-model="trabajoForm.estado" value="pendiente" class="sr-only">
+                                <div :class="[
+                                    'px-3 py-2.5 rounded-lg text-xs font-bold text-center transition-all duration-200 border-2',
+                                    trabajoForm.estado === 'pendiente' 
+                                        ? 'bg-yellow-500 text-white border-yellow-600 shadow-lg scale-105' 
+                                        : 'bg-yellow-100 text-yellow-700 border-yellow-300 hover:bg-yellow-200'
+                                ]">
+                                    <i class="fas fa-clock mr-1"></i>Pendiente
+                                </div>
+                            </label>
+                            
+                            <!-- En Proceso -->
+                            <label class="cursor-pointer">
+                                <input type="radio" v-model="trabajoForm.estado" value="en_proceso" class="sr-only">
+                                <div :class="[
+                                    'px-3 py-2.5 rounded-lg text-xs font-bold text-center transition-all duration-200 border-2',
+                                    trabajoForm.estado === 'en_proceso' 
+                                        ? 'bg-blue-500 text-white border-blue-600 shadow-lg scale-105' 
+                                        : 'bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200'
+                                ]">
+                                    <i class="fas fa-spinner mr-1" :class="{'fa-spin': trabajoForm.estado === 'en_proceso'}"></i>En Proceso
+                                </div>
+                            </label>
+                            
+                            <!-- Completado -->
+                            <label class="cursor-pointer">
+                                <input type="radio" v-model="trabajoForm.estado" value="completado" class="sr-only">
+                                <div :class="[
+                                    'px-3 py-2.5 rounded-lg text-xs font-bold text-center transition-all duration-200 border-2',
+                                    trabajoForm.estado === 'completado' 
+                                        ? 'bg-green-500 text-white border-green-600 shadow-lg scale-105' 
+                                        : 'bg-green-100 text-green-700 border-green-300 hover:bg-green-200'
+                                ]">
+                                    <i class="fas fa-check-circle mr-1"></i>Completado
+                                </div>
+                            </label>
+                            
+                            <!-- Entregado -->
+                            <label class="cursor-pointer">
+                                <input type="radio" v-model="trabajoForm.estado" value="entregado" class="sr-only">
+                                <div :class="[
+                                    'px-3 py-2.5 rounded-lg text-xs font-bold text-center transition-all duration-200 border-2',
+                                    trabajoForm.estado === 'entregado' 
+                                        ? 'bg-purple-500 text-white border-purple-600 shadow-lg scale-105' 
+                                        : 'bg-purple-100 text-purple-700 border-purple-300 hover:bg-purple-200'
+                                ]">
+                                    <i class="fas fa-handshake mr-1"></i>Entregado
+                                </div>
+                            </label>
+                            
+                            <!-- Cancelado -->
+                            <label class="cursor-pointer" class="col-span-2">
+                                <input type="radio" v-model="trabajoForm.estado" value="cancelado" class="sr-only">
+                                <div :class="[
+                                    'px-3 py-2.5 rounded-lg text-xs font-bold text-center transition-all duration-200 border-2',
+                                    trabajoForm.estado === 'cancelado' 
+                                        ? 'bg-red-500 text-white border-red-600 shadow-lg scale-105' 
+                                        : 'bg-red-100 text-red-700 border-red-300 hover:bg-red-200'
+                                ]">
+                                    <i class="fas fa-times-circle mr-1"></i>Cancelado
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <!-- Notas -->
