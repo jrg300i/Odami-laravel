@@ -2196,7 +2196,23 @@
                         notas: ''
                     };
                     this.inventarioForm = { nombre: '', categoria: 'telas', stock_actual: 0, stock_minimo: 5, precio_unitario: 0, proveedor: '' };
-                    this.facturaForm = { trabajo_id: '', subtotal: 0, igv: 0, total: 0, estado_pago: 'pendiente' };
+                    this.facturaForm = { 
+                        numero_factura: '',
+                        tipo: 'original',
+                        trabajo_id: '',
+                        cliente_nombre: '',
+                        cliente_apellido: '',
+                        cliente_documento: '',
+                        cliente_direccion: '',
+                        cliente_telefono: '',
+                        cliente_email: '',
+                        subtotal: 0,
+                        igv: 0,
+                        total: 0,
+                        estado_pago: 'pendiente',
+                        observaciones: '',
+                        condiciones_ids: []
+                    };
                     this.movimientoForm = { item_id: '', tipo_movimiento: 'entrada', cantidad: 0, motivo: '' };
                 },
                 
