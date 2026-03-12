@@ -170,8 +170,9 @@
                                 <!-- Menú Dropdown Usuario -->
                                 <div v-if="mostrarMenuUsuario"
                                     @click.self.stop="mostrarMenuUsuario = false"
-                                    class="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-2xl py-2 z-50 border border-gray-100 overflow-hidden"
-                                    style="top: 100%;">
+                                    class="absolute bg-white rounded-xl shadow-2xl py-2 z-50 border border-gray-100 overflow-hidden
+                                           right-0 mt-2 w-[280px] max-w-[90vw]
+                                           sm:right-0 sm:mt-2 sm:w-72">
                                     <!-- Header del menú -->
                                     <div class="px-4 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-blue-100">
                                         <div class="flex items-center space-x-3">
