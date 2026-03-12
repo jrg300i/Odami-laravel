@@ -9,9 +9,7 @@ const LoginComponent = {
     data() {
         return {
             username: '',
-            password: '',
-            mostrarConfig: false,
-            apiUrl: localStorage.getItem('tapiceria_api_url') || 'http://127.0.0.1:8000'
+            password: ''
         };
     },
     template: `
@@ -23,18 +21,6 @@ const LoginComponent = {
                     </div>
                     <h1 class="text-3xl font-bold text-gray-800">Tapicería Odami</h1>
                     <p class="text-gray-500 mt-2">Sistema de Gestión</p>
-                </div>
-
-                <!-- Configuración de API -->
-                <div v-if="mostrarConfig" class="mb-4 p-3 bg-gray-50 rounded-lg border">
-                    <label class="block text-xs font-semibold mb-1">URL de la API</label>
-                    <input v-model="apiUrl" type="text" class="w-full px-3 py-2 border rounded text-sm" placeholder="http://127.0.0.1:8000">
-                    <button @click="guardarApiUrl" class="mt-2 w-full bg-blue-600 text-white py-1 rounded text-sm hover:bg-blue-700">Guardar URL</button>
-                </div>
-
-                <div class="flex justify-between items-center mb-4">
-                    <p class="text-xs text-gray-500">API: <span class="font-mono">{{ apiUrl }}</span></p>
-                    <button @click="mostrarConfig = !mostrarConfig" class="text-xs text-blue-600 hover:underline">Configurar</button>
                 </div>
 
                 <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
@@ -62,7 +48,7 @@ const LoginComponent = {
                 </form>
 
                 <div class="mt-6 text-center text-xs text-gray-400">
-                    <p><i class="fas fa-shield-alt"></i> Conexión segura</p>
+                    <p><i class="fas fa-shield-alt"></i> Conexión segura vía Cloudflare Tunnel</p>
                 </div>
             </div>
         </div>
@@ -71,13 +57,8 @@ const LoginComponent = {
         handleSubmit() {
             this.$emit('login', {
                 username: this.username,
-                password: this.password,
-                apiUrl: this.apiUrl
+                password: this.password
             });
-        },
-        guardarApiUrl() {
-            localStorage.setItem('tapiceria_api_url', this.apiUrl);
-            alert('URL guardada: ' + this.apiUrl);
         }
     }
 };

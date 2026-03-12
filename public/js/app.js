@@ -110,8 +110,8 @@ const app = createApp({
     },
 
     async mounted() {
-        // Inicializar API
-        const baseUrl = localStorage.getItem('tapiceria_api_url') || 'http://127.0.0.1:8000';
+        // Inicializar API usando la URL actual del navegador
+        const baseUrl = window.location.origin;
         ApiService.init(baseUrl);
 
         // Verificar sesión
@@ -131,12 +131,6 @@ const app = createApp({
         async realizarLogin(credentials) {
             this.cargando = true;
             this.error = '';
-
-            // Si viene una URL diferente, usarla
-            if (credentials.apiUrl && credentials.apiUrl !== localStorage.getItem('tapiceria_api_url')) {
-                localStorage.setItem('tapiceria_api_url', credentials.apiUrl);
-                ApiService.init(credentials.apiUrl);
-            }
 
             try {
                 const response = await axios.post(`${ApiService.baseUrl}/api/auth/login`, credentials);
