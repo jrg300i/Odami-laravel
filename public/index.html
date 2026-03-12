@@ -154,7 +154,7 @@
 
                             <!-- Perfil de Usuario -->
                             <div class="relative" ref="menuUsuarioContainer">
-                                <button @click.stop="toggleMenuUsuario"
+                                <button @click.stop="mostrarMenuUsuario = !mostrarMenuUsuario"
                                     class="p-2 hover:bg-blue-700 rounded-lg transition relative"
                                     :class="{'bg-blue-700': mostrarMenuUsuario}"
                                     title="Usuario">
@@ -167,114 +167,62 @@
                                     </span>
                                 </button>
 
-                                <!-- Menú Dropdown Desktop -->
-                                <div v-if="mostrarMenuUsuario && !isMobile"
-                                    @click.self.stop="mostrarMenuUsuario = false"
-                                    class="hidden md:block absolute bg-white rounded-xl shadow-2xl py-2 z-50 border border-gray-100 overflow-hidden
-                                           right-0 mt-2 w-[280px] max-w-[90vw]">
-                                    <!-- Header del menú -->
-                                    <div class="px-4 py-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-blue-100">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center shadow-lg border-2 border-white flex-shrink-0">
-                                                <span class="font-bold text-white text-base">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <p class="font-bold text-gray-800 text-sm truncate">{{ usuario.nombre }}</p>
-                                                <p class="text-xs text-blue-600 font-medium capitalize truncate">{{ usuario.rol }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Items del menú -->
-                                    <div class="py-2">
-                                        <!-- Opción: Email -->
-                                        <div class="px-4 py-3 border-b border-gray-100">
-                                            <div class="flex items-start space-x-3">
-                                                <i class="fas fa-envelope text-blue-500 mt-0.5 flex-shrink-0"></i>
-                                                <div class="flex-1 min-w-0">
-                                                    <p class="text-xs text-gray-500 mb-1">Email</p>
-                                                    <p class="text-sm text-gray-700 truncate">{{ usuario.email || 'Sin email' }}</p>
+                                <!-- Menú Lateral Derecho (Drawer) - Visible en TODOS los dispositivos -->
+                                <div v-if="mostrarMenuUsuario"
+                                    class="fixed inset-0 z-50"
+                                    @click.self.stop="mostrarMenuUsuario = false">
+                                    <!-- Overlay -->
+                                    <div class="absolute inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+                                    
+                                    <!-- Panel lateral derecho -->
+                                    <div class="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl overflow-y-auto">
+                                        <!-- Header con botón cerrar -->
+                                        <div class="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-500 to-blue-600 flex-shrink-0">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                                    <span class="font-bold text-blue-600 text-lg">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="font-bold text-white truncate">{{ usuario.nombre }}</p>
+                                                    <p class="text-xs text-blue-100 capitalize truncate">{{ usuario.rol }}</p>
                                                 </div>
                                             </div>
+                                            <button @click="mostrarMenuUsuario = false" class="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition ml-2 flex-shrink-0">
+                                                <i class="fas fa-times text-white text-xl"></i>
+                                            </button>
                                         </div>
 
-                                        <!-- Opción: Cerrar Sesión -->
-                                        <button @click="logout(); mostrarMenuUsuario = false"
-                                            class="w-full px-4 py-3 text-left hover:bg-red-50 flex items-center transition-colors duration-200 group">
-                                            <div class="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center mr-3 flex-shrink-0 group-hover:bg-red-200 transition">
-                                                <i class="fas fa-sign-out-alt text-red-600 group-hover:text-red-700"></i>
-                                            </div>
-                                            <div class="min-w-0 flex-1">
-                                                <p class="font-semibold text-red-600 group-hover:text-red-700 truncate">Cerrar Sesión</p>
-                                                <p class="text-xs text-gray-500 truncate">Salir de tu cuenta</p>
-                                            </div>
-                                        </button>
-                                    </div>
-
-                                    <!-- Footer -->
-                                    <div class="px-4 py-3 bg-gray-50 border-t border-gray-100">
-                                        <p class="text-xs text-gray-400 text-center">
-                                            <i class="fas fa-shield-alt mr-1"></i>Conexión segura
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Menú Lateral Derecho Móvil (Drawer) -->
-                            <div v-if="mostrarMenuUsuario && isMobile"
-                                class="fixed inset-0 z-50 md:hidden"
-                                @click.self.stop="mostrarMenuUsuario = false">
-                                <!-- Overlay -->
-                                <div class="absolute inset-0 bg-black bg-opacity-50 transition-opacity"></div>
-                                
-                                <!-- Panel lateral -->
-                                <div class="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl overflow-y-auto">
-                                    <!-- Header con botón cerrar -->
-                                    <div class="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-500 to-blue-600">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
-                                                <span class="font-bold text-blue-600 text-lg">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
-                                            </div>
-                                            <div>
-                                                <p class="font-bold text-white">{{ usuario.nombre }}</p>
-                                                <p class="text-xs text-blue-100 capitalize">{{ usuario.rol }}</p>
-                                            </div>
-                                        </div>
-                                        <button @click="mostrarMenuUsuario = false" class="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition">
-                                            <i class="fas fa-times text-white text-xl"></i>
-                                        </button>
-                                    </div>
-
-                                    <!-- Items del menú -->
-                                    <div class="p-4 space-y-4">
-                                        <!-- Email -->
-                                        <div class="bg-blue-50 rounded-lg p-4">
-                                            <div class="flex items-start space-x-3">
-                                                <i class="fas fa-envelope text-blue-600 mt-1"></i>
-                                                <div>
-                                                    <p class="text-xs text-gray-500 mb-1">Email</p>
-                                                    <p class="text-sm text-gray-800 font-medium">{{ usuario.email || 'Sin email' }}</p>
+                                        <!-- Contenido del menú -->
+                                        <div class="p-4 space-y-4">
+                                            <!-- Email -->
+                                            <div class="bg-blue-50 rounded-lg p-4">
+                                                <div class="flex items-start space-x-3">
+                                                    <i class="fas fa-envelope text-blue-600 mt-1 flex-shrink-0"></i>
+                                                    <div class="min-w-0 flex-1">
+                                                        <p class="text-xs text-gray-500 mb-1">Email</p>
+                                                        <p class="text-sm text-gray-800 font-medium truncate">{{ usuario.email || 'Sin email' }}</p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <!-- Cerrar Sesión -->
-                                        <button @click="logout(); mostrarMenuUsuario = false"
-                                            class="w-full bg-red-50 hover:bg-red-100 rounded-lg p-4 flex items-center transition-colors duration-200 group border-2 border-red-200">
-                                            <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-red-200 transition">
-                                                <i class="fas fa-sign-out-alt text-red-600 text-xl group-hover:text-red-700"></i>
-                                            </div>
-                                            <div class="text-left">
-                                                <p class="font-bold text-red-600 group-hover:text-red-700">Cerrar Sesión</p>
-                                                <p class="text-xs text-gray-500">Salir de tu cuenta</p>
-                                            </div>
-                                        </button>
+                                            <!-- Cerrar Sesión -->
+                                            <button @click="logout(); mostrarMenuUsuario = false"
+                                                class="w-full bg-red-50 hover:bg-red-100 rounded-lg p-4 flex items-center transition-colors duration-200 group border-2 border-red-200">
+                                                <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center mr-4 flex-shrink-0 group-hover:bg-red-200 transition">
+                                                    <i class="fas fa-sign-out-alt text-red-600 text-xl group-hover:text-red-700"></i>
+                                                </div>
+                                                <div class="min-w-0 flex-1 text-left">
+                                                    <p class="font-bold text-red-600 group-hover:text-red-700 truncate">Cerrar Sesión</p>
+                                                    <p class="text-xs text-gray-500 truncate">Salir de tu cuenta</p>
+                                                </div>
+                                            </button>
 
-                                        <!-- Información adicional -->
-                                        <div class="bg-gray-50 rounded-lg p-4 border-t-4 border-blue-500">
-                                            <div class="flex items-center justify-center space-x-2 text-gray-400">
-                                                <i class="fas fa-shield-alt"></i>
-                                                <p class="text-xs">Conexión segura vía Cloudflare</p>
+                                            <!-- Información adicional -->
+                                            <div class="bg-gray-50 rounded-lg p-4 border-t-4 border-blue-500">
+                                                <div class="flex items-center justify-center space-x-2 text-gray-400">
+                                                    <i class="fas fa-shield-alt"></i>
+                                                    <p class="text-xs text-center">Conexión segura vía Cloudflare Tunnel</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -2624,11 +2572,6 @@
                         { id: 'proveedores', nombre: 'Proveedores', icono: 'fa-truck' },
                         { id: 'facturas', nombre: 'Facturas', icono: 'fa-file-invoice-dollar' }
                     ];
-                },
-
-                isMobile() {
-                    // Detectar si es dispositivo móvil
-                    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
                 },
 
                 clientesFiltrados() {
