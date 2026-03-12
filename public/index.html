@@ -110,6 +110,12 @@
                     <div class="flex items-center justify-between h-16">
                         <!-- Logo y Menú -->
                         <div class="flex items-center flex-1">
+                            <!-- Botón Menú Móvil -->
+                            <button @click="mostrarMenuLateral = !mostrarMenuLateral" 
+                                class="md:hidden p-2 hover:bg-blue-700 rounded-lg transition mr-2">
+                                <i class="fas fa-bars text-xl"></i>
+                            </button>
+                            
                             <!-- Logo -->
                             <div class="flex items-center mr-6">
                                 <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
@@ -117,26 +123,26 @@
                                 </div>
                                 <span class="font-bold text-lg ml-2 hidden md:block">Odami</span>
                             </div>
-                            
-                            <!-- Menú de Navegación -->
-                            <div class="flex items-center space-x-1 overflow-x-auto">
-                                <a v-for="item in menuItems" :key="item.id" 
+
+                            <!-- Menú de Navegación (Desktop) -->
+                            <div class="hidden md:flex items-center space-x-1 overflow-x-auto">
+                                <a v-for="item in menuItems" :key="item.id"
                                     @click="vistaActual = item.id"
-                                    :class="['flex items-center px-4 py-2 rounded-lg cursor-pointer transition whitespace-nowrap', 
+                                    :class="['flex items-center px-4 py-2 rounded-lg cursor-pointer transition whitespace-nowrap',
                                         vistaActual === item.id ? 'bg-white text-blue-900' : 'hover:bg-blue-700']">
                                     <i :class="['fas', item.icono, 'text-lg']"></i>
-                                    <span class="ml-2 hidden md:inline">{{ item.nombre }}</span>
+                                    <span class="ml-2">{{ item.nombre }}</span>
                                 </a>
                             </div>
                         </div>
-                        
+
                         <!-- Acciones de Usuario -->
                         <div class="flex items-center space-x-2">
                             <!-- Botón Refrescar -->
                             <button @click="refrescarDatos" class="p-2 hover:bg-blue-700 rounded-lg transition" title="Refrescar">
                                 <i class="fas fa-sync-alt" :class="{'fa-spin': cargando}"></i>
                             </button>
-                            
+
                             <!-- Notificaciones -->
                             <button @click="mostrarNotificaciones = !mostrarNotificaciones" class="p-2 hover:bg-blue-700 rounded-lg transition relative">
                                 <i class="fas fa-bell"></i>
@@ -144,7 +150,7 @@
                                     {{ notificacionesCount }}
                                 </span>
                             </button>
-                            
+
                             <!-- Perfil de Usuario -->
                             <div class="relative ml-2" ref="menuUsuarioContainer">
                                 <button @click.stop="toggleMenuUsuario"
@@ -168,7 +174,7 @@
                                     leave-active-class="transition duration-150 ease-in"
                                     leave-from-class="transform scale-100 opacity-100 translate-y-0"
                                     leave-to-class="transform scale-95 opacity-0 translate-y-2">
-                                    <div v-if="mostrarMenuUsuario" 
+                                    <div v-if="mostrarMenuUsuario"
                                         class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 z-50 border border-gray-100">
                                         <!-- Header del menú -->
                                         <div class="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-blue-100 rounded-t-xl">
@@ -182,7 +188,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Items del menú -->
                                         <div class="py-1">
                                             <!-- Opción: Perfil (info) -->
@@ -190,9 +196,9 @@
                                                 <i class="fas fa-envelope mr-2 text-blue-500"></i>
                                                 <span>{{ usuario.email || 'Sin email' }}</span>
                                             </div>
-                                            
+
                                             <!-- Opción: Cerrar Sesión -->
-                                            <button @click="logout()" 
+                                            <button @click="logout()"
                                                 class="w-full px-4 py-3 text-left text-red-600 hover:bg-red-50 flex items-center transition-colors duration-150 group">
                                                 <i class="fas fa-sign-out-alt mr-3 text-red-500 group-hover:text-red-600"></i>
                                                 <span class="font-medium">Cerrar Sesión</span>
@@ -205,6 +211,29 @@
                     </div>
                 </div>
             </nav>
+
+            <!-- Menú Lateral Móvil -->
+            <div v-if="mostrarMenuLateral" 
+                @click.self.stop="mostrarMenuLateral = false"
+                class="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden">
+                <div class="bg-white w-64 h-full shadow-2xl overflow-y-auto">
+                    <div class="p-4 border-b flex justify-between items-center">
+                        <h2 class="font-bold text-lg text-gray-800">Menú</h2>
+                        <button @click="mostrarMenuLateral = false" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="p-2 space-y-1">
+                        <a v-for="item in menuItems" :key="item.id"
+                            @click="vistaActual = item.id; mostrarMenuLateral = false"
+                            :class="['flex items-center px-4 py-3 rounded-lg cursor-pointer transition',
+                                vistaActual === item.id ? 'bg-blue-100 text-blue-900' : 'text-gray-700 hover:bg-gray-100']">
+                            <i :class="['fas', item.icono, 'text-lg w-6']"></i>
+                            <span class="ml-3 font-medium">{{ item.nombre }}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
             <!-- Contenido Principal -->
             <main class="flex-1 overflow-auto bg-gray-100">
@@ -2403,6 +2432,7 @@
                     modalAbierto: null,
                     mostrarNotificaciones: false,
                     mostrarMenuUsuario: false,
+                    mostrarMenuLateral: false,
 
                     // Datos
                     stats: {},
@@ -2670,12 +2700,34 @@
                             this.mostrarMenuUsuario = false;
                         }
                     }
-                    
+
                     // Cerrar notificaciones al hacer clic fuera
                     const notifButton = e.target.closest('[title="Refrescar"]') || e.target.closest('.fa-bell');
                     const notifPanel = e.target.closest('.fixed.top-16.right-4.w-96');
                     if (!notifButton && !notifPanel && this.mostrarNotificaciones) {
                         this.mostrarNotificaciones = false;
+                    }
+                });
+
+                // Cerrar modales y menús con tecla ESC
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' || e.key === 'Esc') {
+                        // Cerrar menú lateral móvil
+                        if (this.mostrarMenuLateral) {
+                            this.mostrarMenuLateral = false;
+                        }
+                        // Cerrar menú de usuario
+                        if (this.mostrarMenuUsuario) {
+                            this.mostrarMenuUsuario = false;
+                        }
+                        // Cerrar notificaciones
+                        if (this.mostrarNotificaciones) {
+                            this.mostrarNotificaciones = false;
+                        }
+                        // Cerrar modal activo
+                        if (this.modalAbierto) {
+                            this.cerrarModal();
+                        }
                     }
                 });
             },
@@ -2688,6 +2740,7 @@
                 // Asegurar que el menú esté cerrado al cargar
                 beforeMount() {
                     this.mostrarMenuUsuario = false;
+                    this.mostrarMenuLateral = false;
                     this.modalAbierto = null;
                     this.mostrarNotificaciones = false;
                 },
