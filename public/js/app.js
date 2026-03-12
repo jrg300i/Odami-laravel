@@ -129,17 +129,17 @@ const app = createApp({
     methods: {
         // Autenticación
         async realizarLogin(credentials) {
-            console.log('=== INICIANDO LOGIN ===');
-            console.log('Credentials:', credentials);
-            console.log('API Base URL:', ApiService.baseUrl);
+            this.addLog('=== INICIANDO LOGIN ===');
+            this.addLog('Credentials: ' + JSON.stringify(credentials));
+            this.addLog('API Base URL: ' + ApiService.baseUrl);
             
             this.cargando = true;
             this.error = '';
 
             try {
-                console.log('Enviando petición a:', ApiService.baseUrl + '/api/auth/login');
+                this.addLog('Enviando petición a: ' + ApiService.baseUrl + '/api/auth/login');
                 const response = await axios.post(`${ApiService.baseUrl}/api/auth/login`, credentials);
-                console.log('Respuesta:', response.data);
+                this.addLog('Respuesta: ' + JSON.stringify(response.data));
                 
                 this.token = response.data.token;
                 this.usuario = response.data.usuario;
@@ -150,11 +150,18 @@ const app = createApp({
                 ApiService.setToken(this.token);
                 await this.cargarDatos();
             } catch (error) {
+                this.addLog('ERROR: ' + JSON.stringify(error));
                 console.error('Error en login:', error);
                 this.error = error.response?.data?.message || 'Error al iniciar sesión';
             } finally {
                 this.cargando = false;
             }
+        },
+
+        addLog(msg) {
+            const time = new Date().toLocaleTimeString();
+            this.debugLog.push(`[${time}] ${msg}`);
+            if (this.debugLog.length > 20) this.debugLog.shift();
         },
 
         logout() {

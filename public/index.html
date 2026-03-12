@@ -23,10 +23,11 @@
 <body class="bg-gray-100">
     <div id="app" v-cloak class="min-h-screen">
         <!-- Componente de Login -->
-        <login-component 
-            v-if="!usuario" 
-            :error="error" 
+        <login-component
+            v-if="!usuario"
+            :error="error"
             :cargando="cargando"
+            :debug-log="debugLog"
             @login="realizarLogin">
         </login-component>
 

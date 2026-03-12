@@ -3,7 +3,8 @@ const LoginComponent = {
     name: 'LoginComponent',
     props: {
         error: String,
-        cargando: Boolean
+        cargando: Boolean,
+        debugLog: Array
     },
     emits: ['login'],
     data() {
@@ -47,6 +48,11 @@ const LoginComponent = {
                     </button>
                 </form>
 
+                <!-- Panel de Logs -->
+                <div v-if="debugLog && debugLog.length > 0" class="mt-4 p-3 bg-gray-900 text-green-400 text-xs font-mono rounded-lg max-h-48 overflow-y-auto">
+                    <div v-for="(log, i) in debugLog" :key="i" class="mb-1">{{ log }}</div>
+                </div>
+
                 <div class="mt-6 text-center text-xs text-gray-400">
                     <p><i class="fas fa-shield-alt"></i> Conexión segura vía Cloudflare Tunnel</p>
                 </div>
@@ -55,9 +61,6 @@ const LoginComponent = {
     `,
     methods: {
         handleSubmit() {
-            console.log('=== LOGIN COMPONENT SUBMIT ===');
-            console.log('Username:', this.username);
-            console.log('Password:', this.password);
             this.$emit('login', {
                 username: this.username,
                 password: this.password
