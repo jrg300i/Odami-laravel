@@ -4,7 +4,7 @@
 # 🌍 TAPICERÍA ODAMI - DESPLIEGUE GLOBAL AUTOMÁTICO
 # =============================================================================
 # Script único para acceso desde cualquier lugar del mundo
-# Usa Cloudflare Tunnel + nonhub simultáneamente con auto-reinicio
+# Usa Cloudflare Tunnel + ngrok simultáneamente con auto-reinicio
 #
 # USO: ./start.sh
 # =============================================================================
@@ -12,7 +12,7 @@
 set -e
 
 # Configuración
-PROJECT_DIR="/data/data/com.termux/files/home/mi-servidor/public/surge-projects/tapiceria-odami-laravel"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOGS_DIR="$PROJECT_DIR/logs"
 PID_DIR="$PROJECT_DIR/.pids"
 CHECK_INTERVAL=60  # Verificar URL cada 60 segundos
@@ -56,7 +56,7 @@ print_header() {
     clear
     echo -e "${CYAN}╔═══════════════════════════════════════════════════════════╗${NC}"
     echo -e "${CYAN}║  🌍 TAPICERÍA ODAMI - ACCESO GLOBAL                       ║${NC}"
-    echo -e "${CYAN}║     Cloudflare Tunnel + nonhub - Auto-reinicio            ║${NC}"
+    echo -e "${CYAN}║     Cloudflare Tunnel + ngrok - Auto-reinicio           ║${NC}"
     echo -e "${CYAN}╚═══════════════════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -72,7 +72,7 @@ stop_services() {
     log "Deteniendo servicios anteriores..."
     pkill -f "php artisan serve" 2>/dev/null || true
     pkill -f "cloudflared tunnel" 2>/dev/null || true
-    pkill -f "nonhub http" 2>/dev/null || true
+    pkill -f "ngrok http" 2>/dev/null || true
     sleep 2
     log_success "Servicios detenidos"
 }
@@ -103,14 +103,15 @@ start_laravel() {
 
 start_cloudflare() {
     log "Iniciando Cloudflare Tunnel..."
-    
+
     cloudflared tunnel --url http://localhost:8000 > "$LOGS_DIR/cloudflare.log" 2>&1 &
     echo $! > "$PID_DIR/cloudflare.pid"
-    
-    sleep 8
-    
+
+    # Esperar más tiempo para que Cloudflare genere la URL
+    sleep 12
+
     CLOUDFLARE_URL=$(grep -oP 'https://[^\s]+\.trycloudflare\.com' "$LOGS_DIR/cloudflare.log" | tail -1)
-    
+
     if [ -n "$CLOUDFLARE_URL" ]; then
         log_success "Cloudflare Tunnel: $CLOUDFLARE_URL"
         return 0
@@ -120,32 +121,35 @@ start_cloudflare() {
     fi
 }
 
-start_nonhub() {
-    log "Iniciando nonhub..."
-    
-    if ! command -v nonhub &> /dev/null; then
-        log_warning "nonhub no está instalado. Saltando..."
+start_ngrok() {
+    log "Iniciando ngrok (opcional - requiere authtoken)..."
+
+    if ! command -v ngrok &> /dev/null; then
+        log_warning "ngrok no está instalado. Usando solo Cloudflare..."
         return 1
     fi
-    
-    if ! nonhub config get token &> /dev/null 2>&1; then
-        log_warning "nonhub sin token configurado"
-        log "Para configurar: nonhub config --token TU_TOKEN"
+
+    # Verificar si ngrok está configurado
+    if ! ngrok config list &>/dev/null; then
+        log_warning "ngrok sin authtoken configurado."
+        log "Para configurar: ngrok config add-authtoken TU_TOKEN"
+        log "Continuando solo con Cloudflare Tunnel..."
         return 1
     fi
-    
-    nonhub http 8000 > "$LOGS_DIR/nonhub.log" 2>&1 &
-    echo $! > "$PID_DIR/nonhub.pid"
-    
-    sleep 5
-    
-    NONHUB_URL=$(grep -oP 'https://[^\s]+\.nonhub\.io' "$LOGS_DIR/nonhub.log" | tail -1)
-    
+
+    ngrok http 8000 --log="$LOGS_DIR/ngrok.log" > "$LOGS_DIR/ngrok_stdout.log" 2>&1 &
+    echo $! > "$PID_DIR/ngrok.pid"
+
+    sleep 8
+
+    # Extraer URL desde la API local de ngrok
+    NONHUB_URL=$(curl -s http://127.0.0.1:4040/api/tunnels 2>/dev/null | grep -oP '"public_url":"https://[^\"]+"' | head -1 | sed 's/"public_url":"//;s/"$//')
+
     if [ -n "$NONHUB_URL" ]; then
-        log_success "nonhub Tunnel: $NONHUB_URL"
+        log_success "ngrok Tunnel: $NONHUB_URL"
         return 0
     else
-        log_error "Error al iniciar nonhub"
+        log_warning "ngrok no pudo iniciar (verifica authtoken). Usando solo Cloudflare..."
         return 1
     fi
 }
@@ -165,8 +169,10 @@ update_env() {
 }
 
 save_urls() {
+    local primary_url="${NONHUB_URL:-$CLOUDFLARE_URL}"
     echo "CLOUDFLARE_URL=$CLOUDFLARE_URL" > "$PROJECT_DIR/.urls"
     echo "NONHUB_URL=$NONHUB_URL" >> "$PROJECT_DIR/.urls"
+    echo "PRIMARY_URL=$primary_url" >> "$PROJECT_DIR/.urls"
     echo "LAST_UPDATE=$(date)" >> "$PROJECT_DIR/.urls"
     log_success "URLs guardadas en .urls"
 }
@@ -177,23 +183,29 @@ print_urls() {
     echo -e "${GREEN}║  🌍 SERVICIOS INICIADOS CON ÉXITO                         ║${NC}"
     echo -e "${GREEN}╚═══════════════════════════════════════════════════════════╝${NC}"
     echo ""
-    
+
     if [ -n "$NONHUB_URL" ]; then
-        echo -e "${WHITE}🔗 URL PRINCIPAL (PERMANENTE):${NC}"
+        echo -e "${WHITE}🔗 URL PRINCIPAL (PERMANENTE - ngrok):${NC}"
         echo -e "${GREEN}$NONHUB_URL${NC}"
         echo ""
     fi
-    
+
     if [ -n "$CLOUDFLARE_URL" ]; then
-        echo -e "${WHITE}🔗 URL SECUNDARIA (TEMPORAL):${NC}"
+        if [ -n "$NONHUB_URL" ]; then
+            echo -e "${WHITE}🔗 URL SECUNDARIA (TEMPORAL - Cloudflare):${NC}"
+        else
+            echo -e "${WHITE}🔗 URL DE ACCESO (Cloudflare Tunnel):${NC}"
+        fi
         echo -e "${CYAN}$CLOUDFLARE_URL${NC}"
         echo ""
     fi
-    
+
+    local primary_url="${NONHUB_URL:-$CLOUDFLARE_URL}"
     echo -e "${WHITE}📝 Endpoints:${NC}"
-    echo "   Login:     ${NONHUB_URL:-$CLOUDFLARE_URL}/api/auth/login"
-    echo "   Dashboard: ${NONHUB_URL:-$CLOUDFLARE_URL}/api/dashboard/stats"
-    echo "   Fotos:     ${NONHUB_URL:-$CLOUDFLARE_URL}/api/fotos"
+    echo "   Login:     ${primary_url}/api/auth/login"
+    echo "   Dashboard: ${primary_url}/api/dashboard/stats"
+    echo "   Trabajos:  ${primary_url}/api/trabajos"
+    echo "   Fotos:     ${primary_url}/api/fotos"
     echo ""
     echo -e "${WHITE}🔐 Credenciales:${NC}"
     echo "   Usuario: admin"
@@ -202,10 +214,17 @@ print_urls() {
     echo -e "${WHITE}📊 Logs:${NC}"
     echo "   Laravel:   tail -f $LOGS_DIR/laravel.log"
     echo "   Cloudflare: tail -f $LOGS_DIR/cloudflare.log"
-    echo "   nonhub:    tail -f $LOGS_DIR/nonhub.log"
+    if [ -n "$NONHUB_URL" ]; then
+        echo "   ngrok:     tail -f $LOGS_DIR/ngrok.log"
+    fi
     echo ""
     echo -e "${WHITE}🛑 Detener:${NC}"
     echo "   ./stop.sh"
+    echo ""
+    echo -e "${YELLOW}⚠️  Nota: La URL de Cloudflare es temporal y cambia al reiniciar.${NC}"
+    if [ -z "$NONHUB_URL" ]; then
+        echo -e "${YELLOW}    Para URL permanente, configura ngrok con: ngrok config add-authtoken TOKEN${NC}"
+    fi
     echo ""
 }
 
@@ -262,7 +281,7 @@ restart_services() {
     stop_services
     start_laravel
     start_cloudflare
-    start_nonhub
+    start_ngrok
     RETRY_COUNT=0
 }
 
@@ -294,8 +313,8 @@ fi
 # Iniciar Cloudflare
 start_cloudflare || true
 
-# Iniciar nonhub (opcional)
-start_nonhub || true
+# Iniciar ngrok (opcional)
+start_ngrok || true
 
 # Determinar URL principal
 if [ -n "$NONHUB_URL" ]; then

@@ -3,7 +3,7 @@
         'name' => 'odami/tapiceria-laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '756241736eff7890c8c492c7dc340caf1db616f9',
+        'reference' => 'e67a661e4410c6406eabb3247d3f6e97bc827ba3',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -568,7 +568,7 @@
         'odami/tapiceria-laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '756241736eff7890c8c492c7dc340caf1db616f9',
+            'reference' => 'e67a661e4410c6406eabb3247d3f6e97bc827ba3',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

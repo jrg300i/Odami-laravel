@@ -28,7 +28,7 @@ Este proyecto usa **versionamiento semántico (SemVer)** por módulo para manten
 | 🚚 Proveedores | `v1.1.1` | ✅ Estable | 2026-03-12 |
 | 📄 Facturación | `v1.3.0` | ✅ Estable | 2026-03-12 |
 
-📖 **Documentación completa**: [VERSIONES.md](VERSIONES.md) | [GUIA_VERSIONAMIENTO.md](GUIA_VERSIONAMIENTO.md)
+📖 **Documentación completa**: [VERSIONES.md](VERSIONES.md)
 
 ---
 
@@ -43,8 +43,10 @@ Este proyecto usa **versionamiento semántico (SemVer)** por módulo para manten
 7. [Módulo de Fotos](#-módulo-de-fotos)
 8. [Seguridad y Roles](#-seguridad-y-roles)
 9. [Acceso Global](#-acceso-global)
-10. [Mantenimiento](#-mantenimiento)
-11. [Solución de Problemas](#-solución-de-problemas)
+10. [Deploy en Render.com](#-deploy-en-rendercom)
+11. [Mantenimiento](#-mantenimiento)
+12. [Solución de Problemas](#-solución-de-problemas)
+13. [Versionamiento](#-versionamiento)
 
 ---
 
@@ -628,6 +630,315 @@ tail -f logs/laravel.log
 
 ---
 
+## 🚀 Deploy en Render.com
+
+**Guía completa para desplegar tu API en Render.com de forma GRATUITA y tenerla online 24/7.**
+
+> **Tiempo estimado**: 15 minutos
+> **Costo**: Gratis (con opción a plan Starter de $7/mes)
+
+---
+
+### 📋 Requisitos Previos
+
+- ✅ Git instalado en Termux
+- ✅ Cuenta en GitHub
+- ✅ Cuenta en Render.com
+- ✅ Proyecto subido a GitHub
+
+---
+
+### 📝 Paso a Paso
+
+#### Paso 1: Verificar Git Instalado
+
+En Termux, ejecuta:
+
+```bash
+git --version
+```
+
+Si muestra una versión, continúa. Si dice "command not found":
+
+```bash
+pkg install git
+```
+
+#### Paso 2: Crear Cuenta en GitHub
+
+1. Ve a https://github.com
+2. Click en "Sign up"
+3. Regístrate (es gratis)
+4. Confirma tu email
+
+#### Paso 3: Subir tu Proyecto a GitHub
+
+En Termux, ejecuta UNO POR UNO:
+
+```bash
+# Ir al proyecto
+cd /data/data/com.termux/files/home/surge-projects/tapiceria-odami-laravel
+
+# Inicializar git
+git init
+
+# Añadir todos los archivos
+git add .
+
+# Crear primer commit
+git commit -m "Mi proyecto Tapiceria"
+```
+
+Ahora, en tu NAVEGADOR:
+
+1. Ve a https://github.com/new
+2. Repository name: `tapiceria-api`
+3. Déjalo PÚBLICO
+4. Click "Create repository"
+
+Copia la URL que aparece (algo como `https://github.com/TU_USUARIO/tapiceria-api.git`) y en Termux:
+
+```bash
+git remote add origin https://github.com/TU_USUARIO/tapiceria-api.git
+git branch -M main
+git push -u origin main
+```
+
+#### Paso 4: Crear Cuenta en Render
+
+1. Ve a https://render.com
+2. Click "Get Started for Free"
+3. "Sign up with GitHub"
+4. Autoriza la aplicación
+
+#### Paso 5: Crear el Web Service en Render
+
+En Render Dashboard:
+
+1. Click "New +" → "Web Service"
+2. Verás tu repositorio "tapiceria-api" en la lista
+3. Click "Connect"
+
+**Configuración:**
+
+| Campo | Valor |
+|-------|-------|
+| Name | `tapiceria-odami-api` |
+| Region | `Oregon` |
+| Branch | `main` |
+| Root Directory | (déjalo vacío) |
+| Runtime | `PHP` |
+| Build Command | `composer install --no-dev --optimize-autoloader` |
+| Start Command | `heroku-php-apache2 public/` |
+| Plan | `Free` |
+
+Click "Advanced" y añade estas **Environment Variables** (UNA POR UNA):
+
+```
+APP_NAME = Tapiceria Odami
+APP_ENV = production
+APP_DEBUG = false
+```
+
+Click "Create Web Service"
+
+Render empezará el deploy (2-3 minutos). Verás una URL como:
+
+```
+https://tapiceria-odami-api-xxxx.onrender.com
+```
+
+¡COPIA ESA URL!
+
+#### Paso 6: Generar APP_KEY
+
+En tu TERMUX:
+
+```bash
+php artisan key:generate --show
+```
+
+Te dará algo como: `base64:AbCdEfGhIjKlMnOpQrStUvWxYz1234567890=`
+
+En RENDER:
+
+1. Ve a tu Web Service
+2. Click "Environment"
+3. Click "Add Environment Variable"
+4. Añade: `APP_KEY` = `base64:AbCdEfGhIjKlMnOpQrStUvWxYz1234567890=`
+5. Click "Save Changes"
+
+Render se redeplegará automáticamente (2 minutos).
+
+#### Paso 7: Añadir Base de Datos PostgreSQL
+
+En Render Dashboard:
+
+1. Click "New +" → "PostgreSQL"
+2. Llena:
+
+| Campo | Valor |
+|-------|-------|
+| Name | `tapiceria-db` |
+| Region | `Oregon` (LA MISMA que el web service) |
+| Database Name | `tapiceria_odami` |
+| User | `tapiceria_user` |
+| Plan | `Free` |
+
+3. Click "Create Database"
+
+Copia las credenciales del "Internal Database URL":
+- Host (ej: `tapiceria-db-xxxx.rds.amazonaws.com`)
+- Port: `5432`
+- Database: `tapiceria_odami`
+- User: `tapiceria_user`
+- Password: (la que te dio Render)
+
+#### Paso 8: Conectar BD al Web Service
+
+1. Ve a tu Web Service en Render
+2. Click "Environment"
+3. Añade estas variables (UNA POR UNA):
+
+```
+DB_CONNECTION = pgsql
+DB_HOST = tapiceria-db-xxxx.rds.amazonaws.com
+DB_PORT = 5432
+DB_DATABASE = tapiceria_odami
+DB_USERNAME = tapiceria_user
+DB_PASSWORD = (la contraseña que te dio Render)
+```
+
+4. Click "Save Changes"
+
+Render se redeplegará automáticamente (2 minutos).
+
+#### Paso 9: Crear las Tablas en la BD
+
+1. En tu Web Service, click "Shell" (arriba a la derecha)
+2. Ejecuta:
+
+```bash
+php artisan migrate --force
+```
+
+Debería decir: "Migration table created successfully"
+
+Luego:
+
+```bash
+php artisan db:seed --force
+```
+
+Debería decir: "Database seeding completed successfully"
+
+Escribe "exit" para salir.
+
+#### Paso 10: Probar la API
+
+Tu API está en:
+
+```
+https://tapiceria-odami-api-xxxx.onrender.com
+```
+
+Añade "/health" y abre en tu navegador:
+
+```
+https://tapiceria-odami-api-xxxx.onrender.com/health
+```
+
+Deberías ver:
+
+```json
+{"status":"ok","database":"connected","timestamp":"..."}
+```
+
+¡SI VES ESO, FUNCIONA! 🎉
+
+#### Paso 11: Configurar Frontend
+
+1. Abre: https://tapiceria-laravel.surge.sh
+2. Click en "Configurar API"
+3. Ingresa la URL de tu API (SIN el /health)
+4. Click "Guardar"
+5. Inicia sesión: `admin` / `admin123`
+
+¡LISTO! 🎉
+
+---
+
+### 📊 Resumen de URLs
+
+| Servicio | URL |
+|----------|-----|
+| Frontend | `https://tapiceria-laravel.surge.sh` |
+| API | `https://tapiceria-odami-api-xxxx.onrender.com` |
+| Login | `admin` / `admin123` |
+
+---
+
+### 🔄 ¿Cómo Actualizar tu API?
+
+Cada vez que hagas cambios:
+
+```bash
+git add .
+git commit -m "Descripción de los cambios"
+git push
+```
+
+Render detectará los cambios y hará deploy automático (2 minutos).
+
+---
+
+### ⚠️ IMPORTANTE: Sleep Time (Plan Gratis)
+
+En el plan GRATIS, Render "duerme" el servicio después de 15 min sin actividad.
+
+**Síntoma**: La primera petición tarda 30-50 segundos.
+
+**Solución GRATIS (UptimeRobot)**:
+
+1. Ve a https://uptimerobot.com
+2. Crea cuenta gratis
+3. "Add New Monitor"
+4. Monitor Type: HTTP(s)
+5. Friendly Name: `Tapiceria API`
+6. URL: `https://tapiceria-odami-api-xxxx.onrender.com/api/health`
+7. Monitoring Interval: 5 minutes
+8. Click "Create Monitor"
+
+Esto hará una petición cada 5 minutos y NUNCA se dormirá.
+
+**Solución PAGO**: Upgrade a Starter ($7/mes) - Sin sleep time, más recursos.
+
+---
+
+### 🛠️ Solución de Problemas - Render
+
+| Error | Solución |
+|-------|----------|
+| "Failed to fetch" en frontend | Verifica que la URL de la API sea correcta (con https://) |
+| Build failed en Render | Revisa los logs en Render → Logs |
+| 500 Internal Server Error | Verifica que APP_KEY esté configurada en Environment |
+| Database connection failed | Verifica DB_HOST, DB_USERNAME, DB_PASSWORD |
+| Tablas no existen | Ejecuta `php artisan migrate --force` desde la Shell |
+| 401 Unauthorized al login | Cierra sesión y vuelve a iniciar |
+
+---
+
+### 📚 Recursos
+
+| Recurso | URL |
+|---------|-----|
+| Render Dashboard | https://dashboard.render.com |
+| UptimeRobot | https://uptimerobot.com |
+| GitHub | https://github.com |
+| Documentación Render | https://render.com/docs |
+
+---
+
 ## 🧹 Mantenimiento
 
 ### Limpieza de Logs
@@ -844,32 +1155,378 @@ Antes de usar, verifica:
 
 ---
 
-## 📚 Documentación de Versionamiento
+## 📋 Versionamiento
 
-| Documento | Descripción |
-|-----------|-------------|
-| [VERSIONES.md](VERSIONES.md) | Control detallado de versiones por módulo y tabla de base de datos |
-| [GUIA_VERSIONAMIENTO.md](GUIA_VERSIONAMIENTO.md) | Guía paso a paso para gestionar versiones y tags de git |
-| [version.json](version.json) | Configuración de versiones en formato JSON |
+### Principios Fundamentales
 
-### Comandos Útiles de Versionamiento
+Este proyecto usa **Semantic Versioning (SemVer)** - [semver.org](https://semver.org/)
+
+```
+MAJOR.MINOR.PATCH
+   │     │     │
+   │     │     └─→ Bug fixes (no rompe compatibilidad)
+   │     └────────→ Nuevas features (compatible con versiones anteriores)
+   └──────────────→ Breaking changes (incompatible con versiones anteriores)
+```
+
+**Principios clave:**
+1. Cada módulo tiene su propia versión
+2. Los tags de git son inmutables (nunca se modifican)
+3. Las versiones siguen SemVer estricto
+
+---
+
+### Flujo de Trabajo para Nueva Versión
+
+#### Paso 1: Identificar el tipo de cambio
+
+**¿Es un bug fix?**
+```bash
+# Versión actual: 1.4.0 → Nueva versión: 1.4.1
+git commit -m "fix(clientes): corregir error en búsqueda por documento"
+```
+
+**¿Es una nueva característica?**
+```bash
+# Versión actual: 1.3.0 → Nueva versión: 1.4.0
+git commit -m "feat(facturacion): agregar filtro por fecha de emisión"
+```
+
+**¿Es un cambio incompatible?**
+```bash
+# Versión actual: 1.4.0 → Nueva versión: 2.0.0
+git commit -m "feat(clientes)!: cambiar estructura de respuesta de API"
+```
+
+#### Paso 2: Actualizar version.json
+
+Editar `version.json`:
+
+```json
+{
+  "modules": {
+    "clientes": {
+      "version": "1.4.1",
+      "last_updated": "2026-03-12",
+      "changelog": [
+        {"version": "1.4.1", "date": "2026-03-12", "changes": "Fix: corregir error en búsqueda"},
+        {"version": "1.4.0", "date": "2026-03-12", "changes": "Diseño responsive + Historial completo"}
+      ]
+    }
+  }
+}
+```
+
+#### Paso 3: Actualizar VERSIONES.md
+
+Agregar el nuevo cambio en la tabla del módulo correspondiente:
+
+```markdown
+### Módulo de Clientes (`ClienteController`)
+
+| Versión | Fecha | Cambios | Estado |
+|---------|-------|---------|--------|
+| `1.4.1` | 2026-03-12 | 🐛 Fix: corregir error en búsqueda por documento | ✅ Estable |
+| `1.4.0` | 2026-03-12 | Diseño responsive + Historial completo | ✅ Estable |
+```
+
+#### Paso 4: Crear commit y tag
+
+```bash
+git add version.json VERSIONES.md
+git commit -m "chore(release): clientes v1.4.1 - Fix búsqueda por documento"
+
+# Tag anotado (recomendado)
+git tag -a v1.4.1 -m "🐛 Fix: clientes v1.4.1 - Corregir error en búsqueda por documento"
+
+# Push
+git push origin main
+git push origin v1.4.1
+```
+
+---
+
+### 🏷️ Sistema de Tags de Git
+
+#### Tipos de Tags
+
+**Tag Ligero:**
+```bash
+git tag v1.0.0
+```
+
+**Tag Anotado (Recomendado):**
+```bash
+git tag -a v1.0.0 -m "🎉 Lanzamiento inicial - Versión 1.0.0"
+```
+
+#### Convención de Nombres
+
+```
+v{MAJOR}.{MINOR}.{PATCH}
+
+Ejemplos:
+v1.0.0    → Lanzamiento inicial
+v1.1.0    → Nueva característica
+v1.1.1    → Bug fix
+v2.0.0    → Breaking change
+```
+
+#### Comandos Útiles
+
+```bash
+# Listar todos los tags
+git tag -l
+
+# Listar tags por patrón
+git tag -l "v1.*"
+
+# Ver información de un tag
+git show v1.0.0
+
+# Ver commits entre tags
+git log v1.0.0..v1.1.0 --oneline
+
+# Eliminar tag local
+git tag -d v1.0.0
+
+# Eliminar tag remoto
+git push origin :refs/tags/v1.0.0
+```
+
+---
+
+### 📊 Control de Cambios por Módulo
+
+### Estructura de Directorios
+
+```
+app/Http/Controllers/Api/
+├── AuthController.php          → v1.2.0
+├── DashboardController.php     → v2.0.0
+├── ClienteController.php       → v1.4.0
+├── TrabajoController.php       → v2.1.0
+├── FotoTrabajoController.php   → v1.3.0
+├── InventarioController.php    → v1.4.0
+├── CategoriaController.php     → v1.1.1
+├── ProveedorController.php     → v1.1.1
+├── FacturaController.php       → v1.3.0
+├── FacturaPdfController.php    → v1.3.0
+├── EntregaController.php       → v1.2.0
+├── NotificacionController.php  → v1.2.0
+├── ConfiguracionController.php → v1.1.0
+└── CondicionController.php     → v1.1.0
+```
+
+#### Comentario en cada Controlador
+
+Agregar al inicio de cada controlador:
+
+```php
+<?php
+
+namespace App\Http\Controllers\Api;
+
+/**
+ * ClienteController
+ *
+ * @version 1.4.0
+ * @last_updated 2026-03-12
+ * @status stable
+ *
+ * Changelog:
+ * - v1.4.0 (2026-03-12): Diseño responsive + Historial completo
+ * - v1.3.0 (2026-03-10): Teléfono con enlace a WhatsApp
+ * - v1.2.0 (2026-03-08): Historial de trabajos
+ */
+
+use App\Http\Controllers\Controller;
+use App\Models\Cliente;
+// ...
+```
+
+---
+
+### 🔄 Flujos de Release
+
+#### Release Menor (Patch) - Bug Fix
+
+```bash
+# 1. Corregir bug y testear
+php artisan test
+
+# 2. Commit
+git add .
+git commit -m "fix(clientes): corregir error en búsqueda"
+
+# 3. Actualizar version.json (1.4.0 → 1.4.1)
+# 4. Actualizar VERSIONES.md
+
+# 5. Commit de versionamiento
+git add version.json VERSIONES.md
+git commit -m "chore(release): clientes v1.4.1"
+
+# 6. Tag y push
+git tag -a v1.4.1 -m "🐛 Fix: clientes v1.4.1"
+git push origin main
+git push origin v1.4.1
+```
+
+#### Release de Característica (Minor)
+
+```bash
+# 1. Implementar feature y tests
+php artisan make:test ClienteSearchTest
+php artisan test
+
+# 2. Commit
+git add .
+git commit -m "feat(clientes): agregar búsqueda por WhatsApp"
+
+# 3. Actualizar version.json (1.4.0 → 1.5.0)
+# 4. Actualizar VERSIONES.md
+
+# 5. Commit de versionamiento
+git add version.json VERSIONES.md
+git commit -m "chore(release): clientes v1.5.0"
+
+# 6. Tag y push
+git tag -a v1.5.0 -m "✨ Feature: clientes v1.5.0 - Búsqueda por WhatsApp"
+git push origin main
+git push origin v1.5.0
+```
+
+#### Release Mayor (Major) - Breaking Change
+
+```bash
+# 1. Implementar cambio incompatible y testear exhaustivamente
+php artisan test
+
+# 2. Actualizar documentación
+
+# 3. Commit
+git add .
+git commit -m "feat(clientes)!: nueva estructura de API v2"
+
+# 4. Actualizar version.json (1.4.0 → 2.0.0)
+# 5. Actualizar VERSIONES.md (documentar breaking changes)
+
+# 6. Commit de versionamiento
+git add version.json VERSIONES.md
+git commit -m "chore(release): clientes v2.0.0 - BREAKING CHANGE"
+
+# 7. Tag y push
+git tag -a v2.0.0 -m "💥 Breaking: clientes v2.0.0 - Nueva estructura de API"
+git push origin main
+git push origin v2.0.0
+```
+
+---
+
+### 📋 Checklist de Pre-Release
+
+Antes de publicar:
+
+- [ ] Todos los tests pasan (`php artisan test`)
+- [ ] No hay errores de sintaxis (`php -l archivo.php`)
+- [ ] Documentación actualizada (VERSIONES.md, version.json)
+- [ ] Changelog actualizado
+- [ ] Comentarios en código actualizados
+- [ ] Migraciones probadas en desarrollo
+- [ ] Backup de base de datos realizado
+- [ ] Código revisado (code review)
+
+**Tests obligatorios:**
+
+```bash
+# Tests unitarios
+php artisan test --filter Unit
+
+# Tests de integración
+php artisan test --filter Integration
+
+# Tests específicos de módulo
+php artisan test --filter ClienteTest
+
+# Coverage (opcional)
+php artisan test --coverage
+```
+
+---
+
+### 🚨 Manejo de Errores Post-Release
+
+#### Si se encuentra un bug después de publicar
+
+```bash
+# 1. Crear rama de fix
+git checkout -b fix/clientes-busqueda
+
+# 2. Corregir bug y testear
+php artisan test
+
+# 3. Commit y merge
+git add .
+git commit -m "fix(clientes): corregir error crítico en búsqueda"
+git checkout main
+git merge fix/clientes-busqueda
+
+# 4. Nueva versión PATCH (1.4.1 → 1.4.2)
+git add version.json VERSIONES.md
+git commit -m "chore(release): clientes v1.4.2"
+git tag -a v1.4.2 -m "🐛 Critical Fix: clientes v1.4.2"
+git push origin main
+git push origin v1.4.2
+```
+
+#### Hotfix crítico (producción)
+
+```bash
+# Hotfix directo
+git checkout main
+git checkout -b hotfix/clientes-critical
+
+# Corregir y testear rápidamente
+
+# Commit y tag
+git commit -m "hotfix(clientes): fix crítico de búsqueda"
+git tag -a v1.4.2-hotfix -m "🔥 HOTFIX: clientes v1.4.2"
+
+# Push inmediato
+git push origin main --force
+git push origin v1.4.2-hotfix
+```
+
+---
+
+### 📊 Monitoreo de Versiones
 
 ```bash
 # Ver versión actual de un módulo
 cat version.json | jq '.modules.clientes.version'
 
-# Ver todos los tags de git
-git tag -l
+# Desde VERSIONES.md
+grep -A 5 "Módulo de Clientes" VERSIONES.md | head -10
 
-# Ver cambios entre versiones
-git log v1.3.0..v2.0.0 --oneline
+# Ver diferencias entre versiones
+git log v1.4.0..v1.4.1 --oneline
+git diff v1.4.0..v1.4.1 -- app/Http/Controllers/Api/ClienteController.php
 
-# Crear nuevo tag
-git tag -a v2.0.1 -m "🐛 Fix: descripción del cambio"
-
-# Push de tag
-git push origin v2.0.1
+# Ver estado de tags
+git tag -l --sort=-version:refname
+git tag -l -n1 --sort=-creatordate
 ```
+
+---
+
+### 🔗 Enlaces Útiles
+
+| Recurso | URL |
+|---------|-----|
+| Semantic Versioning | [semver.org](https://semver.org/) |
+| Git Tags | [git-scm.com](https://git-scm.com/book/en/v2/Git-Basics-Tagging) |
+| Keep a Changelog | [keepachangelog.com](https://keepachangelog.com/) |
+| Conventional Commits | [conventionalcommits.org](https://www.conventionalcommits.org/) |
 
 ---
 

@@ -8,11 +8,15 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * Tabla para registrar materiales usados en trabajos.
      */
     public function up(): void
     {
+        if (Schema::hasTable('trabajo_materiales')) {
+            return;
+        }
+
         Schema::create('trabajo_materiales', function (Blueprint $table) {
             $table->id();
             $table->foreignId('trabajo_id')->constrained('trabajos')->onDelete('cascade');
@@ -21,7 +25,7 @@ return new class extends Migration
             $table->string('unidad_medida')->default('unidad');
             $table->text('observaciones')->nullable();
             $table->timestamps();
-            
+
             // Índice para búsquedas rápidas
             $table->index(['trabajo_id', 'inventario_id']);
         });

@@ -39,10 +39,11 @@
     "clientes": {
       "name": "Clientes",
       "controller": "ClienteController.php",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "status": "stable",
       "last_updated": "2026-03-12",
       "changelog": [
+        {"version": "1.5.0", "date": "2026-03-12", "changes": "Pestañas Activos/Inactivos + Tarjetas compactas + Toggle estado"},
         {"version": "1.4.0", "date": "2026-03-12", "changes": "Diseño responsive + Historial completo"},
         {"version": "1.3.0", "date": "2026-03-10", "changes": "Teléfono con enlace a WhatsApp"},
         {"version": "1.2.0", "date": "2026-03-08", "changes": "Historial de trabajos"},
@@ -80,10 +81,11 @@
     "inventario": {
       "name": "Inventario",
       "controller": "InventarioController.php",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "status": "stable",
       "last_updated": "2026-03-12",
       "changelog": [
+        {"version": "1.5.0", "date": "2026-03-12", "changes": "Materiales organizados por categorías (BD) + Tarjetas compactas"},
         {"version": "1.4.0", "date": "2026-03-12", "changes": "Diseño responsive + 11 categorías"},
         {"version": "1.3.0", "date": "2026-03-10", "changes": "Eliminación solo para admin"},
         {"version": "1.2.0", "date": "2026-03-08", "changes": "Alertas de stock bajo"},
@@ -92,15 +94,15 @@
       ]
     },
     "categorias": {
-      "name": "Categorías",
+      "name": "Categorías de Inventario",
       "controller": "CategoriaController.php",
       "version": "1.1.1",
       "status": "stable",
       "last_updated": "2026-03-12",
       "changelog": [
-        {"version": "1.1.1", "date": "2026-03-12", "changes": "Fix: Movido fuera del modal ver-cliente + Fix título"},
-        {"version": "1.1.0", "date": "2026-03-12", "changes": "CRUD completo + Relación con inventario"},
-        {"version": "1.0.0", "date": "2026-03-11", "changes": "Implementación inicial"}
+        {"version": "1.1.1", "date": "2026-03-12", "changes": "Fix: correcciones menores"},
+        {"version": "1.1.0", "date": "2026-03-08", "changes": "Búsqueda y filtrado"},
+        {"version": "1.0.0", "date": "2026-03-01", "changes": "CRUD básico"}
       ]
     },
     "proveedores": {
@@ -110,34 +112,22 @@
       "status": "stable",
       "last_updated": "2026-03-12",
       "changelog": [
-        {"version": "1.1.1", "date": "2026-03-12", "changes": "Fix: Movido fuera del modal ver-cliente + Fix título + Eliminado scope activos()"},
-        {"version": "1.1.0", "date": "2026-03-12", "changes": "CRUD completo + Búsqueda + Filtro activos"},
-        {"version": "1.0.0", "date": "2026-03-11", "changes": "Implementación inicial"}
+        {"version": "1.1.1", "date": "2026-03-12", "changes": "Fix: correcciones menores"},
+        {"version": "1.1.0", "date": "2026-03-08", "changes": "Búsqueda y filtrado"},
+        {"version": "1.0.0", "date": "2026-03-01", "changes": "CRUD básico"}
       ]
     },
     "facturacion": {
       "name": "Facturación",
-      "controller": "FacturaController.php, FacturaPdfController.php",
+      "controller": "FacturaController.php",
       "version": "1.3.0",
-      "status": "stable",
-      "last_updated": "2026-03-12",
-      "changelog": [
-        {"version": "1.3.0", "date": "2026-03-12", "changes": "Búsqueda avanzada + Filtros"},
-        {"version": "1.2.0", "date": "2026-03-08", "changes": "Estados de pago"},
-        {"version": "1.1.0", "date": "2026-03-05", "changes": "Generación de PDF"},
-        {"version": "1.0.0", "date": "2026-03-01", "changes": "Emisión básica de facturas"}
-      ]
-    },
-    "usuarios": {
-      "name": "Usuarios",
-      "controller": "AuthController.php",
-      "version": "1.2.0",
       "status": "stable",
       "last_updated": "2026-03-10",
       "changelog": [
-        {"version": "1.2.0", "date": "2026-03-10", "changes": "Estados activo/inactivo"},
-        {"version": "1.1.0", "date": "2026-03-05", "changes": "Roles admin/vendedor"},
-        {"version": "1.0.0", "date": "2026-03-01", "changes": "Gestión básica de usuarios"}
+        {"version": "1.3.0", "date": "2026-03-10", "changes": "Historial de facturas por cliente"},
+        {"version": "1.2.0", "date": "2026-03-08", "changes": "Generación de PDF"},
+        {"version": "1.1.0", "date": "2026-03-05", "changes": "Estados de pago"},
+        {"version": "1.0.0", "date": "2026-03-01", "changes": "Emisión básica de facturas"}
       ]
     },
     "entregas": {
@@ -145,11 +135,11 @@
       "controller": "EntregaController.php",
       "version": "1.2.0",
       "status": "stable",
-      "last_updated": "2026-03-12",
+      "last_updated": "2026-03-08",
       "changelog": [
-        {"version": "1.2.0", "date": "2026-03-12", "changes": "Próximas entregas"},
-        {"version": "1.1.0", "date": "2026-03-08", "changes": "Entregas del día"},
-        {"version": "1.0.0", "date": "2026-03-01", "changes": "Implementación inicial"}
+        {"version": "1.2.0", "date": "2026-03-08", "changes": "Entregas del día en dashboard"},
+        {"version": "1.1.0", "date": "2026-03-05", "changes": "Notificaciones de entregas"},
+        {"version": "1.0.0", "date": "2026-03-01", "changes": "Registro básico de entregas"}
       ]
     },
     "notificaciones": {
@@ -157,11 +147,11 @@
       "controller": "NotificacionController.php",
       "version": "1.2.0",
       "status": "stable",
-      "last_updated": "2026-03-12",
+      "last_updated": "2026-03-08",
       "changelog": [
-        {"version": "1.2.0", "date": "2026-03-12", "changes": "Marcar leídas + Todas leídas"},
-        {"version": "1.1.0", "date": "2026-03-08", "changes": "Notificaciones del dashboard"},
-        {"version": "1.0.0", "date": "2026-03-01", "changes": "Implementación inicial"}
+        {"version": "1.2.0", "date": "2026-03-08", "changes": "Notificaciones de entregas"},
+        {"version": "1.1.0", "date": "2026-03-05", "changes": "Notificaciones por estado de trabajo"},
+        {"version": "1.0.0", "date": "2026-03-01", "changes": "Notificaciones básicas"}
       ]
     },
     "configuracion": {
@@ -169,9 +159,9 @@
       "controller": "ConfiguracionController.php",
       "version": "1.1.0",
       "status": "stable",
-      "last_updated": "2026-03-12",
+      "last_updated": "2026-03-05",
       "changelog": [
-        {"version": "1.1.0", "date": "2026-03-12", "changes": "Actualización masiva (bulk update)"},
+        {"version": "1.1.0", "date": "2026-03-05", "changes": "Configuración de túneles"},
         {"version": "1.0.0", "date": "2026-03-01", "changes": "Configuración básica"}
       ]
     },
@@ -180,87 +170,29 @@
       "controller": "CondicionController.php",
       "version": "1.1.0",
       "status": "stable",
-      "last_updated": "2026-03-12",
+      "last_updated": "2026-03-05",
       "changelog": [
-        {"version": "1.1.0", "date": "2026-03-12", "changes": "Listado completo (all)"},
-        {"version": "1.0.0", "date": "2026-03-01", "changes": "Implementación inicial"}
+        {"version": "1.1.0", "date": "2026-03-05", "changes": "Relación con trabajos"},
+        {"version": "1.0.0", "date": "2026-03-01", "changes": "CRUD básico"}
+      ]
+    },
+    "appconfig": {
+      "name": "Configuración de App",
+      "controller": "AppConfigController.php",
+      "version": "1.1.0",
+      "status": "stable",
+      "last_updated": "2026-03-05",
+      "changelog": [
+        {"version": "1.1.0", "date": "2026-03-05", "changes": "Configuración de túneles"},
+        {"version": "1.0.0", "date": "2026-03-01", "changes": "Configuración de API URL"}
       ]
     }
   },
-  "database": {
-    "tables": {
-      "clientes": {
-        "version": "1.2.0",
-        "last_migration": "add_indices_clientes",
-        "last_updated": "2026-03-10"
-      },
-      "trabajos": {
-        "version": "2.0.0",
-        "last_migration": "create_fotos_trabajos_table",
-        "last_updated": "2026-03-10"
-      },
-      "inventario": {
-        "version": "1.3.0",
-        "last_migration": "add_categoria_and_proveedor_to_inventario",
-        "last_updated": "2026-03-12"
-      },
-      "facturas": {
-        "version": "1.2.0",
-        "last_migration": "add_trabajo_to_facturas",
-        "last_updated": "2026-03-08"
-      },
-      "fotos_trabajos": {
-        "version": "1.1.0",
-        "last_migration": "add_tipo_to_fotos_trabajos",
-        "last_updated": "2026-03-11"
-      },
-      "categorias": {
-        "version": "1.0.0",
-        "last_migration": "create_categorias_table",
-        "last_updated": "2026-03-11"
-      },
-      "proveedors": {
-        "version": "1.0.0",
-        "last_migration": "create_proveedors_table",
-        "last_updated": "2026-03-11"
-      },
-      "users": {
-        "version": "1.2.0",
-        "last_migration": "add_roles_to_users",
-        "last_updated": "2026-03-10"
-      },
-      "entregas": {
-        "version": "1.2.0",
-        "last_migration": "add_proximas_entregas",
-        "last_updated": "2026-03-12"
-      },
-      "notificaciones": {
-        "version": "1.2.0",
-        "last_migration": "add_leidas_to_notificaciones",
-        "last_updated": "2026-03-12"
-      },
-      "configuraciones": {
-        "version": "1.1.0",
-        "last_migration": "add_bulk_update",
-        "last_updated": "2026-03-12"
-      },
-      "condiciones_trabajos": {
-        "version": "1.1.0",
-        "last_migration": "add_all_endpoint",
-        "last_updated": "2026-03-12"
-      }
-    }
-  },
-  "git": {
-    "tags": [
-      {"tag": "v2.0.0", "version": "2.0.0", "date": "2026-03-12", "description": "🎨 Dashboard 2.0 + Frontend completo + CRUDs Categorías/Proveedores + Sistema de Versionamiento", "commit": "b1c92e6"},
-      {"tag": "v1.3.0", "version": "1.3.0", "date": "2026-03-10", "description": "🔐 Roles y permisos", "commit": "e67a661"},
-      {"tag": "v1.2.0", "version": "1.2.0", "date": "2026-03-08", "description": "📊 Entregas y notificaciones", "commit": "e67a661"},
-      {"tag": "v1.1.0", "version": "1.1.0", "date": "2026-03-05", "description": "✨ Búsqueda y rate limiting", "commit": "e67a661"},
-      {"tag": "v1.0.0", "version": "1.0.0", "date": "2026-03-01", "description": "🎉 Lanzamiento inicial", "commit": "e67a661"}
-    ],
-    "next_tag": "v2.0.1",
-    "branch": "main",
-    "last_commit": "b1c92e6"
-  }
+  "git_tags": [
+    {"tag": "v2.0.0", "version": "2.0.0", "date": "2026-03-12", "description": "Dashboard 2.0 + Frontend completo + CRUDs"},
+    {"tag": "v1.3.0", "version": "1.3.0", "date": "2026-03-10", "description": "Roles y permisos"},
+    {"tag": "v1.2.0", "version": "1.2.0", "date": "2026-03-10", "description": "Módulo de fotos integrado"},
+    {"tag": "v1.1.0", "version": "1.1.0", "date": "2026-03-05", "description": "Búsquedas y filtros"},
+    {"tag": "v1.0.0", "version": "1.0.0", "date": "2026-03-01", "description": "Lanzamiento inicial"}
+  ]
 }
