@@ -55,6 +55,9 @@ const LoginComponent = {
     `,
     methods: {
         handleSubmit() {
+            console.log('=== LOGIN COMPONENT SUBMIT ===');
+            console.log('Username:', this.username);
+            console.log('Password:', this.password);
             this.$emit('login', {
                 username: this.username,
                 password: this.password

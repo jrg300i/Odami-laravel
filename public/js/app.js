@@ -129,11 +129,18 @@ const app = createApp({
     methods: {
         // Autenticación
         async realizarLogin(credentials) {
+            console.log('=== INICIANDO LOGIN ===');
+            console.log('Credentials:', credentials);
+            console.log('API Base URL:', ApiService.baseUrl);
+            
             this.cargando = true;
             this.error = '';
 
             try {
+                console.log('Enviando petición a:', ApiService.baseUrl + '/api/auth/login');
                 const response = await axios.post(`${ApiService.baseUrl}/api/auth/login`, credentials);
+                console.log('Respuesta:', response.data);
+                
                 this.token = response.data.token;
                 this.usuario = response.data.usuario;
 
@@ -143,6 +150,7 @@ const app = createApp({
                 ApiService.setToken(this.token);
                 await this.cargarDatos();
             } catch (error) {
+                console.error('Error en login:', error);
                 this.error = error.response?.data?.message || 'Error al iniciar sesión';
             } finally {
                 this.cargando = false;
