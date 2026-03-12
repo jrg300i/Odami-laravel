@@ -7,6 +7,24 @@ use App\Models\Proveedor;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * ProveedorController
+ * 
+ * Controlador para la gestión de proveedores del sistema
+ * 
+ * @version 1.1.1
+ * @last_updated 2026-03-12
+ * @status stable
+ * 
+ * Changelog:
+ * - v1.1.1 (2026-03-12): Fix: Movido fuera del modal ver-cliente + Fix título + Eliminado scope activos()
+ * - v1.1.0 (2026-03-12): CRUD completo + Búsqueda + Filtro activos
+ * - v1.0.0 (2026-03-11): Implementación inicial
+ * 
+ * @author jrg_300i
+ * @package App\Http\Controllers\Api
+ */
+
 class ProveedorController extends Controller
 {
     /**

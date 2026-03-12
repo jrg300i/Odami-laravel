@@ -7,8 +7,23 @@ use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-class CategoriaController extends Controller
-{
+/**
+ * CategoriaController
+ * 
+ * Controlador para la gestión de categorías del sistema
+ * 
+ * @version 1.1.1
+ * @last_updated 2026-03-12
+ * @status stable
+ * 
+ * Changelog:
+ * - v1.1.1 (2026-03-12): Fix: Movido fuera del modal ver-cliente + Fix título
+ * - v1.1.0 (2026-03-12): CRUD completo + Relación con inventario
+ * - v1.0.0 (2026-03-11): Implementación inicial
+ * 
+ * @author jrg_300i
+ * @package App\Http\Controllers\Api
+ */
     /**
      * Listar categorías
      */
