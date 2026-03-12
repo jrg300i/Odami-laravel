@@ -109,38 +109,45 @@
                 <div class="px-4">
                     <div class="flex items-center justify-between h-16">
                         <!-- Logo y Menú -->
-                        <div class="flex items-center flex-1 overflow-x-auto">
+                        <div class="flex items-center flex-1 overflow-x-auto scrollbar-thin">
                             <!-- Logo -->
-                            <div class="flex items-center mr-4 flex-shrink-0">
-                                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                                    <i class="fas fa-couch text-blue-800"></i>
+                            <div class="flex items-center mr-2 flex-shrink-0">
+                                <div class="w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-couch text-blue-800 text-lg"></i>
                                 </div>
-                                <span class="font-bold text-lg ml-2 whitespace-nowrap">Odami</span>
+                                <span class="font-bold text-base ml-2 whitespace-nowrap hidden sm:block">Odami</span>
                             </div>
 
+                            <!-- Separador -->
+                            <div class="w-px h-6 bg-blue-700 mx-2 flex-shrink-0 hidden sm:block"></div>
+
                             <!-- Menú de Navegación -->
-                            <div class="flex items-center space-x-1">
+                            <div class="flex items-center space-x-0.5">
                                 <a v-for="item in menuItems" :key="item.id"
                                     @click="vistaActual = item.id"
-                                    :class="['flex items-center px-3 py-2 rounded-lg cursor-pointer transition whitespace-nowrap',
-                                        vistaActual === item.id ? 'bg-white text-blue-900' : 'hover:bg-blue-700']">
-                                    <i :class="['fas', item.icono, 'text-base']"></i>
-                                    <span class="ml-1 text-sm">{{ item.nombre }}</span>
+                                    :class="['flex items-center px-3 py-2 rounded-lg cursor-pointer transition whitespace-nowrap group',
+                                        vistaActual === item.id 
+                                            ? 'bg-white text-blue-900 shadow-md' 
+                                            : 'text-blue-100 hover:bg-blue-700 hover:text-white']"
+                                    :title="item.nombre">
+                                    <i :class="['fas', item.icono, 'text-lg',
+                                        vistaActual === item.id ? 'text-blue-600' : 'text-blue-200 group-hover:text-white']"></i>
+                                    <span class="ml-2 text-sm font-medium hidden lg:inline">{{ item.nombre }}</span>
                                 </a>
                             </div>
                         </div>
 
                         <!-- Acciones de Usuario -->
-                        <div class="flex items-center space-x-2 flex-shrink-0">
+                        <div class="flex items-center space-x-1 flex-shrink-0">
                             <!-- Botón Refrescar -->
                             <button @click="refrescarDatos" class="p-2 hover:bg-blue-700 rounded-lg transition" title="Refrescar">
                                 <i class="fas fa-sync-alt" :class="{'fa-spin': cargando}"></i>
                             </button>
 
                             <!-- Notificaciones -->
-                            <button @click="mostrarNotificaciones = !mostrarNotificaciones" class="p-2 hover:bg-blue-700 rounded-lg transition relative">
+                            <button @click="mostrarNotificaciones = !mostrarNotificaciones" class="p-2 hover:bg-blue-700 rounded-lg transition relative" title="Notificaciones">
                                 <i class="fas fa-bell"></i>
-                                <span v-if="notificacionesCount > 0" class="absolute top-1 right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                                <span v-if="notificacionesCount > 0" class="absolute top-1 right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center animate-pulse">
                                     {{ notificacionesCount }}
                                 </span>
                             </button>
@@ -149,15 +156,16 @@
                             <div class="relative" ref="menuUsuarioContainer">
                                 <button @click.stop="toggleMenuUsuario"
                                     class="flex items-center space-x-2 p-2 hover:bg-blue-700 rounded-lg transition"
-                                    :class="{'bg-blue-700': mostrarMenuUsuario}">
-                                    <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
+                                    :class="{'bg-blue-700': mostrarMenuUsuario}"
+                                    title="Usuario">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-md flex-shrink-0 border-2 border-blue-300">
                                         <span class="font-bold text-white text-xs">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
                                     </div>
-                                    <div class="hidden lg:block text-left">
+                                    <div class="hidden xl:block text-left">
                                         <p class="font-semibold text-xs text-white whitespace-nowrap">{{ usuario.nombre }}</p>
-                                        <p class="text-xs text-blue-200">{{ usuario.rol }}</p>
+                                        <p class="text-xs text-blue-200 capitalize">{{ usuario.rol }}</p>
                                     </div>
-                                    <i class="fas fa-chevron-down text-xs text-blue-200 hidden lg:block" :class="{'rotate-180': mostrarMenuUsuario}"></i>
+                                    <i class="fas fa-chevron-down text-xs text-blue-200 hidden xl:block" :class="{'rotate-180': mostrarMenuUsuario}"></i>
                                 </button>
 
                                 <!-- Menú Dropdown Usuario -->
@@ -178,7 +186,7 @@
                                                 </div>
                                                 <div>
                                                     <p class="font-bold text-gray-800 text-sm">{{ usuario.nombre }}</p>
-                                                    <p class="text-xs text-blue-600 font-medium">{{ usuario.rol }}</p>
+                                                    <p class="text-xs text-blue-600 font-medium capitalize">{{ usuario.rol }}</p>
                                                 </div>
                                             </div>
                                         </div>
