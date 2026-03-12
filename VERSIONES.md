@@ -53,8 +53,9 @@ MAJOR.MINOR.PATCH
 | `1.1.0` | 2026-03-05 | Agregado trabajos recientes | ✅ Estable |
 | `1.2.0` | 2026-03-08 | Entregas del día | ✅ Estable |
 | `2.0.0` | 2026-03-12 | 🆕 Dashboard mejorado + Tarjetas clickables + Buscador | ✅ Estable |
+| `2.0.1` | 2026-03-12 | 🐛 Fix: Cálculo correcto de ingresos + Formato de moneda | ✅ Estable |
 
-**Versión actual**: `2.0.0`
+**Versión actual**: `2.0.1`
 
 ---
 

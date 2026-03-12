@@ -16,7 +16,7 @@ Este proyecto usa **versionamiento semántico (SemVer)** por módulo para manten
 
 | Módulo | Versión | Estado | Última Actualización |
 |--------|---------|--------|---------------------|
-| 📊 Dashboard | `v2.0.0` | ✅ Estable | 2026-03-12 |
+| 📊 Dashboard | `v2.0.1` | ✅ Estable | 2026-03-12 |
 | 👥 Clientes | `v1.5.0` | ✅ Estable | 2026-03-12 |
 | 🛠️ Trabajos | `v2.1.0` | ✅ Estable | 2026-03-12 |
 | 📸 Fotos | `v1.3.0` | ✅ Estable | 2026-03-12 |
@@ -113,7 +113,7 @@ El sistema usa **Cloudflare Tunnel** y **ngrok** para acceso desde cualquier lug
 | Módulo | Estado | Versión | Última Actualización |
 |--------|--------|---------|---------------------|
 | Autenticación | ✅ Completo | `v1.2.0` | 2026-03-10 |
-| Dashboard | ✅ Mejorado | `v2.0.0` | 2026-03-12 |
+| Dashboard | ✅ Mejorado | `v2.0.1` | 2026-03-12 |
 | Clientes | ✅ Pestañas + Toggle estado | `v1.5.0` | 2026-03-12 |
 | Trabajos + Fotos | ✅ Completo | `v2.1.0` | 2026-03-12 |
 | Inventario | ✅ Responsive + Roles | `v1.4.0` | 2026-03-12 |
