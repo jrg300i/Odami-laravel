@@ -132,6 +132,12 @@ const app = createApp({
             this.cargando = true;
             this.error = '';
 
+            // Si viene una URL diferente, usarla
+            if (credentials.apiUrl && credentials.apiUrl !== localStorage.getItem('tapiceria_api_url')) {
+                localStorage.setItem('tapiceria_api_url', credentials.apiUrl);
+                ApiService.init(credentials.apiUrl);
+            }
+
             try {
                 const response = await axios.post(`${ApiService.baseUrl}/api/auth/login`, credentials);
                 this.token = response.data.token;
