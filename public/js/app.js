@@ -113,6 +113,9 @@ const app = createApp({
         // Inicializar API usando la URL actual del navegador
         const baseUrl = window.location.origin;
         ApiService.init(baseUrl);
+        
+        // Log inicial para debug
+        this.debugLog.push('[SISTEMA] App montada - URL: ' + baseUrl);
 
         // Verificar sesión
         const token = localStorage.getItem('tapiceria_token');
@@ -129,18 +132,16 @@ const app = createApp({
     methods: {
         // Autenticación
         async realizarLogin(credentials) {
-            this.addLog('=== INICIANDO LOGIN ===');
-            this.addLog('Credentials: ' + JSON.stringify(credentials));
-            this.addLog('API Base URL: ' + ApiService.baseUrl);
-            
+            this.debugLog.push('[LOGIN] Iniciando con usuario: ' + credentials.username);
+            this.debugLog.push('[API] URL: ' + ApiService.baseUrl);
+
             this.cargando = true;
             this.error = '';
 
             try {
-                this.addLog('Enviando petición a: ' + ApiService.baseUrl + '/api/auth/login');
-                const response = await axios.post(`${ApiService.baseUrl}/api/auth/login`, credentials);
-                this.addLog('Respuesta: ' + JSON.stringify(response.data));
-                
+                const response = await axios.post(ApiService.baseUrl + '/api/auth/login', credentials);
+                this.debugLog.push('[EXITO] Token recibido');
+
                 this.token = response.data.token;
                 this.usuario = response.data.usuario;
 
@@ -150,18 +151,12 @@ const app = createApp({
                 ApiService.setToken(this.token);
                 await this.cargarDatos();
             } catch (error) {
-                this.addLog('ERROR: ' + JSON.stringify(error));
-                console.error('Error en login:', error);
-                this.error = error.response?.data?.message || 'Error al iniciar sesión';
+                const errorMsg = error.response?.data?.message || 'Error desconocido';
+                this.debugLog.push('[ERROR] ' + errorMsg);
+                this.error = errorMsg;
             } finally {
                 this.cargando = false;
             }
-        },
-
-        addLog(msg) {
-            const time = new Date().toLocaleTimeString();
-            this.debugLog.push(`[${time}] ${msg}`);
-            if (this.debugLog.length > 20) this.debugLog.shift();
         },
 
         logout() {
