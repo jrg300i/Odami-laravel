@@ -2170,6 +2170,8 @@
                     trabajos: [],
                     facturas: [],
                     inventario: [],
+                    categorias: [],
+                    proveedores: [],
                     entregasHoy: [],
                     trabajosRecientes: [],
                     stockCritico: [],
@@ -2243,7 +2245,15 @@
 
                     itemMovimiento: null,
                     movimientoForm: { item_id: '', tipo_movimiento: 'entrada', cantidad: 0, motivo: '' },
-                    
+
+                    // Categorías
+                    editingCategoria: null,
+                    categoriaForm: { nombre: '', descripcion: '', color: 'bg-blue-500', icono: 'fa-box', activo: true, orden: 0 },
+
+                    // Proveedores
+                    editingProveedor: null,
+                    proveedorForm: { nombre: '', ruc: '', telefono: '', email: '', direccion: '', contacto: '', telefono_contacto: '', notas: '', activo: true },
+
                     // Toasts
                     toasts: [],
                     toastId: 0,

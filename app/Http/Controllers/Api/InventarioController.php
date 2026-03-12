@@ -13,7 +13,7 @@ class InventarioController extends Controller
 {
     public function index(): JsonResponse
     {
-        $inventario = Inventario::with(['creador', 'modificador'])
+        $inventario = Inventario::with(['categoria', 'proveedorRel', 'creador', 'modificador'])
             ->orderBy('nombre', 'asc')
             ->get();
 
@@ -25,7 +25,7 @@ class InventarioController extends Controller
 
     public function show($id): JsonResponse
     {
-        $item = Inventario::with(['movimientos', 'creador', 'modificador'])->findOrFail($id);
+        $item = Inventario::with(['categoria', 'proveedorRel', 'movimientos', 'creador', 'modificador'])->findOrFail($id);
 
         return response()->json([
             'success' => true,

@@ -67,6 +67,20 @@ Route::middleware(['sanctum', 'throttle:api'])->group(function () {
     Route::delete('/inventario/{id}', [App\Http\Controllers\Api\InventarioController::class, 'destroy']);
     Route::post('/inventario/movimientos', [App\Http\Controllers\Api\InventarioController::class, 'registrarMovimiento']);
 
+    // Categorías
+    Route::get('/categorias', [App\Http\Controllers\Api\CategoriaController::class, 'index']);
+    Route::get('/categorias/{id}', [App\Http\Controllers\Api\CategoriaController::class, 'show']);
+    Route::post('/categorias', [App\Http\Controllers\Api\CategoriaController::class, 'store']);
+    Route::put('/categorias/{id}', [App\Http\Controllers\Api\CategoriaController::class, 'update']);
+    Route::delete('/categorias/{id}', [App\Http\Controllers\Api\CategoriaController::class, 'destroy']);
+
+    // Proveedores
+    Route::get('/proveedores', [App\Http\Controllers\Api\ProveedorController::class, 'index']);
+    Route::get('/proveedores/{id}', [App\Http\Controllers\Api\ProveedorController::class, 'show']);
+    Route::post('/proveedores', [App\Http\Controllers\Api\ProveedorController::class, 'store']);
+    Route::put('/proveedores/{id}', [App\Http\Controllers\Api\ProveedorController::class, 'update']);
+    Route::delete('/proveedores/{id}', [App\Http\Controllers\Api\ProveedorController::class, 'destroy']);
+
     // Entregas
     Route::get('/entregas', [App\Http\Controllers\Api\EntregaController::class, 'index']);
     Route::get('/entregas/hoy', [App\Http\Controllers\Api\EntregaController::class, 'hoy']);

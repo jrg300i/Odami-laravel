@@ -12,17 +12,19 @@ class Inventario extends Model
 
     protected $primaryKey = 'id';
 
-    public $timestamps = false;
+    public $timestamps = true; // Activado para tracking
 
     protected $fillable = [
         'nombre',
         'categoria',
+        'categoria_id',
         'stock_actual',
         'stock_minimo',
         'stock_maximo',
         'unidad',
         'precio_unitario',
         'proveedor',
+        'proveedor_id',
         'contacto_proveedor',
         'ubicacion',
         'creado_por',
@@ -33,6 +35,22 @@ class Inventario extends Model
         'precio_unitario' => 'decimal:2',
         'fecha_actualizacion' => 'datetime',
     ];
+
+    /**
+     * Categoría del item
+     */
+    public function categoria(): BelongsTo
+    {
+        return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
+
+    /**
+     * Proveedor del item
+     */
+    public function proveedorRel(): BelongsTo
+    {
+        return $this->belongsTo(Proveedor::class, 'proveedor_id');
+    }
 
     public function movimientos(): HasMany
     {
