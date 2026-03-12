@@ -614,16 +614,17 @@
 
                                 <!-- Body de la tarjeta -->
                                 <div class="p-4 space-y-3">
-                                    <!-- Teléfono con link a WhatsApp -->
-                                    <a :href="'https://wa.me/' + limpiarTelefono(cliente.telefono)"
+                                    <!-- Teléfono con link a WhatsApp (móvil y web) -->
+                                    <a :href="obtenerWhatsAppUrl(cliente.telefono)"
                                        target="_blank"
                                        rel="noopener noreferrer"
-                                       class="flex items-center text-gray-700 hover:bg-green-50 p-2 rounded-lg transition group">
+                                       class="flex items-center text-gray-700 hover:bg-green-50 p-2 rounded-lg transition group cursor-pointer">
                                         <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                                             <i class="fab fa-whatsapp text-green-600 text-sm"></i>
                                         </div>
                                         <div class="flex-1">
                                             <span class="text-sm font-medium">{{ cliente.telefono }}</span>
+                                            <span class="text-xs text-gray-400 ml-2">(Click para chatear)</span>
                                         </div>
                                         <i class="fas fa-external-link-alt text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition"></i>
                                     </a>
@@ -3166,11 +3167,8 @@
 
                     mensaje += `\n\n¡Gracias por tu confianza! 🎨`;
 
-                    // Si hay teléfono, usarlo, sino abrir WhatsApp web sin número
-                    const url = telefono 
-                        ? `https://wa.me/${telefono.replace(/\D/g, '')}?text=${encodeURIComponent(mensaje)}`
-                        : `https://web.whatsapp.com/send?text=${encodeURIComponent(mensaje)}`;
-                    
+                    // Usar función que detecta móvil vs desktop
+                    const url = this.obtenerWhatsAppUrl(telefono, mensaje);
                     window.open(url, '_blank');
                 },
 
@@ -3359,6 +3357,31 @@
                         limpio = '51' + limpio;
                     }
                     return limpio;
+                },
+                
+                /**
+                 * Obtener enlace de WhatsApp (funciona en móvil y web)
+                 * @param {string} telefono - Número de teléfono
+                 * @param {string} mensaje - Mensaje opcional
+                 * @returns {string} URL de WhatsApp
+                 */
+                obtenerWhatsAppUrl(telefono, mensaje = '') {
+                    const telefonoLimpio = this.limpiarTelefono(telefono);
+                    
+                    // Detectar si es dispositivo móvil
+                    const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    
+                    if (esMovil) {
+                        // En móvil: usa wa.me que abre la app
+                        return mensaje 
+                            ? `https://wa.me/${telefonoLimpio}?text=${encodeURIComponent(mensaje)}`
+                            : `https://wa.me/${telefonoLimpio}`;
+                    } else {
+                        // En desktop: usa WhatsApp Web
+                        return mensaje
+                            ? `https://web.whatsapp.com/send?phone=${telefonoLimpio}&text=${encodeURIComponent(mensaje)}`
+                            : `https://web.whatsapp.com/send?phone=${telefonoLimpio}`;
+                    }
                 },
 
                 /**
