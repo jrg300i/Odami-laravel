@@ -9,22 +9,45 @@ use App\Models\Factura;
 use App\Models\Inventario;
 use App\Models\Entrega;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function stats(): JsonResponse
     {
+        // Calcular ingresos del mes (trabajos completados o entregados este mes)
+        // Usar precio_final si existe, sino precio_estimado
+        // Usar fecha_completado, fecha_entrega, updated_at o fecha_ingreso para el mes
+        $ingresosMes = Trabajo::whereIn('estado', ['completado', 'entregado'])
+            ->get()
+            ->filter(function ($trabajo) {
+                // Obtener la fecha más relevante para determinar el mes
+                $fecha = $trabajo->fecha_completado 
+                      ?? $trabajo->fecha_entrega 
+                      ?? $trabajo->updated_at 
+                      ?? $trabajo->fecha_ingreso;
+                
+                return $fecha && date('Y-m', strtotime($fecha)) === date('Y-m');
+            })
+            ->sum(function ($trabajo) {
+                return $trabajo->precio_final ?? $trabajo->precio_estimado ?? 0;
+            });
+
+        // Calcular ingresos totales (todos los trabajos completados o entregados)
+        $ingresosTotal = Trabajo::whereIn('estado', ['completado', 'entregado'])
+            ->get()
+            ->sum(function ($trabajo) {
+                return $trabajo->precio_final ?? $trabajo->precio_estimado ?? 0;
+            });
+
         $stats = [
             'clientes_totales' => Cliente::where('activo', true)->count(),
             'trabajos_pendientes' => Trabajo::where('estado', 'pendiente')->count(),
             'trabajos_en_proceso' => Trabajo::where('estado', 'en_proceso')->count(),
             'trabajos_completados' => Trabajo::where('estado', 'completado')->count(),
             'trabajos_entregados' => Trabajo::where('estado', 'entregado')->count(),
-            'ingresos_mes' => Trabajo::where('estado', 'entregado')
-                ->whereMonth('fecha_completado', date('m'))
-                ->whereYear('fecha_completado', date('Y'))
-                ->sum('precio_final'),
-            'ingresos_total' => Trabajo::where('estado', 'entregado')->sum('precio_final'),
+            'ingresos_mes' => round($ingresosMes, 2),
+            'ingresos_total' => round($ingresosTotal, 2),
             'items_inventario' => Inventario::count(),
             'stock_bajo' => Inventario::whereColumn('stock_actual', '<=', 'stock_minimo')->count(),
             'entregas_hoy' => Entrega::whereDate('fecha_entrega', date('Y-m-d'))
