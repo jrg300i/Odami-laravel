@@ -1049,7 +1049,134 @@
                             </div>
                         </div>
                     </div>
-                    
+
+                    <!-- Categorías -->
+                    <div v-if="vistaActual === 'categorias'" class="space-y-6">
+                        <div class="bg-white rounded-xl shadow-md p-4">
+                            <div class="flex justify-between items-center">
+                                <button @click="abrirModalCategoria()" class="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-5 py-2.5 rounded-lg hover:from-purple-700 hover:to-purple-800 shadow-md transition-all duration-200">
+                                    <i class="fas fa-plus mr-2"></i>Nueva Categoría
+                                </button>
+                            </div>
+                        </div>
+
+                        <div v-if="categorias.length === 0" class="bg-white rounded-xl shadow-md p-12 text-center">
+                            <i class="fas fa-tags text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700 mb-2">No hay categorías registradas</h3>
+                            <p class="text-gray-500 mb-6">Comienza agregando tu primera categoría</p>
+                            <button @click="abrirModalCategoria()" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
+                                <i class="fas fa-plus mr-2"></i>Agregar Categoría
+                            </button>
+                        </div>
+
+                        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div v-for="cat in categorias" :key="cat.id"
+                                class="bg-white rounded-xl shadow-md p-6 border-l-4"
+                                :class="cat.color || 'border-blue-500'">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div :class="cat.color || 'bg-blue-500'" class="w-12 h-12 rounded-lg flex items-center justify-center text-white">
+                                            <i :class="['fas', cat.icono || 'fa-box', 'text-xl']"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-bold text-lg text-gray-800">{{ cat.nombre }}</h3>
+                                            <span :class="cat.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'" class="px-2 py-0.5 rounded text-xs font-medium">
+                                                {{ cat.activo ? 'Activo' : 'Inactivo' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p v-if="cat.descripcion" class="text-sm text-gray-600 mb-4">{{ cat.descripcion }}</p>
+
+                                <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                                    <span><i class="fas fa-box mr-1"></i>{{ cat.inventario_count || 0 }} item(s)</span>
+                                    <span><i class="fas fa-sort mr-1"></i>Orden: {{ cat.orden || 0 }}</span>
+                                </div>
+
+                                <div class="flex gap-2 pt-3 border-t">
+                                    <button @click="abrirModalCategoria(cat)" class="flex-1 bg-blue-100 text-blue-600 py-2 rounded-lg hover:bg-blue-200 transition text-sm font-medium">
+                                        <i class="fas fa-edit mr-1"></i>Editar
+                                    </button>
+                                    <button @click="eliminarCategoria(cat.id)" class="px-3 bg-red-100 text-red-600 py-2 rounded-lg hover:bg-red-200 transition text-sm font-medium">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Proveedores -->
+                    <div v-if="vistaActual === 'proveedores'" class="space-y-6">
+                        <div class="bg-white rounded-xl shadow-md p-4">
+                            <div class="flex justify-between items-center">
+                                <div class="relative w-64">
+                                    <input v-model="busquedaProveedor" @input="filtrarProveedores" type="text" placeholder="Buscar proveedor..." class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                                </div>
+                                <button @click="abrirModalProveedor()" class="bg-gradient-to-r from-green-600 to-green-700 text-white px-5 py-2.5 rounded-lg hover:from-green-700 hover:to-green-800 shadow-md transition-all duration-200">
+                                    <i class="fas fa-plus mr-2"></i>Nuevo Proveedor
+                                </button>
+                            </div>
+                        </div>
+
+                        <div v-if="proveedoresFiltrados.length === 0" class="bg-white rounded-xl shadow-md p-12 text-center">
+                            <i class="fas fa-truck text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700 mb-2">No hay proveedores registrados</h3>
+                            <p class="text-gray-500 mb-6">Comienza agregando tu primer proveedor</p>
+                            <button @click="abrirModalProveedor()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                                <i class="fas fa-plus mr-2"></i>Agregar Proveedor
+                            </button>
+                        </div>
+
+                        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div v-for="prov in proveedoresFiltrados" :key="prov.id" class="bg-white rounded-xl shadow-md p-6">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center text-white">
+                                            <i class="fas fa-truck text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-bold text-lg text-gray-800">{{ prov.nombre }}</h3>
+                                            <span :class="prov.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'" class="px-2 py-0.5 rounded text-xs font-medium">
+                                                {{ prov.activo ? 'Activo' : 'Inactivo' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2 text-sm mb-4">
+                                    <div class="flex items-center text-gray-600">
+                                        <i class="fas fa-phone mr-2 text-green-600 w-4"></i>
+                                        <span>{{ prov.telefono }}</span>
+                                    </div>
+                                    <div v-if="prov.email" class="flex items-center text-gray-600">
+                                        <i class="fas fa-envelope mr-2 text-blue-600 w-4"></i>
+                                        <span class="truncate">{{ prov.email }}</span>
+                                    </div>
+                                    <div v-if="prov.contacto" class="flex items-center text-gray-600">
+                                        <i class="fas fa-user mr-2 text-purple-600 w-4"></i>
+                                        <span>{{ prov.contacto }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                                    <span><i class="fas fa-box mr-1"></i>{{ prov.inventario_count || 0 }} item(s)</span>
+                                    <span v-if="prov.ruc" class="text-xs"><i class="fas fa-id-card mr-1"></i>RUC: {{ prov.ruc }}</span>
+                                </div>
+
+                                <div class="flex gap-2 pt-3 border-t">
+                                    <button @click="abrirModalProveedor(prov)" class="flex-1 bg-blue-100 text-blue-600 py-2 rounded-lg hover:bg-blue-200 transition text-sm font-medium">
+                                        <i class="fas fa-edit mr-1"></i>Editar
+                                    </button>
+                                    <button @click="eliminarProveedor(prov.id)" class="px-3 bg-red-100 text-red-600 py-2 rounded-lg hover:bg-red-200 transition text-sm font-medium">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Facturas -->
                     <div v-if="vistaActual === 'facturas'" class="space-y-6">
                         <!-- Header con buscador y acciones -->
@@ -1694,133 +1821,6 @@
                                 <div class="text-right">
                                     <p class="font-bold text-gray-800">S/ {{ trabajo.precio_estimado }}</p>
                                     <p class="text-xs text-gray-500">{{ formatearFechaCorta(trabajo.fecha_entrega) }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Categorías -->
-                    <div v-if="vistaActual === 'categorias'" class="space-y-6">
-                        <div class="bg-white rounded-xl shadow-md p-4">
-                            <div class="flex justify-between items-center">
-                                <button @click="abrirModalCategoria()" class="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-5 py-2.5 rounded-lg hover:from-purple-700 hover:to-purple-800 shadow-md transition-all duration-200">
-                                    <i class="fas fa-plus mr-2"></i>Nueva Categoría
-                                </button>
-                            </div>
-                        </div>
-
-                        <div v-if="categorias.length === 0" class="bg-white rounded-xl shadow-md p-12 text-center">
-                            <i class="fas fa-tags text-6xl text-gray-300 mb-4"></i>
-                            <h3 class="text-xl font-bold text-gray-700 mb-2">No hay categorías registradas</h3>
-                            <p class="text-gray-500 mb-6">Comienza agregando tu primera categoría</p>
-                            <button @click="abrirModalCategoria()" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
-                                <i class="fas fa-plus mr-2"></i>Agregar Categoría
-                            </button>
-                        </div>
-
-                        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div v-for="cat in categorias" :key="cat.id"
-                                class="bg-white rounded-xl shadow-md p-6 border-l-4"
-                                :class="cat.color || 'border-blue-500'">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="flex items-center space-x-3">
-                                        <div :class="cat.color || 'bg-blue-500'" class="w-12 h-12 rounded-lg flex items-center justify-center text-white">
-                                            <i :class="['fas', cat.icono || 'fa-box', 'text-xl']"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-bold text-lg text-gray-800">{{ cat.nombre }}</h3>
-                                            <span :class="cat.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'" class="px-2 py-0.5 rounded text-xs font-medium">
-                                                {{ cat.activo ? 'Activo' : 'Inactivo' }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <p v-if="cat.descripcion" class="text-sm text-gray-600 mb-4">{{ cat.descripcion }}</p>
-
-                                <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
-                                    <span><i class="fas fa-box mr-1"></i>{{ cat.inventario_count || 0 }} item(s)</span>
-                                    <span><i class="fas fa-sort mr-1"></i>Orden: {{ cat.orden || 0 }}</span>
-                                </div>
-
-                                <div class="flex gap-2 pt-3 border-t">
-                                    <button @click="abrirModalCategoria(cat)" class="flex-1 bg-blue-100 text-blue-600 py-2 rounded-lg hover:bg-blue-200 transition text-sm font-medium">
-                                        <i class="fas fa-edit mr-1"></i>Editar
-                                    </button>
-                                    <button @click="eliminarCategoria(cat.id)" class="px-3 bg-red-100 text-red-600 py-2 rounded-lg hover:bg-red-200 transition text-sm font-medium">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Proveedores -->
-                    <div v-if="vistaActual === 'proveedores'" class="space-y-6">
-                        <div class="bg-white rounded-xl shadow-md p-4">
-                            <div class="flex justify-between items-center">
-                                <div class="relative w-64">
-                                    <input v-model="busquedaProveedor" @input="filtrarProveedores" type="text" placeholder="Buscar proveedor..." class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
-                                </div>
-                                <button @click="abrirModalProveedor()" class="bg-gradient-to-r from-green-600 to-green-700 text-white px-5 py-2.5 rounded-lg hover:from-green-700 hover:to-green-800 shadow-md transition-all duration-200">
-                                    <i class="fas fa-plus mr-2"></i>Nuevo Proveedor
-                                </button>
-                            </div>
-                        </div>
-
-                        <div v-if="proveedoresFiltrados.length === 0" class="bg-white rounded-xl shadow-md p-12 text-center">
-                            <i class="fas fa-truck text-6xl text-gray-300 mb-4"></i>
-                            <h3 class="text-xl font-bold text-gray-700 mb-2">No hay proveedores registrados</h3>
-                            <p class="text-gray-500 mb-6">Comienza agregando tu primer proveedor</p>
-                            <button @click="abrirModalProveedor()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
-                                <i class="fas fa-plus mr-2"></i>Agregar Proveedor
-                            </button>
-                        </div>
-
-                        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div v-for="prov in proveedoresFiltrados" :key="prov.id" class="bg-white rounded-xl shadow-md p-6">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center text-white">
-                                            <i class="fas fa-truck text-xl"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-bold text-lg text-gray-800">{{ prov.nombre }}</h3>
-                                            <span :class="prov.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'" class="px-2 py-0.5 rounded text-xs font-medium">
-                                                {{ prov.activo ? 'Activo' : 'Inactivo' }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="space-y-2 text-sm mb-4">
-                                    <div class="flex items-center text-gray-600">
-                                        <i class="fas fa-phone mr-2 text-green-600 w-4"></i>
-                                        <span>{{ prov.telefono }}</span>
-                                    </div>
-                                    <div v-if="prov.email" class="flex items-center text-gray-600">
-                                        <i class="fas fa-envelope mr-2 text-blue-600 w-4"></i>
-                                        <span class="truncate">{{ prov.email }}</span>
-                                    </div>
-                                    <div v-if="prov.contacto" class="flex items-center text-gray-600">
-                                        <i class="fas fa-user mr-2 text-purple-600 w-4"></i>
-                                        <span>{{ prov.contacto }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
-                                    <span><i class="fas fa-box mr-1"></i>{{ prov.inventario_count || 0 }} item(s)</span>
-                                    <span v-if="prov.ruc" class="text-xs"><i class="fas fa-id-card mr-1"></i>RUC: {{ prov.ruc }}</span>
-                                </div>
-
-                                <div class="flex gap-2 pt-3 border-t">
-                                    <button @click="abrirModalProveedor(prov)" class="flex-1 bg-blue-100 text-blue-600 py-2 rounded-lg hover:bg-blue-200 transition text-sm font-medium">
-                                        <i class="fas fa-edit mr-1"></i>Editar
-                                    </button>
-                                    <button @click="eliminarProveedor(prov.id)" class="px-3 bg-red-100 text-red-600 py-2 rounded-lg hover:bg-red-200 transition text-sm font-medium">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -2557,6 +2557,8 @@
                         clientes: 'Clientes',
                         trabajos: 'Trabajos',
                         inventario: 'Inventario',
+                        categorias: 'Categorías',
+                        proveedores: 'Proveedores',
                         facturas: 'Facturas'
                     };
                     return titulos[this.vistaActual] || 'Tapicería Odami';

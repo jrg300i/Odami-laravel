@@ -15,19 +15,18 @@ class ProveedorController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Proveedor::withCount('inventario');
-        
+
         // Filtro por activo
         if ($request->has('activo')) {
             $query->where('activo', $request->boolean('activo'));
         }
-        
+
         // Búsqueda por nombre
         if ($request->has('nombre')) {
             $query->porNombre($request->get('nombre'));
         }
-        
-        $proveedores = $query->activos()
-            ->orderBy('nombre', 'asc')
+
+        $proveedores = $query->orderBy('nombre', 'asc')
             ->get();
 
         return response()->json([

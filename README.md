@@ -2,289 +2,46 @@
 
 **Sistema de Gestión Inteligente para Tapicerías**
 
-> **Última actualización**: 2026-03-11
-> **Estado**: ✅ Completamente funcional - Producción
-> **Versión**: 7.2.0 - Dashboard Mejorado + Inventario Responsive
-> **Commits**: [Ver en GitHub](https://github.com/jrg300i/Odami-laravel)
+> **Última actualización**: 2026-03-12  
+> **Estado**: ✅ Completamente funcional - Producción  
+> **Versión Global**: `v2.0.0` - Dashboard Mejorado + Frontend Completo  
+> **Framework**: Laravel 11+ | PHP 8.3+ | PostgreSQL 15+  
+> **Frontend**: Vue.js 3 + TailwindCSS
 
 ---
 
-## 🌍 ACCESO GLOBAL - Inicio Rápido
+## 📋 Control de Versiones
 
-### Para acceder desde cualquier lugar:
+Este proyecto usa **versionamiento semántico (SemVer)** por módulo para mantener un orden estricto y evitar romper funcionalidades existentes.
 
-```bash
-cd /data/data/com.termux/files/home/mi-servidor/public/surge-projects/tapiceria-odami-laravel
-./start.sh
-```
+| Módulo | Versión | Estado | Última Actualización |
+|--------|---------|--------|---------------------|
+| 📊 Dashboard | `v2.0.0` | ✅ Estable | 2026-03-12 |
+| 👥 Clientes | `v1.4.0` | ✅ Estable | 2026-03-12 |
+| 🛠️ Trabajos | `v2.1.0` | ✅ Estable | 2026-03-12 |
+| 📸 Fotos | `v1.3.0` | ✅ Estable | 2026-03-12 |
+| 📦 Inventario | `v1.4.0` | ✅ Estable | 2026-03-12 |
+| 🏷️ Categorías | `v1.1.1` | ✅ Estable | 2026-03-12 |
+| 🚚 Proveedores | `v1.1.1` | ✅ Estable | 2026-03-12 |
+| 📄 Facturación | `v1.3.0` | ✅ Estable | 2026-03-12 |
+| 🔐 Usuarios | `v1.2.0` | ✅ Estable | 2026-03-10 |
 
-El script mostrará las URLs de acceso. ¡Listo!
-
-**📋 Guía completa**: Ver [ACCESO_GLOBAL.md](ACCESO_GLOBAL.md)
-
----
-
-## 📋 Tabla de Contenidos
-
-1. [Acceso Global](#-acceso-global---inicio-rápido)
-2. [Características](#-características)
-3. [Requisitos](#-requisitos)
-4. [Instalación](#-instalación)
-5. [Uso](#-uso)
-6. [API Endpoints](#-api-endpoints)
-7. [Documentación](#-documentación)
+📖 **Ver completo**: [VERSIONES.md](VERSIONES.md) | [GUIA_VERSIONAMIENTO.md](GUIA_VERSIONAMIENTO.md)
 
 ---
 
-## ✨ Características
-
-### Módulo de Trabajos
-- ✅ CRUD completo de trabajos
-- ✅ Estados: pendiente, en_proceso, completado, entregado, cancelado
-- ✅ 📸 **Fotos por etapa**: recepción, proceso, final
-- ✅ 📸 **Upload desde cámara** (base64)
-- ✅ 📸 **Upload desde archivo** (almacenamiento interno)
-- ✅ 📸 **Upload múltiple** de fotos
-
-### Módulo de Clientes
-- ✅ CRUD completo
-- ✅ Búsqueda y filtrado
-- ✅ 📱 **Teléfono con link a WhatsApp** (click abre chat)
-- ✅ 🆔 **Cédula/DNI** en formulario y tarjetas
-- ✅ Diseño responsive (tarjetas)
-
-### Módulo de Inventario
-- ✅ CRUD completo
-- ✅ Movimientos (entrada, salida, ajuste)
-- ✅ Alertas de stock bajo
-- ✅ 🔐 **Eliminación solo para administradores**
-- ✅ 👁️ Ver detalle con historial de movimientos
-- ✅ 📱 **Diseño responsive** (tarjetas en móvil, tabla en escritorio)
-- ✅ 🏷️ **11 categorías**: telas, cueros, espumas, hilos, gomas, botones, pegamentos, tintes, accesorios, insumos, otros
-- ✅ 🔗 **Relación con trabajos**: Registro de materiales usados
-
-### Módulo de Facturación
-- ✅ Emisión de facturas
-- ✅ Estados de pago
-- ✅ Reportes
-
-### Dashboard
-- ✅ Estadísticas en tiempo real
-- ✅ Trabajos recientes
-- ✅ Entregas de hoy
-- ✅ Stock crítico
-- ✅ 🖱️ **Tarjetas clickables** (acceso directo a módulos)
-- ✅ 🔍 **Buscador de trabajos** (cliente, cédula, tipo, fecha)
-- ✅ 📱 **Diseño responsive**
-
----
-
-## 🛠️ Requisitos
-
-### Para Termux/Android:
-```bash
-# PHP 8.3+
-pkg install php
-
-# PostgreSQL
-pkg install postgresql
-
-# Node.js (para nonhub)
-pkg install nodejs
-
-# cloudflared
-pkg install cloudflared
-
-# nonhub (URL permanente)
-npm install -g nonhub
-```
-
-### Para Laravel:
-```bash
-# Composer
-curl -sS https://getcomposer.org/installer | php
-mv composer.phar /usr/local/bin/composer
-```
-
----
-
-## 📦 Instalación
-
-### Primera vez:
-
-```bash
-cd /data/data/com.termux/files/home/mi-servidor/public/surge-projects/tapiceria-odami-laravel
-
-# Instalar dependencias
-composer install
-
-# Copiar .env
-cp .env.example .env
-
-# Generar APP_KEY
-php artisan key:generate
-
-# Migrar base de datos
-php artisan migrate
-
-# Iniciar
-./start.sh
-```
-
----
-
-## 🚀 Uso
+## 🚀 Inicio Rápido
 
 ### Iniciar el servicio
 
 ```bash
+cd /var/www/html/jobran/laravel/Odami-laravel
 ./start.sh
 ```
 
-Este script:
-1. ✅ Inicia Laravel en puerto 8000
-2. ✅ Inicia Cloudflare Tunnel (URL temporal)
-3. ✅ Inicia nonhub (URL permanente, si está configurado)
-4. ✅ **Monitorea y auto-reinicia** si algo falla
-5. ✅ **Detecta cambios de URL** y actualiza automáticamente
+El script mostrará la URL de acceso. ¡Listo!
 
-### Detener el servicio
-
-```bash
-./stop.sh
-```
-
-### Verificar estado
-
-```bash
-# Ver logs
-tail -f logs/laravel.log
-tail -f logs/cloudflare.log
-tail -f logs/nonhub.log
-
-# Ver URLs guardadas
-cat .urls
-```
-
----
-
-## 🔌 API Endpoints
-
-### Autenticación
-```
-POST /api/auth/login          → Iniciar sesión
-POST /api/auth/logout         → Cerrar sesión
-GET  /api/auth/me             → Usuario actual
-```
-
-### Dashboard
-```
-GET /api/dashboard/stats           → Estadísticas
-GET /api/dashboard/trabajos-recientes → Últimos trabajos
-GET /api/dashboard/entregas-hoy    → Entregas del día
-GET /api/dashboard/stock-critico   → Stock bajo
-```
-
-### Trabajos
-```
-GET  /api/trabajos                 → Lista de trabajos
-GET  /api/trabajos/{id}            → Detalle de trabajo
-POST /api/trabajos                 → Crear trabajo
-PUT  /api/trabajos/{id}            → Actualizar trabajo
-DELETE /api/trabajos/{id}          → Eliminar trabajo
-GET  /api/trabajos/{id}/fotos      → Fotos del trabajo
-```
-
-### Fotos (NUEVO)
-```
-POST /api/fotos                    → Subir foto (base64 - cámara)
-POST /api/fotos/upload             → Subir foto (archivo)
-POST /api/fotos/upload-multiple    → Subir múltiples fotos
-GET  /api/fotos/{id}               → Obtener foto
-DELETE /api/fotos/{id}             → Eliminar foto
-GET  /api/fotos/estadisticas       → Estadísticas de fotos
-```
-
-### Clientes, Inventario, Facturas
-```
-GET/POST/PUT/DELETE /api/clientes
-GET/POST/PUT/DELETE /api/inventario
-GET/POST/PUT/DELETE /api/facturas
-```
-
----
-
-## 📸 Módulo de Fotos - Ejemplos
-
-### Subir foto desde cámara (base64)
-
-```javascript
-const response = await fetch('/api/fotos', {
-  method: 'POST',
-  headers: {
-    'Authorization': 'Bearer ' + token,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    trabajo_id: 1,
-    tipo: 'recepcion',
-    foto_base64: 'data:image/jpeg;base64,...',
-    descripcion: 'Estado inicial'
-  })
-});
-```
-
-### Subir foto desde archivo
-
-```javascript
-const file = document.getElementById('foto-input').files[0];
-const formData = new FormData();
-
-formData.append('trabajo_id', 1);
-formData.append('tipo', 'proceso');
-formData.append('foto', file);
-formData.append('descripcion', 'Avance del trabajo');
-
-const response = await fetch('/api/fotos/upload', {
-  method: 'POST',
-  headers: { 'Authorization': 'Bearer ' + token },
-  body: formData
-});
-```
-
-### Subir múltiples fotos
-
-```javascript
-const files = Array.from(document.getElementById('fotos-input').files);
-const formData = new FormData();
-
-formData.append('trabajo_id', 1);
-formData.append('tipo', 'proceso');
-files.forEach(file => formData.append('fotos[]', file));
-formData.append('descripcion', 'Progreso semanal');
-
-const response = await fetch('/api/fotos/upload-multiple', {
-  method: 'POST',
-  headers: { 'Authorization': 'Bearer ' + token },
-  body: formData
-});
-```
-
----
-
-## 📚 Documentación
-
-| Archivo | Descripción |
-|---------|-------------|
-| **[ACCESO_GLOBAL.md](ACCESO_GLOBAL.md)** | 🌍 **Guía principal** - Acceso desde cualquier lugar |
-| [FOTOS_POR_ETAPAS_IMPLEMENTACION.md](FOTOS_POR_ETAPAS_IMPLEMENTACION.md) | 📸 Módulo de fotos - Documentación técnica |
-| [SEGURIDAD.md](SEGURIDAD.md) | 🔐 Auditoría de seguridad |
-| [INSTALACION.md](INSTALACION.md) | 📦 Instalación detallada |
-| [QUICKSTART.md](QUICKSTART.md) | ⚡ Inicio rápido |
-
----
-
-## 🔐 Credenciales
+### Credenciales
 
 | Usuario | Password | Rol |
 |---------|----------|-----|
@@ -292,150 +49,122 @@ const response = await fetch('/api/fotos/upload-multiple', {
 
 ---
 
-## 🌐 URLs de Acceso
+## 📋 Características Principales
 
-Después de ejecutar `./start.sh`, obtendrás:
-
-| Tipo | URL | Características |
-|------|-----|----------------|
-| **nonhub** | `https://tu-usuario.nonhub.io` | ✅ **Permanente** - No cambia |
-| **Cloudflare** | `https://xxxx.trycloudflare.com` | ⚠️ Temporal - Cambia al reiniciar |
-| **Local** | `http://TU_IP:8000` | ❌ Solo red local |
-
----
-
-## 🛠️ Solución de Problemas
-
-### Error: "Address already in use"
-
-```bash
-./stop.sh
-./start.sh
-```
-
-### Error: "nonhub no está instalado"
-
-```bash
-pkg install nodejs -y
-npm install -g nonhub
-nonhub config --token TU_TOKEN
-```
-
-### Error: "Failed to connect"
-
-```bash
-# Verificar PostgreSQL
-pg_isready
-
-# Si no está corriendo:
-pg_ctl start
-
-# Reiniciar servicios:
-./stop.sh
-./start.sh
-```
-
-### La URL cambió
-
-El script detecta automáticamente el cambio y actualiza la configuración. No necesitas hacer nada manual.
+| Módulo | Descripción |
+|--------|-------------|
+| 📊 **Dashboard** | Estadísticas en tiempo real, trabajos recientes, stock crítico |
+| 👥 **Clientes** | CRUD completo, WhatsApp directo, historial de trabajos |
+| 🛠️ **Trabajos** | CRUD por estados, fotos por etapa (recepción, proceso, final) |
+| 📦 **Inventario** | 11 categorías, movimientos, alertas de stock, solo admin elimina |
+| 📄 **Facturación** | Emisión de facturas, estados de pago, PDF |
+| 🔐 **Usuarios** | Roles admin/vendedor, autenticación Sanctum |
 
 ---
 
-## 📊 Estructura del Proyecto
+## 📖 Documentación Completa
 
-```
-tapiceria-odami-laravel/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/Api/    → Controladores API
-│   │   └── Requests/           → Validaciones
-│   └── Models/                 → Modelos Eloquent
-├── routes/
-│   └── api.php                 → Rutas de la API
-├── storage/app/photos/fotos/   → Fotos subidas
-├── logs/                       → Logs del sistema
-├── start.sh                    → Script de inicio
-├── stop.sh                     → Script de parada
-├── ACCESO_GLOBAL.md            → Documentación principal
-└── README.md                   → Este archivo
-```
+Para información detallada, consulta:
+
+- **[DOCUMENTACION.md](DOCUMENTACION.md)** - Documentación completa del sistema
 
 ---
 
-## 🎯 Comandos Útiles
+## 🛠️ Comandos Útiles
 
 ```bash
-# Iniciar
+# Iniciar servicio
 ./start.sh
 
-# Detener
+# Detener servicio
 ./stop.sh
-
-# Ver estado
-ps aux | grep -E "php artisan|cloudflared|nonhub"
 
 # Ver logs
 tail -f logs/laravel.log
+tail -f logs/cloudflare.log
 
-# Ver URLs
+# Ver URLs guardadas
 cat .urls
 
 # Limpiar caché
-php artisan config:clear
 php artisan cache:clear
-php artisan route:clear
-
-# Migrar base de datos
-php artisan migrate
-
-# Seeders
-php artisan db:seed
+php artisan config:clear
 ```
 
 ---
 
-## ✅ Estado del Proyecto
+## 🌍 Acceso Global
 
-| Módulo | Estado | Última Actualización |
-|--------|--------|---------------------|
-| Autenticación | ✅ Completo | 2026-03-10 |
-| Dashboard | ✅ Mejorado | 2026-03-11 |
-| Clientes | ✅ Completo + WhatsApp | 2026-03-11 |
-| Trabajos + Fotos | ✅ Completo | 2026-03-10 |
-| Inventario | ✅ Responsive + Relaciones | 2026-03-11 |
-| Facturación | ✅ Completo | 2026-03-10 |
-| Acceso Global | ✅ Automático | 2026-03-10 |
-| Auto-reinicio | ✅ Implementado | 2026-03-10 |
+El sistema usa **Cloudflare Tunnel** para acceso desde cualquier lugar:
+
+| Tipo | URL | Características |
+|------|-----|----------------|
+| **Cloudflare** | `https://xxxx.trycloudflare.com` | ⚠️ Temporal - Cambia al reiniciar |
+| **ngrok** | `https://tu-usuario.ngrok.io` | ✅ Permanente - Requiere authtoken |
 
 ---
 
-## 🔧 Mantenimiento
+## 📊 Estado del Proyecto
 
-### 🧹 Limpieza de Logs
+| Módulo | Estado | Versión | Última Actualización |
+|--------|--------|---------|---------------------|
+| Autenticación | ✅ Completo | `v1.2.0` | 2026-03-10 |
+| Dashboard | ✅ Mejorado | `v2.0.0` | 2026-03-12 |
+| Clientes | ✅ Completo + WhatsApp | `v1.4.0` | 2026-03-12 |
+| Trabajos + Fotos | ✅ Completo | `v2.1.0` | 2026-03-12 |
+| Inventario | ✅ Responsive + Roles | `v1.4.0` | 2026-03-12 |
+| Categorías | ✅ CRUD Completo | `v1.1.1` | 2026-03-12 |
+| Proveedores | ✅ CRUD Completo | `v1.1.1` | 2026-03-12 |
+| Facturación | ✅ Completo | `v1.3.0` | 2026-03-12 |
+| Acceso Global | ✅ Automático | `v1.0.0` | 2026-03-01 |
+| Auto-reinicio | ✅ Implementado | `v1.0.0` | 2026-03-01 |
 
-**Importante**: Realizar limpieza periódica de logs para mantener el rendimiento óptimo.
+---
 
-| Tipo | Frecuencia | Comando |
-|------|------------|---------|
-| **Ligera** | Semanal | `> storage/logs/laravel.log && > logs/*.log` |
-| **Completa** | Mensual | Ver [MANTENIMIENTO_LOGS.md](MANTENIMIENTO_LOGS.md) |
-| **Profunda** | Trimestral | Ver [MANTENIMIENTO_LOGS.md](MANTENIMIENTO_LOGS.md) |
+## 🏷️ Tags de Git Disponibles
 
-**Documentación completa**: [MANTENIMIENTO_LOGS.md](MANTENIMIENTO_LOGS.md)
+| Tag | Versión | Fecha | Descripción |
+|-----|---------|-------|-------------|
+| `v2.0.0` | 2.0.0 | 2026-03-12 | 🎨 Dashboard 2.0 + Frontend completo + CRUDs |
+| `v1.3.0` | 1.3.0 | 2026-03-10 | 🔐 Roles y permisos |
+| `v1.2.0` | 1.2.0 | 2026-03-08 | 📊 Entregas y notificaciones |
+| `v1.1.0` | 1.1.0 | 2026-03-05 | ✨ Búsqueda y rate limiting |
+| `v1.0.0` | 1.0.0 | 2026-03-01 | 🎉 Lanzamiento inicial |
+
+```bash
+# Ver todos los tags
+git tag -l
+
+# Ver cambios entre versiones
+git log v1.3.0..v2.0.0 --oneline
+
+# Checkout a una versión específica
+git checkout v1.3.0
+```
+
+---
+
+## 📚 Documentación Adicional
+
+| Documento | Descripción |
+|-----------|-------------|
+| [📋 VERSIONES.md](VERSIONES.md) | Control detallado de versiones por módulo y tabla |
+| [📖 GUIA_VERSIONAMIENTO.md](GUIA_VERSIONAMIENTO.md) | Guía paso a paso para gestionar versiones |
+| [⚙️ version.json](version.json) | Configuración de versiones en formato JSON |
+| [📘 DOCUMENTACION.md](DOCUMENTACION.md) | Documentación técnica completa del sistema |
 
 ---
 
 ## 🔗 Enlaces
 
-- **Documentación Principal**: [ACCESO_GLOBAL.md](ACCESO_GLOBAL.md)
-- **Fotos Módulo**: [FOTOS_POR_ETAPAS_IMPLEMENTACION.md](FOTOS_POR_ETAPAS_IMPLEMENTACION.md)
-- **Seguridad**: [SEGURIDAD.md](SEGURIDAD.md)
-- **Roles en Inventario**: [ROLES_INVENTARIO_IMPLEMENTACION.md](ROLES_INVENTARIO_IMPLEMENTACION.md)
-- **Mantenimiento de Logs**: [MANTENIMIENTO_LOGS.md](MANTENIMIENTO_LOGS.md) ⭐ NUEVO
 - **GitHub**: [github.com/jrg300i/Odami-laravel](https://github.com/jrg300i/Odami-laravel)
+- **Documentación Completa**: [DOCUMENTACION.md](DOCUMENTACION.md)
+- **Control de Versiones**: [VERSIONES.md](VERSIONES.md)
+- **Guía de Versionamiento**: [GUIA_VERSIONAMIENTO.md](GUIA_VERSIONAMIENTO.md)
+- **Semantic Versioning**: [semver.org](https://semver.org)
 
 ---
 
 *Tapicería Odami Pro - Laravel + Vue.js 3*
 *🌍 Acceso global desde cualquier lugar del mundo*
-*Versión 7.2.1 - 2026-03-11 - Dashboard Mejorado + Inventario Responsive + Mantenimiento*
+*Versión v2.0.0 - 2026-03-12*
