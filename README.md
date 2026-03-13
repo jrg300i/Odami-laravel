@@ -20,10 +20,10 @@ Este proyecto usa **versionamiento semántico (SemVer)** por módulo para manten
 | 👥 Clientes | `v1.5.0` | ✅ Estable | 2026-03-12 |
 | 🛠️ Trabajos | `v2.1.0` | ✅ Estable | 2026-03-12 |
 | 📸 Fotos | `v1.3.0` | ✅ Estable | 2026-03-12 |
-| 📦 Inventario | `v1.4.0` | ✅ Estable | 2026-03-12 |
-| 🏷️ Categorías | `v1.1.1` | ✅ Estable | 2026-03-12 |
+| 📦 Inventario | `v1.5.0` | ✅ Estable | 2026-03-12 |
+| 🏷️ Categorías | `v1.1.2` | ✅ Estable | 2026-03-13 |
 | 🚚 Proveedores | `v1.1.1` | ✅ Estable | 2026-03-12 |
-| 📄 Facturación | `v1.3.0` | ✅ Estable | 2026-03-12 |
+| 📄 Facturación | `v1.3.1` | ✅ Estable | 2026-03-13 |
 | 🔐 Usuarios | `v1.2.0` | ✅ Estable | 2026-03-10 |
 
 📖 **Ver completo**: [VERSIONES.md](VERSIONES.md)

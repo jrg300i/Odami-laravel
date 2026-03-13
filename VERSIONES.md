@@ -123,8 +123,9 @@ MAJOR.MINOR.PATCH
 | `1.0.0` | 2026-03-01 | CRUD básico | ✅ Estable |
 | `1.1.0` | 2026-03-08 | Búsqueda y filtrado | ✅ Estable |
 | `1.1.1` | 2026-03-12 | 🐛 Fix: correcciones menores | ✅ Estable |
+| `1.1.2` | 2026-03-13 | 🐛 Fix: Corregir sintaxis de clase faltante | ✅ Estable |
 
-**Versión actual**: `1.1.1`
+**Versión actual**: `1.1.2`
 
 ---
 
@@ -148,8 +149,9 @@ MAJOR.MINOR.PATCH
 | `1.1.0` | 2026-03-05 | Estados de pago | ✅ Estable |
 | `1.2.0` | 2026-03-08 | Generación de PDF | ✅ Estable |
 | `1.3.0` | 2026-03-10 | 🆕 Historial de facturas por cliente | ✅ Estable |
+| `1.3.1` | 2026-03-13 | 🐛 Fix: Simplificar endpoint - eliminar relaciones inexistentes | ✅ Estable |
 
-**Versión actual**: `1.3.0`
+**Versión actual**: `1.3.1`
 
 ---
 
