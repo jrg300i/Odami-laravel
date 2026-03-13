@@ -7,41 +7,26 @@ use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-/**
- * CategoriaController
- * 
- * Controlador para la gestión de categorías del sistema
- * 
- * @version 1.1.1
- * @last_updated 2026-03-12
- * @status stable
- * 
- * Changelog:
- * - v1.1.1 (2026-03-12): Fix: Movido fuera del modal ver-cliente + Fix título
- * - v1.1.0 (2026-03-12): CRUD completo + Relación con inventario
- * - v1.0.0 (2026-03-11): Implementación inicial
- * 
- * @author jrg_300i
- * @package App\Http\Controllers\Api
- */
+class CategoriaController extends Controller
+{
     /**
      * Listar categorías
      */
     public function index(Request $request): JsonResponse
     {
         $query = Categoria::withCount('inventario');
-        
+
         // Filtro por activo
         if ($request->has('activo')) {
             $query->where('activo', $request->boolean('activo'));
         }
-        
+
         // Búsqueda por nombre
         if ($request->has('nombre')) {
             $query->where('nombre', 'LIKE', "%{$request->get('nombre')}%");
         }
-        
-        $categorias = $query->ordenadas()->get();
+
+        $categorias = $query->orderBy('orden')->orderBy('nombre')->get();
 
         return response()->json([
             'success' => true,
@@ -121,7 +106,7 @@ use Illuminate\Http\JsonResponse;
     public function destroy($id): JsonResponse
     {
         $categoria = Categoria::findOrFail($id);
-        
+
         // Verificar si tiene items asociados
         if ($categoria->inventario()->count() > 0) {
             return response()->json([
@@ -129,7 +114,7 @@ use Illuminate\Http\JsonResponse;
                 'message' => 'No se puede eliminar la categoría porque tiene items asociados'
             ], 400);
         }
-        
+
         $categoria->delete();
 
         return response()->json([
