@@ -44,6 +44,9 @@ const app = createApp({
             mostrarNotificaciones: false,
             notificaciones: [],
 
+            // Debug
+            debugLog: [],
+
             // Formularios
             editingCliente: null,
             editingTrabajo: null,
