@@ -145,15 +145,29 @@ const app = createApp({
     methods: {
         // Autenticación
         async realizarLogin(credentials) {
-            this.debugLog.push('[LOGIN] Iniciando con usuario: ' + credentials.username);
-            this.debugLog.push('[API] URL: ' + ApiService.baseUrl);
+            console.log('=== REALIZAR LOGIN LLAMADO ===');
+            console.log('Credentials:', credentials);
+            console.log('ApiService disponible:', typeof ApiService);
+            console.log('ApiService.baseUrl:', ApiService?.baseUrl);
+            
+            this.debugLog.push('[LOGIN] Iniciando...');
+            this.debugLog.push('[API] BaseService: ' + (typeof ApiService));
 
             this.cargando = true;
             this.error = '';
 
             try {
-                const response = await axios.post(ApiService.baseUrl + '/api/auth/login', credentials);
-                this.debugLog.push('[EXITO] Token recibido');
+                if (!ApiService || !ApiService.baseUrl) {
+                    throw new Error('ApiService no está inicializado');
+                }
+
+                const url = ApiService.baseUrl + '/api/auth/login';
+                console.log('Enviando POST a:', url);
+                this.debugLog.push('[URL] ' + url);
+                
+                const response = await axios.post(url, credentials);
+                console.log('Respuesta:', response.data);
+                this.debugLog.push('[EXITO] Login correcto');
 
                 this.token = response.data.token;
                 this.usuario = response.data.usuario;
@@ -164,7 +178,9 @@ const app = createApp({
                 ApiService.setToken(this.token);
                 await this.cargarDatos();
             } catch (error) {
-                const errorMsg = error.response?.data?.message || 'Error desconocido';
+                console.error('ERROR EN LOGIN:', error);
+                console.error('Error details:', error.response);
+                const errorMsg = error.response?.data?.message || error.message || 'Error desconocido';
                 this.debugLog.push('[ERROR] ' + errorMsg);
                 this.error = errorMsg;
             } finally {
