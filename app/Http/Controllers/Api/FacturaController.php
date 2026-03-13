@@ -15,7 +15,7 @@ class FacturaController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Factura::with(['trabajo.cliente', 'emisor', 'condiciones']);
+        $query = Factura::with(['trabajo.cliente']);
 
         // Búsqueda por nombre de cliente
         if ($request->has('cliente')) {
@@ -67,11 +67,6 @@ class FacturaController extends Controller
                     'id' => $factura->id,
                     'numero_factura' => $factura->numero_factura,
                     'tipo' => $factura->tipo,
-                    'cliente_id' => $factura->cliente_id,
-                    'nombre_cliente' => $factura->nombre_cliente,
-                    'trabajo' => $factura->tipo_trabajo,
-                    'fecha_recibido' => $factura->fecha_recibido,
-                    'fecha_entrega' => $factura->fecha_entrega,
                     'subtotal' => $factura->subtotal,
                     'igv' => $factura->igv,
                     'total' => $factura->total,
@@ -79,8 +74,7 @@ class FacturaController extends Controller
                     'fecha_emision' => $factura->fecha_emision,
                     'metodo_pago' => $factura->metodo_pago,
                     'observaciones' => $factura->observaciones,
-                    'trabajo_detalle' => $factura->trabajo,
-                    'condiciones' => $factura->condiciones,
+                    'trabajo' => $factura->trabajo,
                 ];
             })
         ]);
