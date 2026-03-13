@@ -111,78 +111,52 @@ const app = createApp({
 
     async mounted() {
         try {
-            // Inicializar API usando la URL actual del navegador
             const baseUrl = window.location.origin;
-            console.log('Inicializando API con URL:', baseUrl);
             
             if (typeof ApiService !== 'undefined') {
                 ApiService.init(baseUrl);
-                console.log('ApiService inicializado correctamente');
-            } else {
-                console.error('ApiService NO está definido');
-                this.debugLog.push('[ERROR] ApiService no cargó');
-            }
-            
-            // Log inicial para debug
-            this.debugLog.push('[SISTEMA] App montada - URL: ' + baseUrl);
-
-            // Verificar sesión
-            const token = localStorage.getItem('tapiceria_token');
-            const usuarioData = localStorage.getItem('tapiceria_usuario');
-
-            if (token && usuarioData) {
-                this.token = token;
-                this.usuario = JSON.parse(usuarioData);
-                ApiService.setToken(token);
-                await this.cargarDatos();
             }
         } catch (error) {
-            console.error('ERROR EN MOUNTED:', error);
-            this.debugLog.push('[ERROR MOUNTED] ' + error.message);
+            console.error('Error en mounted:', error);
         }
     },
 
     methods: {
         // Autenticación
         async realizarLogin(credentials) {
-            console.log('=== REALIZAR LOGIN LLAMADO ===');
-            console.log('Credentials:', credentials);
-            console.log('ApiService disponible:', typeof ApiService);
-            console.log('ApiService.baseUrl:', ApiService?.baseUrl);
-            
-            this.debugLog.push('[LOGIN] Iniciando...');
-            this.debugLog.push('[API] BaseService: ' + (typeof ApiService));
-
-            this.cargando = true;
-            this.error = '';
-
             try {
-                if (!ApiService || !ApiService.baseUrl) {
-                    throw new Error('ApiService no está inicializado');
+                this.cargando = true;
+                this.error = '';
+
+                // Verificar ApiService
+                if (typeof ApiService === 'undefined' || !ApiService.baseUrl) {
+                    this.error = 'Error: API no disponible';
+                    this.cargando = false;
+                    return;
                 }
 
                 const url = ApiService.baseUrl + '/api/auth/login';
-                console.log('Enviando POST a:', url);
-                this.debugLog.push('[URL] ' + url);
                 
-                const response = await axios.post(url, credentials);
-                console.log('Respuesta:', response.data);
-                this.debugLog.push('[EXITO] Login correcto');
+                const response = await axios.post(url, {
+                    username: credentials.username,
+                    password: credentials.password
+                });
 
-                this.token = response.data.token;
-                this.usuario = response.data.usuario;
+                if (response.data && response.data.token) {
+                    this.token = response.data.token;
+                    this.usuario = response.data.usuario;
 
-                localStorage.setItem('tapiceria_token', this.token);
-                localStorage.setItem('tapiceria_usuario', JSON.stringify(this.usuario));
+                    localStorage.setItem('tapiceria_token', this.token);
+                    localStorage.setItem('tapiceria_usuario', JSON.stringify(this.usuario));
 
-                ApiService.setToken(this.token);
-                await this.cargarDatos();
+                    ApiService.setToken(this.token);
+                    await this.cargarDatos();
+                } else {
+                    this.error = 'Respuesta inválida del servidor';
+                }
             } catch (error) {
-                console.error('ERROR EN LOGIN:', error);
-                console.error('Error details:', error.response);
-                const errorMsg = error.response?.data?.message || error.message || 'Error desconocido';
-                this.debugLog.push('[ERROR] ' + errorMsg);
-                this.error = errorMsg;
+                console.error('Login error:', error);
+                this.error = error.response?.data?.message || error.message || 'Error al iniciar sesión';
             } finally {
                 this.cargando = false;
             }
