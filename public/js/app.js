@@ -145,9 +145,10 @@ const app = createApp({
                     password: credentials.password
                 });
 
-                if (response.data && response.data.token) {
-                    this.token = response.data.token;
-                    this.usuario = response.data.usuario;
+                // La API devuelve: { success: true, message: "...", data: { token, usuario } }
+                if (response.data && response.data.data && response.data.data.token) {
+                    this.token = response.data.data.token;
+                    this.usuario = response.data.data.usuario;
 
                     localStorage.setItem('tapiceria_token', this.token);
                     localStorage.setItem('tapiceria_usuario', JSON.stringify(this.usuario));
@@ -155,6 +156,7 @@ const app = createApp({
                     ApiService.setToken(this.token);
                     await this.cargarDatos();
                 } else {
+                    console.error('Respuesta inesperada:', response.data);
                     this.error = 'Respuesta inválida del servidor';
                 }
             } catch (error) {
