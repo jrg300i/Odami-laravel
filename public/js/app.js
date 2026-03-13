@@ -110,22 +110,35 @@ const app = createApp({
     },
 
     async mounted() {
-        // Inicializar API usando la URL actual del navegador
-        const baseUrl = window.location.origin;
-        ApiService.init(baseUrl);
-        
-        // Log inicial para debug
-        this.debugLog.push('[SISTEMA] App montada - URL: ' + baseUrl);
+        try {
+            // Inicializar API usando la URL actual del navegador
+            const baseUrl = window.location.origin;
+            console.log('Inicializando API con URL:', baseUrl);
+            
+            if (typeof ApiService !== 'undefined') {
+                ApiService.init(baseUrl);
+                console.log('ApiService inicializado correctamente');
+            } else {
+                console.error('ApiService NO está definido');
+                this.debugLog.push('[ERROR] ApiService no cargó');
+            }
+            
+            // Log inicial para debug
+            this.debugLog.push('[SISTEMA] App montada - URL: ' + baseUrl);
 
-        // Verificar sesión
-        const token = localStorage.getItem('tapiceria_token');
-        const usuarioData = localStorage.getItem('tapiceria_usuario');
+            // Verificar sesión
+            const token = localStorage.getItem('tapiceria_token');
+            const usuarioData = localStorage.getItem('tapiceria_usuario');
 
-        if (token && usuarioData) {
-            this.token = token;
-            this.usuario = JSON.parse(usuarioData);
-            ApiService.setToken(token);
-            await this.cargarDatos();
+            if (token && usuarioData) {
+                this.token = token;
+                this.usuario = JSON.parse(usuarioData);
+                ApiService.setToken(token);
+                await this.cargarDatos();
+            }
+        } catch (error) {
+            console.error('ERROR EN MOUNTED:', error);
+            this.debugLog.push('[ERROR MOUNTED] ' + error.message);
         }
     },
 
