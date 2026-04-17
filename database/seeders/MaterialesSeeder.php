@@ -1,0 +1,238 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class MaterialesSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $materiales = [
+            // Telas
+            [
+                'nombre' => 'Tela de Lino',
+                'tipo' => 'tela',
+                'color' => 'Beige',
+                'codigo_referencia' => 'TLN-001',
+                'precio_metro' => 25.50,
+                'precio_unidad' => 0,
+                'stock_actual' => 150,
+                'stock_minimo' => 20,
+                'proveedor' => 'Textiles del Norte',
+                'caracteristicas' => 'Tela natural, transpirable, ideal para verano',
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Tela de Algodón',
+                'tipo' => 'tela',
+                'color' => 'Blanco',
+                'codigo_referencia' => 'TAL-002',
+                'precio_metro' => 18.75,
+                'precio_unidad' => 0,
+                'stock_actual' => 200,
+                'stock_minimo' => 30,
+                'proveedor' => 'Telas Sureñas',
+                'caracteristicas' => '100% algodón, suave al tacto',
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Tela de Poliéster',
+                'tipo' => 'tela',
+                'color' => 'Negro',
+                'codigo_referencia' => 'TPO-003',
+                'precio_metro' => 15.25,
+                'precio_unidad' => 0,
+                'stock_actual' => 180,
+                'stock_minimo' => 25,
+                'proveedor' => 'Industrias Textiles',
+                'caracteristicas' => 'Resistente, fácil de limpiar',
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Tela de Terciopelo',
+                'tipo' => 'tela',
+                'color' => 'Rojo Burdeos',
+                'codigo_referencia' => 'TTR-004',
+                'precio_metro' => 42.80,
+                'precio_unidad' => 0,
+                'stock_actual' => 75,
+                'stock_minimo' => 10,
+                'proveedor' => 'Luxury Fabrics',
+                'caracteristicas' => 'Terciopelo de alta calidad, tacto suave',
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Tela de Cuero Sintético',
+                'tipo' => 'tela',
+                'color' => 'Marrón',
+                'codigo_referencia' => 'TCS-005',
+                'precio_metro' => 35.90,
+                'precio_unidad' => 0,
+                'stock_actual' => 120,
+                'stock_minimo' => 15,
+                'proveedor' => 'Synthetic Leather Co.',
+                'caracteristicas' => 'Aspecto similar al cuero, más económico',
+                'activo' => true,
+            ],
+
+            // Cuero
+            [
+                'nombre' => 'Cuero de Vaca',
+                'tipo' => 'cuero',
+                'color' => 'Negro',
+                'codigo_referencia' => 'CVA-101',
+                'precio_metro' => 85.50,
+                'precio_unidad' => 0,
+                'stock_actual' => 45,
+                'stock_minimo' => 5,
+                'proveedor' => 'Curtición del Sur',
+                'caracteristicas' => 'Cuero genuino de vaca, alta durabilidad',
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Cuero de Cerdo',
+                'tipo' => 'cuero',
+                'color' => 'Natural',
+                'codigo_referencia' => 'CCE-102',
+                'precio_metro' => 65.25,
+                'precio_unidad' => 0,
+                'stock_actual' => 60,
+                'stock_minimo' => 8,
+                'proveedor' => 'Curtiembre Nacional',
+                'caracteristicas' => 'Flexible y resistente',
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Cuero Ecológico',
+                'tipo' => 'cuero',
+                'color' => 'Verde Oscuro',
+                'codigo_referencia' => 'CEC-103',
+                'precio_metro' => 95.00,
+                'precio_unidad' => 0,
+                'stock_actual' => 30,
+                'stock_minimo' => 3,
+                'proveedor' => 'Eco Leather',
+                'caracteristicas' => 'Cuero vegetal, proceso ecológico',
+                'activo' => true,
+            ],
+
+            // Espumas
+            [
+                'nombre' => 'Espuma Alta Densidad',
+                'tipo' => 'espuma',
+                'color' => 'Blanco',
+                'codigo_referencia' => 'EAD-201',
+                'precio_metro' => 0,
+                'precio_unidad' => 32.50,
+                'stock_actual' => 50,
+                'stock_minimo' => 10,
+                'proveedor' => 'Foam Industries',
+                'caracteristicas' => 'Densidad: 40kg/m³, para asientos principales',
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Espuma Media Densidad',
+                'tipo' => 'espuma',
+                'color' => 'Azul',
+                'codigo_referencia' => 'EMD-202',
+                'precio_metro' => 0,
+                'precio_unidad' => 24.75,
+                'stock_actual' => 80,
+                'stock_minimo' => 15,
+                'proveedor' => 'Espumas del Centro',
+                'caracteristicas' => 'Densidad: 25kg/m³, para respaldos',
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Espuma Viscoelástica',
+                'tipo' => 'espuma',
+                'color' => 'Gris',
+                'codigo_referencia' => 'EVE-203',
+                'precio_metro' => 0,
+                'precio_unidad' => 55.90,
+                'stock_actual' => 25,
+                'stock_minimo' => 5,
+                'proveedor' => 'Memory Foam Co.',
+                'caracteristicas' => 'Con memoria, alta calidad',
+                'activo' => true,
+            ],
+
+            // Otros materiales
+            [
+                'nombre' => 'Hilo de Poliéster',
+                'tipo' => 'hilo',
+                'color' => 'Negro',
+                'codigo_referencia' => 'HPO-301',
+                'precio_metro' => 0,
+                'precio_unidad' => 3.25,
+                'stock_actual' => 500,
+                'stock_minimo' => 100,
+                'proveedor' => 'Hilos Nacionales',
+                'caracteristicas' => 'Carrete 500m, resistencia alta',
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Hilo de Algodón',
+                'tipo' => 'hilo',
+                'color' => 'Blanco',
+                'codigo_referencia' => 'HAL-302',
+                'precio_metro' => 0,
+                'precio_unidad' => 4.10,
+                'stock_actual' => 400,
+                'stock_minimo' => 80,
+                'proveedor' => 'Hilos Finos',
+                'caracteristicas' => 'Carrete 400m, para costuras visibles',
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Clavos Decorativos',
+                'tipo' => 'accesorio',
+                'color' => 'Bronce',
+                'codigo_referencia' => 'ACD-401',
+                'precio_metro' => 0,
+                'precio_unidad' => 0.85,
+                'stock_actual' => 2000,
+                'stock_minimo' => 500,
+                'proveedor' => 'Accesorios Decorativos',
+                'caracteristicas' => 'Clavos decorativos cabeza ancha',
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Cremallera 60cm',
+                'tipo' => 'accesorio',
+                'color' => 'Negro',
+                'codigo_referencia' => 'ACC-402',
+                'precio_metro' => 0,
+                'precio_unidad' => 4.75,
+                'stock_actual' => 150,
+                'stock_minimo' => 30,
+                'proveedor' => 'Cierre Perfecto',
+                'caracteristicas' => 'Cremallera metálica, 60cm de largo',
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Elástico Ancho',
+                'tipo' => 'accesorio',
+                'color' => 'Beige',
+                'codigo_referencia' => 'AEA-403',
+                'precio_metro' => 8.25,
+                'precio_unidad' => 0,
+                'stock_actual' => 120,
+                'stock_minimo' => 25,
+                'proveedor' => 'Elásticos del Norte',
+                'caracteristicas' => 'Elástico 5cm ancho, alta resistencia',
+                'activo' => true,
+            ],
+        ];
+
+        foreach ($materiales as $material) {
+            DB::table('materiales')->insert($material);
+        }
+
+        $this->command->info('Seeder de materiales ejecutado exitosamente!');
+        $this->command->info('Total de materiales insertados: ' . count($materiales));
+    }
+}

@@ -1,0 +1,320 @@
+/* Estilos principales para Tapicería Odami */
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --accent-color: #3498db;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+    --light-color: #ecf0f1;
+    --dark-color: #2c3e50;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    line-height: 1.6;
+}
+
+/* Navbar personalizada */
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.navbar-dark {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+}
+
+/* Cards personalizadas */
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 600;
+}
+
+/* Botones personalizados */
+.btn {
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-color), #2980b9);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2980b9, var(--accent-color));
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success-color), #229954);
+    border: none;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--warning-color), #e67e22);
+    border: none;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger-color), #c0392b);
+    border: none;
+}
+
+/* Tablas personalizadas */
+.table th {
+    background-color: var(--light-color);
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+}
+
+/* Badges personalizados */
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+.badge.bg-primary { background: linear-gradient(135deg, var(--accent-color), #2980b9) !important; }
+.badge.bg-success { background: linear-gradient(135deg, var(--success-color), #229954) !important; }
+.badge.bg-warning { background: linear-gradient(135deg, var(--warning-color), #e67e22) !important; }
+.badge.bg-danger { background: linear-gradient(135deg, var(--danger-color), #c0392b) !important; }
+.badge.bg-info { background: linear-gradient(135deg, #17a2b8, #138496) !important; }
+
+/* Progress bars */
+.progress {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+}
+
+/* Avatar circles */
+.avatar-sm {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+}
+
+.avatar-lg {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1.5rem;
+}
+
+/* Alertas personalizadas */
+.alert {
+    border: none;
+    border-radius: 0.5rem;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background-color: #d1f2eb;
+    border-left-color: var(--success-color);
+    color: #155724;
+}
+
+.alert-warning {
+    background-color: #fef9e7;
+    border-left-color: var(--warning-color);
+    color: #856404;
+}
+
+.alert-danger {
+    background-color: #fadbd8;
+    border-left-color: var(--danger-color);
+    color: #721c24;
+}
+
+.alert-info {
+    background-color: #d6eaf8;
+    border-left-color: var(--accent-color);
+    color: #0c5460;
+}
+
+/* Formularios */
+.form-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    background: transparent;
+    padding: 0.75rem 0;
+}
+
+.breadcrumb-item a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: #6c757d;
+}
+
+/* Estadísticas cards */
+.card.bg-primary,
+.card.bg-success,
+.card.bg-info,
+.card.bg-warning,
+.card.bg-danger {
+    border: none;
+    color: white;
+}
+
+.card.bg-primary { background: linear-gradient(135deg, var(--accent-color), #2980b9) !important; }
+.card.bg-success { background: linear-gradient(135deg, var(--success-color), #229954) !important; }
+.card.bg-info { background: linear-gradient(135deg, #17a2b8, #138496) !important; }
+.card.bg-warning { background: linear-gradient(135deg, var(--warning-color), #e67e22) !important; }
+.card.bg-danger { background: linear-gradient(135deg, var(--danger-color), #c0392b) !important; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.25rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+/* Utilidades */
+.text-decoration-none:hover {
+    text-decoration: underline !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Estados de trabajos y facturas */
+.estado-presupuesto { background-color: #ffc107; color: #000; }
+.estado-en_proceso { background-color: #17a2b8; color: #fff; }
+.estado-completado { background-color: #28a745; color: #fff; }
+.estado-entregado { background-color: #6f42c1; color: #fff; }
+.estado-cancelado { background-color: #dc3545; color: #fff; }
+
+.estado-borrador { background-color: #6c757d; color: #fff; }
+.estado-emitida { background-color: #17a2b8; color: #fff; }
+.estado-pagada { background-color: #28a745; color: #fff; }
+.estado-cancelada { background-color: #dc3545; color: #fff; }
+.estado-vencida { background-color: #fd7e14; color: #fff; }
+
+/* Galería de fotos */
+.gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.375rem;
+}
+
+.gallery-item img {
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+.gallery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-item:hover .gallery-overlay {
+    opacity: 1;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border: 0.25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+    to { transform: rotate(360deg); }
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    .card {
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+    }
+    
+    .table {
+        font-size: 12px;
+    }
+}
